@@ -53,7 +53,7 @@ nav_msgs::msg::Path BSpliner::spline(
   if (poses.size() < 2) {return path;}
 
   int n = poses.size() - 1;
-  if(n < 4){
+  if (n < 4) {
     k = n;
   }
   knots_vector_.resize(n + k + 1);
@@ -86,17 +86,17 @@ nav_msgs::msg::Path BSpliner::spline(
     for (int i = 0; i < knots_vector_.size(); ++i) {
       if (i < k) {
         knots_vector_[i] = 0.0;
-      }else if(k <= i && i < knots_vector_.size() - k){
-        knots_vector_[i] = knots_vector_[i-1] + x;
-      }else{
+      } else if (k <= i && i < knots_vector_.size() - k) {
+        knots_vector_[i] = knots_vector_[i - 1] + x;
+      } else {
         knots_vector_[i] = 1.0;
       }
     }
 
     for (double u = 0.0; u <= 1.001; u += 0.01) {
-      if(u>1.0)u=0.99999;
+      if (u > 1.0) {u = 0.99999;}
       double x = 0.0, y = 0.0;
-      for(int i = 0; i <= n; i++){
+      for (int i = 0; i <= n; i++) {
         Bik[i] = deboor_cox(i, k - 1, u);
 
         x += Bik[i] * poses[i].pose.position.x;
@@ -104,7 +104,7 @@ nav_msgs::msg::Path BSpliner::spline(
       }
       pose.pose.position.x = x;
       pose.pose.position.y = y;
-      path.poses.push_back(pose);      
+      path.poses.push_back(pose);
     }
   }
 

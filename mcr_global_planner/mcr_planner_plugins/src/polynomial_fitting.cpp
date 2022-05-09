@@ -42,8 +42,8 @@ nav_msgs::msg::Path PolynomialFitting::spline(
   while (cx <= max_x + 0.001) {
     double cy = A[0] + A[1] * cx + A[2] *
       (pow(cx, 2)) + A[3] * (pow(cx, 3));
-	pose.pose.position.x = cx;
-	pose.pose.position.y = cy;
+    pose.pose.position.x = cx;
+    pose.pose.position.y = cy;
     path.poses.push_back(pose);
     cx += 0.05;
   }

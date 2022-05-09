@@ -168,7 +168,7 @@ public:
   void clearStaticObservations(bool marking, bool clearing);
 
 protected:
-  bool getTrackingPoseInLaserFrame(geometry_msgs::msg::PoseStamped &pose_transformed);
+  bool getTrackingPoseInLaserFrame(geometry_msgs::msg::PoseStamped & pose_transformed);
   void callback_tracking_pose(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   /**
    * @brief  Get the observations used to mark space

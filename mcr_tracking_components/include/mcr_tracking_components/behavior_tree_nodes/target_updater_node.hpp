@@ -58,7 +58,7 @@ public:
       BT::OutputPort<geometry_msgs::msg::PoseStamped>(
         "output_goal",
         "Received Goal by subscription"),
-      BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped> >(
+      BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
         "output_goals",
         "Received Goals by subscription"),
       BT::OutputPort<unsigned int>(
@@ -80,9 +80,9 @@ private:
    */
   void callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
 
-  geometry_msgs::msg::PoseStamped translatePoseByMode(const geometry_msgs::msg::PoseStamped& pose);
+  geometry_msgs::msg::PoseStamped translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose);
 
-  void historyPoseUpdate(const geometry_msgs::msg::PoseStamped &pose);
+  void historyPoseUpdate(const geometry_msgs::msg::PoseStamped & pose);
 
   void truncatOverduePosesAndAppendCurPose();
   void truncatHinderPosesAndAppendCurPose();
@@ -98,7 +98,7 @@ private:
   rclcpp::Time latest_timestamp_;
 
   std::mutex mutex_;
-  unsigned char current_mode_=255;
+  unsigned char current_mode_ = 255;
 
   std::string global_frame_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;

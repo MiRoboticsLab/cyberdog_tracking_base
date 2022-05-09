@@ -8,33 +8,38 @@
 #include "mcr_global_planner/mcr_global_planner.h"
 
 
-class PlannerWrapper : public nav2_util::LifecycleNode{
+class PlannerWrapper : public nav2_util::LifecycleNode
+{
 public:
-  PlannerWrapper():nav2_util::LifecycleNode("mcr_planner", "", true),
+  PlannerWrapper()
+  : nav2_util::LifecycleNode("mcr_planner", "", true),
     gp_loader_("nav2_core", "nav2_core::GlobalPlanner"),
-    costmap_(nullptr){
-  start_.header.frame_id = "map";
-  RCLCPP_INFO(get_logger(), "Creating");
+    costmap_(nullptr)
+  {
+    start_.header.frame_id = "map";
+    RCLCPP_INFO(get_logger(), "Creating");
 
-  goal_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>("/goal_pose",
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&PlannerWrapper::onGoalPoseReceived, this, std::placeholders::_1));
+    goal_sub_ = create_subscription<geometry_msgs::msg::PoseStamped>(
+      "/goal_pose",
+      rclcpp::SystemDefaultsQoS(),
+      std::bind(&PlannerWrapper::onGoalPoseReceived, this, std::placeholders::_1));
 
-  initialpose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/initialpose",
-    rclcpp::SystemDefaultsQoS(),
-    std::bind(&PlannerWrapper::onInitialPoseReceived, this, std::placeholders::_1));
+    initialpose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>(
+      "/initialpose",
+      rclcpp::SystemDefaultsQoS(),
+      std::bind(&PlannerWrapper::onInitialPoseReceived, this, std::placeholders::_1));
 
 
+    // Setup the global costmap
+    costmap_ros_ = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
+      "global_costmap", std::string{get_namespace()}, "global_costmap");
 
-  // Setup the global costmap
-  costmap_ros_ = std::make_shared<nav2_costmap_2d::Costmap2DROS>(
-    "global_costmap", std::string{get_namespace()}, "global_costmap");
-
-  // Launch a thread to run the costmap node
-  costmap_thread_ = std::make_unique<nav2_util::NodeThread>(costmap_ros_);
+    // Launch a thread to run the costmap node
+    costmap_thread_ = std::make_unique<nav2_util::NodeThread>(costmap_ros_);
   }
 
-  ~PlannerWrapper(){
+  ~PlannerWrapper()
+  {
     RCLCPP_INFO(get_logger(), "Destroying");
     costmap_thread_.reset();
   }
@@ -45,7 +50,8 @@ protected:
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
-  nav2_util::CallbackReturn on_configure(const rclcpp_lifecycle::State & state) override{
+  nav2_util::CallbackReturn on_configure(const rclcpp_lifecycle::State & state) override
+  {
     RCLCPP_INFO(get_logger(), "Configuring");
 
     costmap_ros_->on_configure(state);
@@ -58,7 +64,9 @@ protected:
     tf_ = costmap_ros_->getTfBuffer();
     auto node = shared_from_this();
     std::string planner_name, plugin_class;
-    nav2_util::declare_parameter_if_not_declared(node, "planner_name", rclcpp::ParameterValue("curve_planner"));
+    nav2_util::declare_parameter_if_not_declared(
+      node, "planner_name",
+      rclcpp::ParameterValue("curve_planner"));
     get_parameter("planner_name", planner_name);
     plugin_class = nav2_util::get_plugin_type_param(node, planner_name);
 
@@ -81,7 +89,8 @@ protected:
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
-  nav2_util::CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override{
+  nav2_util::CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override
+  {
     RCLCPP_INFO(get_logger(), "Activating");
 
     plan_publisher_->on_activate();
@@ -94,21 +103,23 @@ protected:
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
-  nav2_util::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override{
+  nav2_util::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override
+  {
     RCLCPP_INFO(get_logger(), "Deactivating");
 
     plan_publisher_->on_deactivate();
     costmap_ros_->on_deactivate(state);
     planner_->activate();
 
-    return nav2_util::CallbackReturn::SUCCESS;    
-   }
+    return nav2_util::CallbackReturn::SUCCESS;
+  }
   /**
    * @brief Reset member variables
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
-  nav2_util::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & state) override{
+  nav2_util::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & state) override
+  {
     RCLCPP_INFO(get_logger(), "Cleaning up");
 
     plan_publisher_.reset();
@@ -124,31 +135,34 @@ protected:
    * @param state Reference to LifeCycle node state
    * @return SUCCESS or FAILURE
    */
-  nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & /*state*/) override{
+  nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & /*state*/) override
+  {
     RCLCPP_INFO(get_logger(), "Shutting down");
     return nav2_util::CallbackReturn::SUCCESS;
   }
 
-  void publishPlan(const nav_msgs::msg::Path & path){
+  void publishPlan(const nav_msgs::msg::Path & path)
+  {
     auto msg = std::make_unique<nav_msgs::msg::Path>(path);
     if (
       plan_publisher_->is_activated() &&
       this->count_subscribers(plan_publisher_->get_topic_name()) > 0)
     {
       plan_publisher_->publish(std::move(msg));
-    }    
+    }
   }
 
   void onGoalPoseReceived(const geometry_msgs::msg::PoseStamped::SharedPtr pose)
   {
-    try{
-      nav_msgs::msg::Path path = 
-      planner_->createPlan(start_, *pose);
+    try {
+      nav_msgs::msg::Path path =
+        planner_->createPlan(start_, *pose);
       publishPlan(path);
-    }catch(...){
-      RCLCPP_WARN(get_logger(), "Failed to get path for the target (%f, %f, %f)",
-                pose->pose.position.x, pose->pose.position.y, 
-                tf2::getYaw(pose->pose.orientation));
+    } catch (...) {
+      RCLCPP_WARN(
+        get_logger(), "Failed to get path for the target (%f, %f, %f)",
+        pose->pose.position.x, pose->pose.position.y,
+        tf2::getYaw(pose->pose.orientation));
     }
   }
 
@@ -157,8 +171,6 @@ protected:
     start_.header = pose->header;
     start_.pose = pose->pose.pose;
   }
-
-
 
 private:
   std::shared_ptr<tf2_ros::Buffer> tf_;

@@ -11,9 +11,9 @@
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "mcr_global_planner/potential_calculator.h"
 
-namespace mcr_global_planner{
+namespace mcr_global_planner {
 
-class MCRGlobalPlanner : public nav2_core::GlobalPlanner{
+  class MCRGlobalPlanner: public nav2_core::GlobalPlanner {
 public:
     /**
      * @brief constructor
@@ -32,10 +32,10 @@ public:
      * @param tf Shared ptr of TF2 buffer
      * @param costmap_ros Costmap2DROS object
      */
-   void configure(
-    const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
-    std::string name, std::shared_ptr<tf2_ros::Buffer> tf,
-    std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros);
+    void configure(
+      const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
+      std::string name, std::shared_ptr < tf2_ros::Buffer > tf,
+      std::shared_ptr < nav2_costmap_2d::Costmap2DROS > costmap_ros);
     /**
      * @brief Cleanup lifecycle node
      */
@@ -59,21 +59,20 @@ public:
      * @return nav_msgs::Path of the generated path
      */
     nav_msgs::msg::Path createPlan(
-        const geometry_msgs::msg::PoseStamped & start,
-        const geometry_msgs::msg::PoseStamped & goal) override;
+      const geometry_msgs::msg::PoseStamped & start,
+      const geometry_msgs::msg::PoseStamped & goal) override;
 
     /**
      * @brief Check the costmap for any obstacles on this path
      * @param path Path to check
      * @return True if there are no obstacles
      */
-    virtual bool isPlanValid(const nav_2d_msgs::msg::Path2D& path) const;
+    virtual bool isPlanValid(const nav_2d_msgs::msg::Path2D & path) const;
 
 protected:
-
     // Subscription for parameter change
     rclcpp::AsyncParametersClient::SharedPtr parameters_client_;
-    rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr parameter_event_sub_;
+    rclcpp::Subscription < rcl_interfaces::msg::ParameterEvent > ::SharedPtr parameter_event_sub_;
 
     /**
      * @brief Callback executed when a paramter change is detected
@@ -95,8 +94,9 @@ protected:
      * @param goal_y y coordinate of the goal in the grid
      * @return True if a path has been cached, the goal is the same as the cached paths, and the plan is valid
      */
-    virtual bool hasValidCachedPath(const geometry_msgs::msg::Pose2D& local_goal,
-                                    unsigned int goal_x, unsigned int goal_y);
+    virtual bool hasValidCachedPath(
+      const geometry_msgs::msg::Pose2D & local_goal,
+      unsigned int goal_x, unsigned int goal_y);
 
     /**
      * @brief Whether the planner should always return a valid cached path without running the planning algorithm
@@ -110,15 +110,18 @@ protected:
      * @param new_path_cost The cost of the new path, according to the traceback
      * @return True if the new path should be the one returned. If False, return the cached one
      */
-    virtual bool shouldReturnNewPath(const nav_2d_msgs::msg::Path2D& new_path, const double new_path_cost) const;
+    virtual bool shouldReturnNewPath(
+      const nav_2d_msgs::msg::Path2D & new_path,
+      const double new_path_cost) const;
 
-    geometry_msgs::msg::Pose2D transformPose(const geometry_msgs::msg::PoseStamped & in_pose,
-                                             const std::string frame);
+    geometry_msgs::msg::Pose2D transformPose(
+      const geometry_msgs::msg::PoseStamped & in_pose,
+      const std::string frame);
 
     // Plugins
-    pluginlib::ClassLoader<PotentialCalculator> calc_loader_;
+    pluginlib::ClassLoader < PotentialCalculator > calc_loader_;
     PotentialCalculator::Ptr calculator_;
-    pluginlib::ClassLoader<Traceback> traceback_loader_;
+    pluginlib::ClassLoader < Traceback > traceback_loader_;
     Traceback::Ptr traceback_;
 
     // Key members
@@ -140,10 +143,10 @@ protected:
 
     nav2_util::LifecycleNode::SharedPtr node_;
     std::string global_frame_, name_;
-    std::shared_ptr<tf2_ros::Buffer> tf_;
-    std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
-    std::shared_ptr<nav2_costmap_2d::Costmap2D> costmap_;
+    std::shared_ptr < tf2_ros::Buffer > tf_;
+    std::shared_ptr < nav2_costmap_2d::Costmap2DROS > costmap_ros_;
+    std::shared_ptr < nav2_costmap_2d::Costmap2D > costmap_;
 
-};
+  };
 }
 #endif

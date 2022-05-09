@@ -1,4 +1,3 @@
-
 #include <mcr_planner_plugins/bezier_spliner.h>
 
 namespace mcr_planner_plugins
@@ -62,7 +61,7 @@ nav_msgs::msg::Path BezierSpliner::spline(
   start = control_points.begin() + i;
   stop = control_points.end();
   std::vector<geometry_msgs::msg::PoseStamped> cp(start, stop);
-  std::vector<geometry_msgs::msg::PoseStamped> &&tmp = bezier(cp);
+  std::vector<geometry_msgs::msg::PoseStamped>&& tmp = bezier(cp);
   path.poses.insert(path.poses.end(), tmp.begin(), tmp.end());
   return path;
 }
@@ -79,7 +78,7 @@ int factorial(int number)
 
 
 std::vector<geometry_msgs::msg::PoseStamped>&& BezierSpliner::bezier(
-  const std::vector<geometry_msgs::msg::PoseStamped> & control_points)
+  const std::vector<geometry_msgs::msg::PoseStamped>&control_points)
 {
   static std::vector<geometry_msgs::msg::PoseStamped> path;
   path.clear();
@@ -102,12 +101,12 @@ std::vector<geometry_msgs::msg::PoseStamped>&& BezierSpliner::bezier(
     } else {
       int n = cns - 1;
       int nf = factorial(n);
-      x=0;y=0;
+      x = 0;y = 0;
       for (int k = 0; k < cns; k++) {
         int i_f = factorial(k);
         int n_i_f = factorial(n - k);
         double ratio = (nf / (i_f * n_i_f)) * pow(t, k) * pow((1 - t), n - k);
-        
+
         x += ratio * control_points[k].pose.position.x;
         y += ratio * control_points[k].pose.position.y;
       }

@@ -67,7 +67,8 @@ void KeepTargetInsightCritic::onInit()
     "/tracking_pose",
     rclcpp::SensorDataQoS(),
     std::bind(&KeepTargetInsightCritic::poseCallback, this, std::placeholders::_1));
-  RCLCPP_INFO(node->get_logger(), "Keep target insight critic subscribed to tracking pose: tracking_pose");
+  RCLCPP_INFO(
+    node->get_logger(), "Keep target insight critic subscribed to tracking pose: tracking_pose");
 
   reset();
 }
@@ -92,7 +93,7 @@ double KeepTargetInsightCritic::scoreTrajectory(const dwb_msgs::msg::Trajectory2
   // If we're not sufficiently close to the goal, we don't care what the twist is
   if (!valid_data_) {
     return 0.0;
-  } 
+  }
   return scoreRotation(traj);
 }
 

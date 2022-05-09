@@ -7,13 +7,14 @@
 #include "mcr_global_planner/potential.h"
 #include "geometry_msgs/msg/pose2_d.hpp"
 
-namespace mcr_global_planner{
+namespace mcr_global_planner {
 
-class PotentialCalculator{
+  class PotentialCalculator {
 public:
-    using Ptr = std::shared_ptr<PotentialCalculator>;
+    using Ptr = std::shared_ptr < PotentialCalculator >;
 
-    PotentialCalculator(): cost_interpreter_(nullptr){}
+    PotentialCalculator() : cost_interpreter_(nullptr) {
+    }
     virtual ~PotentialCalculator() = default;
     /**
      * @brief Initialize function
@@ -24,11 +25,12 @@ public:
      * @param costmap Pointer to costmap (possibly for tracking changes)
      * @param cost_interpreter CostInterpreter pointer
      */
-    virtual void initialize(rclcpp_lifecycle::LifecycleNode::SharedPtr /*node*/,
-                            const std::string &name,
-                            std::shared_ptr<nav2_costmap_2d::Costmap2DROS> /*costmap*/,
-                            CostInterpreter::Ptr cost_interpreter)
-    { cost_interpreter_ = cost_interpreter; name_ = name;}
+    virtual void initialize(
+      rclcpp_lifecycle::LifecycleNode::SharedPtr /*node*/,
+      const std::string & name,
+      std::shared_ptr < nav2_costmap_2d::Costmap2DROS > /*costmap*/,
+      CostInterpreter::Ptr cost_interpreter)
+    {cost_interpreter_ = cost_interpreter; name_ = name;}
 
     /**
      * @brief Main potential calculation function
@@ -38,14 +40,15 @@ public:
      * @param goal Goal pose, in the same frame as the potential
      * @return Number of cells expanded. Used for comparing expansion strategies.
      */
-    virtual unsigned int updatePotentials(PotentialGrid& potential_grid,
-                                        const geometry_msgs::msg::Pose2D& start, 
-                                        const geometry_msgs::msg::Pose2D& goal) = 0;
+    virtual unsigned int updatePotentials(
+      PotentialGrid & potential_grid,
+      const geometry_msgs::msg::Pose2D & start,
+      const geometry_msgs::msg::Pose2D & goal) = 0;
+
 protected:
     CostInterpreter::Ptr cost_interpreter_;
     std::string name_;
-};
-
+  };
 
 
 }

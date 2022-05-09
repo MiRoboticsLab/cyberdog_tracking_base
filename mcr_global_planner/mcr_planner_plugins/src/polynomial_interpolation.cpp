@@ -47,7 +47,7 @@ nav_msgs::msg::Path PolynomialInterpolation::spline(
   for (size_t i = 0; i < poses.size() - 1; i++) {
     control_points.clear();
     control_points.push_back(poses[i]);
-    control_points.push_back(poses[i+1]);
+    control_points.push_back(poses[i + 1]);
 
     std::vector<geometry_msgs::msg::PoseStamped>&& poses_t = interpolation(control_points);
     path.poses.insert(path.poses.end(), poses_t.begin(), poses_t.end());

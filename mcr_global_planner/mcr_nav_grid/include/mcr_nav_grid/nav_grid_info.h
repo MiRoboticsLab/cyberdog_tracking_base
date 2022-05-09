@@ -46,46 +46,47 @@ namespace mcr_nav_grid
  * except the map_load_time is removed, the geometry is simplified from a Pose to xy coordinates, and the frame_id
  * is added.
  */
-struct NavGridInfo
-{
+  struct NavGridInfo
+  {
 public:
-  /* All data is publically accessible */
-  unsigned int width = 0;
-  unsigned int height = 0;
-  double resolution = 1.0;
-  std::string frame_id = "map";
-  double origin_x = 0.0;  ///< The origin defines the coordinates of minimum corner of cell (0,0) in the grid
-  double origin_y = 0.0;
+    /* All data is publically accessible */
+    unsigned int width = 0;
+    unsigned int height = 0;
+    double resolution = 1.0;
+    std::string frame_id = "map";
+    double origin_x = 0.0; ///< The origin defines the coordinates of minimum corner of cell (0,0) in the grid
+    double origin_y = 0.0;
 
-  /**
-   * @brief comparison operator that requires all fields are equal
-   */
-  bool operator == (const NavGridInfo& info) const
-  {
-    return width == info.width && height == info.height && resolution == info.resolution &&
-           origin_x == info.origin_x && origin_y == info.origin_y && frame_id == info.frame_id;
-  }
+    /**
+     * @brief comparison operator that requires all fields are equal
+     */
+    bool operator == (const NavGridInfo & info) const
+    {
+      return width == info.width && height == info.height && resolution == info.resolution &&
+             origin_x == info.origin_x && origin_y == info.origin_y && frame_id == info.frame_id;
+    }
 
-  bool operator != (const NavGridInfo& info) const
-  {
-    return !operator==(info);
-  }
+    bool operator != (const NavGridInfo & info) const
+    {
+      return !operator == (info);
+    }
 
-  /**
-   * @brief String representation of this object
-   */
-  std::string toString() const
-  {
-    return std::to_string(width) + "x" + std::to_string(height) + " (" + std::to_string(resolution) + "res) " +
-      frame_id + " " + std::to_string(origin_x) + " " + std::to_string(origin_y);
-  }
-};
+    /**
+     * @brief String representation of this object
+     */
+    std::string toString() const
+    {
+      return std::to_string(width) + "x" + std::to_string(height) + " (" +
+             std::to_string(resolution) + "res) " +
+             frame_id + " " + std::to_string(origin_x) + " " + std::to_string(origin_y);
+    }
+  };
 
-inline std::ostream& operator<<(std::ostream& stream, const NavGridInfo& info)
-{
-  stream << info.toString();
-  return stream;
-}
+  inline std::ostream & operator << (std::ostream & stream, const NavGridInfo & info)
+      {
+      stream << info.toString();
+      return stream;
+    }
 
 }  // namespace mcr_nav_grid
 

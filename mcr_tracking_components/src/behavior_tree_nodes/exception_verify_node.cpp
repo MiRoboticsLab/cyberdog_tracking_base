@@ -25,7 +25,7 @@ ExceptionVerify::ExceptionVerify(
   const BT::NodeConfiguration & conf)
 : BT::DecoratorNode(name, conf)
 {
-  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");  
+  node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
 }
 
 BT::NodeStatus ExceptionVerify::tick()

@@ -72,12 +72,15 @@ void SpinAndSearch::onConfigure()
     "rotational_acc_lim", rclcpp::ParameterValue(3.2));
   shared_node_->get_parameter("rotational_acc_lim", rotational_acc_lim_);
 
-  shared_node_->get_parameter_or<std::string>("goal_updater_topic", goal_updater_topic_, "tracking_pose");  
+  shared_node_->get_parameter_or<std::string>(
+    "goal_updater_topic", goal_updater_topic_,
+    "tracking_pose");
   goal_sub_ = shared_node_->create_subscription<geometry_msgs::msg::PoseStamped>(
     goal_updater_topic_, rclcpp::SensorDataQoS(),
-    std::bind(&SpinAndSearch::callback_updated_goal, this, std::placeholders::_1));  
+    std::bind(&SpinAndSearch::callback_updated_goal, this, std::placeholders::_1));
 }
-void SpinAndSearch::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg){
+void SpinAndSearch::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+{
   latest_timestamped_ = shared_node_->now();
   latest_posestamped_ = *msg;
 }
@@ -97,7 +100,7 @@ nav2_recoveries::Status SpinAndSearch::onRun(const std::shared_ptr<const SpinAct
   prev_yaw_ = tf2::getYaw(current_pose.pose.orientation);
   relative_yaw_ = 0.0;
 
-  if(latest_posestamped_.pose.position.y < 0){
+  if (latest_posestamped_.pose.position.y < 0) {
     cmd_yaw_ *= -1.0;
   }
 
@@ -132,7 +135,7 @@ nav2_recoveries::Status SpinAndSearch::onCycleUpdate()
   action_server_->publish_feedback(feedback_);
 
   double remaining_yaw = abs(cmd_yaw_) - abs(relative_yaw_);
-  if(shared_node_->now().seconds() - latest_timestamped_.seconds() < 1.0 || remaining_yaw < 1e-6){
+  if (shared_node_->now().seconds() - latest_timestamped_.seconds() < 1.0 || remaining_yaw < 1e-6) {
     stopRobot();
     return nav2_recoveries::Status::SUCCEEDED;
   }

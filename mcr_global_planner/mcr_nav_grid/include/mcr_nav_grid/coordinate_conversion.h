@@ -50,11 +50,11 @@ namespace mcr_nav_grid
  * @param[out] wx Set to the associated x world coordinate
  * @param[out] wy Set to the associated y world coordinate
  */
-inline void gridToWorld(const NavGridInfo& info, int mx, int my, double& wx, double& wy)
-{
-  wx = info.origin_x + (mx + 0.5) * info.resolution;
-  wy = info.origin_y + (my + 0.5) * info.resolution;
-}
+  inline void gridToWorld(const NavGridInfo & info, int mx, int my, double & wx, double & wy)
+  {
+    wx = info.origin_x + (mx + 0.5) * info.resolution;
+    wy = info.origin_y + (my + 0.5) * info.resolution;
+  }
 
 /**
  * @brief  Convert from world coordinates to the precise (double) grid coordinates
@@ -66,11 +66,11 @@ inline void gridToWorld(const NavGridInfo& info, int mx, int my, double& wx, dou
  * @param[out] mx Set to the associated x grid coordinate
  * @param[out] my Set to the associated y grid coordinate
  */
-inline void worldToGrid(const NavGridInfo& info, double wx, double wy, double& mx, double& my)
-{
-  mx = (wx - info.origin_x) / info.resolution;
-  my = (wy - info.origin_y) / info.resolution;
-}
+  inline void worldToGrid(const NavGridInfo & info, double wx, double wy, double & mx, double & my)
+  {
+    mx = (wx - info.origin_x) / info.resolution;
+    my = (wy - info.origin_y) / info.resolution;
+  }
 
 /**
  * @brief  Convert from world coordinates to grid coordinates without checking for legal bounds
@@ -80,13 +80,13 @@ inline void worldToGrid(const NavGridInfo& info, double wx, double wy, double& m
  * @param[out] my Set to the associated y grid coordinate
  * @note       The returned grid coordinates <b>are not guaranteed to lie within the grid.</b>
  */
-inline void worldToGrid(const NavGridInfo& info, double wx, double wy, int& mx, int& my)
-{
-  double dmx, dmy;
-  worldToGrid(info, wx, wy, dmx, dmy);
-  mx = static_cast<int>(floor(dmx));
-  my = static_cast<int>(floor(dmy));
-}
+  inline void worldToGrid(const NavGridInfo & info, double wx, double wy, int & mx, int & my)
+  {
+    double dmx, dmy;
+    worldToGrid(info, wx, wy, dmx, dmy);
+    mx = static_cast < int > (floor(dmx));
+    my = static_cast < int > (floor(dmy));
+  }
 
 /**
  * @brief  Convert from world coordinates to grid coordinates
@@ -101,45 +101,37 @@ inline void worldToGrid(const NavGridInfo& info, double wx, double wy, int& mx, 
  * @param[out] my Set to the associated (bounds-enforced) y grid coordinate
  * @return     True if the input coordinates were within the grid
  */
-inline bool worldToGridBounded(const NavGridInfo& info, double wx, double wy, unsigned int& mx, unsigned int& my)
-{
-  double dmx, dmy;
-  worldToGrid(info, wx, wy, dmx, dmy);
+  inline bool worldToGridBounded(
+    const NavGridInfo & info, double wx, double wy, unsigned int & mx,
+    unsigned int & my)
+  {
+    double dmx, dmy;
+    worldToGrid(info, wx, wy, dmx, dmy);
 
-  bool valid = true;
+    bool valid = true;
 
-  if (dmx < 0.0)
-  {
-    mx = 0;
-    valid = false;
-  }
-  else if (dmx >= info.width)
-  {
-    mx = info.width - 1;
-    valid = false;
-  }
-  else
-  {
-    mx = static_cast<unsigned int>(dmx);
-  }
+    if (dmx < 0.0) {
+      mx = 0;
+      valid = false;
+    } else if (dmx >= info.width) {
+      mx = info.width - 1;
+      valid = false;
+    } else {
+      mx = static_cast < unsigned int > (dmx);
+    }
 
-  if (dmy < 0.0)
-  {
-    my = 0;
-    valid = false;
-  }
-  else if (dmy >= info.height)
-  {
-    my = info.height - 1;
-    valid = false;
-  }
-  else
-  {
-    my = static_cast<unsigned int>(dmy);
-  }
+    if (dmy < 0.0) {
+      my = 0;
+      valid = false;
+    } else if (dmy >= info.height) {
+      my = info.height - 1;
+      valid = false;
+    } else {
+      my = static_cast < unsigned int > (dmy);
+    }
 
-  return valid;
-}
+    return valid;
+  }
 
 /**
  * @brief Check to see if the world coordinates are within the grid.
@@ -151,16 +143,15 @@ inline bool worldToGridBounded(const NavGridInfo& info, double wx, double wy, un
  * @param[in]  wy The y world coordinate
  * @return     True if the input coordinates were within the grid
  */
-inline bool isWithinGrid(const NavGridInfo& info, double wx, double wy)
-{
-  wx -= info.origin_x;
-  wy -= info.origin_y;
-  return wx >= 0.0 &&
-         wy >= 0.0 &&
-         wx < info.width * info.resolution &&
-         wy < info.height * info.resolution;
-}
-
+  inline bool isWithinGrid(const NavGridInfo & info, double wx, double wy)
+  {
+    wx -= info.origin_x;
+    wy -= info.origin_y;
+    return wx >= 0.0 &&
+           wy >= 0.0 &&
+           wx < info.width * info.resolution &&
+           wy < info.height * info.resolution;
+  }
 
 
 }  // namespace mcr_nav_grid

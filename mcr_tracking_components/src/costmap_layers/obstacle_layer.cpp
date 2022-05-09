@@ -98,22 +98,25 @@ void ObstacleLayer::onInitialize()
 
   node->get_parameter(name_ + "." + "tracking_pose_topic", tracking_pose_topic);
   node->get_parameter(name_ + "." + "use_tracking_mode", use_tracking_mode_);
-  node->get_parameter(name_ + "." + "tracking_pose_invisible_radius", tracking_pose_invisible_radius);
-  tracking_pose_invisible_radius_sq_ = tracking_pose_invisible_radius * tracking_pose_invisible_radius;
-  if(use_tracking_mode_){
+  node->get_parameter(
+    name_ + "." + "tracking_pose_invisible_radius",
+    tracking_pose_invisible_radius);
+  tracking_pose_invisible_radius_sq_ = tracking_pose_invisible_radius *
+    tracking_pose_invisible_radius;
+  if (use_tracking_mode_) {
     std::string names = node->get_namespace();
     std::vector<std::string> fields;
-    boost::split( fields, names, boost::is_any_of( "/" ) );
+    boost::split(fields, names, boost::is_any_of("/") );
 
-    if(fields.size() > 2){
+    if (fields.size() > 2) {
       tracking_pose_topic = "/" + fields[1] + "/" + tracking_pose_topic;
     } else {
       tracking_pose_topic = "/" + tracking_pose_topic;
     }
     tracking_pose_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-                                                    tracking_pose_topic,
-                                                    rclcpp::SensorDataQoS(),
-                                                    std::bind(&ObstacleLayer::callback_tracking_pose, this, std::placeholders::_1));
+      tracking_pose_topic,
+      rclcpp::SensorDataQoS(),
+      std::bind(&ObstacleLayer::callback_tracking_pose, this, std::placeholders::_1));
     RCLCPP_INFO(logger_, "Subscribed to tracking pose: %s", tracking_pose_topic.c_str());
   }
 
@@ -462,12 +465,12 @@ ObstacleLayer::updateBounds(
         continue;
       }
 
-      if(use_tracking_mode_ && lastest_tracking_pose_received_.header.frame_id != ""){
+      if (use_tracking_mode_ && lastest_tracking_pose_received_.header.frame_id != "") {
         geometry_msgs::msg::PoseStamped p;
-        if(has_tracking_pose_in_ && getTrackingPoseInLaserFrame(p)){
-          sq_dist = (px - p.pose.position.x) * (px - p.pose.position.x) + 
-                    (py - p.pose.position.y)  * (py - p.pose.position.y);
-          if (sq_dist < tracking_pose_invisible_radius_sq_){
+        if (has_tracking_pose_in_ && getTrackingPoseInLaserFrame(p)) {
+          sq_dist = (px - p.pose.position.x) * (px - p.pose.position.x) +
+            (py - p.pose.position.y) * (py - p.pose.position.y);
+          if (sq_dist < tracking_pose_invisible_radius_sq_) {
             continue;
           }
         }
@@ -489,13 +492,16 @@ ObstacleLayer::updateBounds(
   updateFootprint(robot_x, robot_y, robot_yaw, min_x, min_y, max_x, max_y);
 }
 
-bool ObstacleLayer::getTrackingPoseInLaserFrame(geometry_msgs::msg::PoseStamped &pose_transformed){
-  try{
-    pose_transformed = tf_->transform(lastest_tracking_pose_received_, global_frame_, tf2::durationFromSec(2.0));
-  }catch (const std::exception &e) {
+bool ObstacleLayer::getTrackingPoseInLaserFrame(geometry_msgs::msg::PoseStamped & pose_transformed)
+{
+  try {
+    pose_transformed = tf_->transform(
+      lastest_tracking_pose_received_, global_frame_, tf2::durationFromSec(
+        2.0));
+  } catch (const std::exception & e) {
     // RCLCPP_ERROR_STREAM_THROTTLE(logger_, node_->get_clock(), 2000,
     //                             "failed to get tracking pose in "<<global_frame_<<" frame :"<<e.what()<<".");
-    RCLCPP_ERROR(logger_, "failed to get tracking pose");                                
+    RCLCPP_ERROR(logger_, "failed to get tracking pose");
     has_tracking_pose_in_ = false;
     return false;
   }
@@ -511,7 +517,9 @@ ObstacleLayer::updateFootprint(
   double * max_y)
 {
   if (!footprint_clearing_enabled_) {return;}
-  nav2_costmap_2d::transformFootprint(robot_x, robot_y, robot_yaw, getFootprint(), transformed_footprint_);
+  nav2_costmap_2d::transformFootprint(
+    robot_x, robot_y, robot_yaw,
+    getFootprint(), transformed_footprint_);
 
   for (unsigned int i = 0; i < transformed_footprint_.size(); i++) {
     touch(transformed_footprint_[i].x, transformed_footprint_[i].y, min_x, min_y, max_x, max_y);

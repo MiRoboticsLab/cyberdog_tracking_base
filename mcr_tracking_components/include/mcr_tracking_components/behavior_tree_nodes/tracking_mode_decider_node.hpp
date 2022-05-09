@@ -69,7 +69,7 @@ private:
    */
   rclcpp::Node::SharedPtr node_;
   rclcpp::CallbackGroup::SharedPtr callback_group_;
-  rclcpp::executors::SingleThreadedExecutor callback_group_executor_;  
+  rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
   BT::NodeStatus tick() override;
   unsigned char last_mode_ = 255;
   rclcpp::Service<mcr_msgs::srv::SwitchMode>::SharedPtr service_;

@@ -90,6 +90,6 @@ protected:
   double simulate_ahead_time_;
 };
 
-}  // namespace mcr_tracking_components 
+}  // namespace mcr_tracking_components
 
 #endif  // NAV2_RECOVERIES__PLUGINS__SPIN_HPP_

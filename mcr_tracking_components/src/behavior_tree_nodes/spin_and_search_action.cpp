@@ -44,7 +44,9 @@ BT_REGISTER_NODES(factory)
   BT::NodeBuilder builder =
     [](const std::string & name, const BT::NodeConfiguration & config)
     {
-      return std::make_unique<mcr_tracking_components::SpinAndSearchAction>(name, "spin_and_search", config);
+      return std::make_unique<mcr_tracking_components::SpinAndSearchAction>(
+        name, "spin_and_search",
+        config);
     };
 
   factory.registerBuilder<mcr_tracking_components::SpinAndSearchAction>("SpinAndSearch", builder);

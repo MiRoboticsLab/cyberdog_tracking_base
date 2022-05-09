@@ -98,10 +98,9 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
   double sq_dist = (e.x - s.x) * (e.x - s.x) + (e.y - s.y) * (e.y - s.y);
 
   double resolution = costmap_->getResolution();
-  double sq_resolution = resolution *resolution;
+  double sq_resolution = resolution * resolution;
 
-  if (sq_dist > sq_resolution)
-  {
+  if (sq_dist > sq_resolution) {
     // add points in-between
     double diff = sqrt(sq_dist) - resolution;
     double steps_double = ceil(diff / resolution) + 1.0;
@@ -110,8 +109,7 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
     double delta_x = (e.x - s.x) / steps_double;
     double delta_y = (e.y - s.y) / steps_double;
 
-    for (int j = 1; j < steps; ++j)
-    {
+    for (int j = 1; j < steps; ++j) {
       geometry_msgs::msg::PoseStamped pose;
       pose.pose.position.x = s.x + j * delta_x;
       pose.pose.position.y = s.y + j * delta_y;
@@ -138,22 +136,22 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
   const std::vector<geometry_msgs::msg::PoseStamped> & poses)
 {
   if (poses.size() < 2) {
-    RCLCPP_INFO(node_->get_logger(),"invalid poses number : %lu, less than 2.", poses.size());
+    RCLCPP_INFO(node_->get_logger(), "invalid poses number : %lu, less than 2.", poses.size());
     return nav_msgs::msg::Path();
-  }else if(poses.size() == 2){
+  } else if (poses.size() == 2) {
     return createPlan(poses[0], poses[1]);
-  }else{
+  } else {
     nav_msgs::msg::Path path = spliner_->spline(poses);
     path.header.frame_id = global_frame_;
 
     if (!isPlanValid(path)) {
       std::stringstream ss;
-      ss << "No valid path is calculated from "<< poses.size()<<" poses "
+      ss << "No valid path is calculated from " << poses.size() << " poses "
         "by forwardx_spline_planner: " << spliner_name_;
       throw mcr_global_planner::NoGlobalPathException(ss.str());
     }
     return path;
-  } 
+  }
 }
 
 }  // namespace mcr_global_planner

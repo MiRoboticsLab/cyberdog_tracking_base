@@ -16,14 +16,16 @@
 #include <ompl/base/ScopedState.h>
 #include <ompl/geometric/SimpleSetup.h>
 
-namespace mcr_global_planner{
+namespace mcr_global_planner {
 
-namespace ob = ompl::base;
+  namespace ob = ompl::base;
 
-class MCRCurvePlanner : public nav2_core::GlobalPlanner {
+  class MCRCurvePlanner: public nav2_core::GlobalPlanner {
 public:
-    MCRCurvePlanner(){};
-    ~MCRCurvePlanner(){};
+    MCRCurvePlanner() {
+    };
+    ~MCRCurvePlanner() {
+    };
 
     /**
      * @brief Configuring plugin
@@ -32,10 +34,10 @@ public:
      * @param tf Shared ptr of TF2 buffer
      * @param costmap_ros Costmap2DROS object
      */
-   void configure(
-    const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
-    std::string name, std::shared_ptr<tf2_ros::Buffer> tf,
-    std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros);
+    void configure(
+      const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
+      std::string name, std::shared_ptr < tf2_ros::Buffer > tf,
+      std::shared_ptr < nav2_costmap_2d::Costmap2DROS > costmap_ros);
 
     /**
      * @brief Cleanup lifecycle node
@@ -60,22 +62,22 @@ public:
      * @return nav_msgs::Path of the generated path
      */
     nav_msgs::msg::Path createPlan(
-        const geometry_msgs::msg::PoseStamped & start,
-        const geometry_msgs::msg::PoseStamped & goal) override;
+      const geometry_msgs::msg::PoseStamped & start,
+      const geometry_msgs::msg::PoseStamped & goal) override;
 
-    virtual bool isPlanValid(const nav_msgs::msg::Path &path) const;
+    virtual bool isPlanValid(const nav_msgs::msg::Path & path) const;
 
 protected:
     nav2_util::LifecycleNode::SharedPtr node_;
     std::string global_frame_, name_;
-    std::shared_ptr<tf2_ros::Buffer> tf_;
-    std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
-    std::shared_ptr<nav2_costmap_2d::Costmap2D> costmap_;
+    std::shared_ptr < tf2_ros::Buffer > tf_;
+    std::shared_ptr < nav2_costmap_2d::Costmap2DROS > costmap_ros_;
+    std::shared_ptr < nav2_costmap_2d::Costmap2D > costmap_;
 
     std::string curve_type_;
     ob::StateSpacePtr space_;
     double turning_radius_;
-};
+  };
 }
 
 #endif

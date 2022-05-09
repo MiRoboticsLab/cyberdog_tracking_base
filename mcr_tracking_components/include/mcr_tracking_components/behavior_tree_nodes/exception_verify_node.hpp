@@ -48,7 +48,7 @@ public:
     return {
       BT::InputPort<unsigned int>("exception_code", 0, "Exception code for check."),
       BT::InputPort<unsigned int>("expected_code", 0, "Expected code for check."),
-    };    
+    };
   }
 
 private:

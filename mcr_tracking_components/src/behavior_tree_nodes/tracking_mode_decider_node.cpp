@@ -38,10 +38,12 @@ TrackingModeDecider::TrackingModeDecider(
     rclcpp::CallbackGroupType::MutuallyExclusive,
     false);
   callback_group_executor_.add_callback_group(callback_group_, node_->get_node_base_interface());
-   
+
   service_ = node_->create_service<mcr_msgs::srv::SwitchMode>(
     "switch_mode",
-    std::bind(&TrackingModeDecider::modeSwitchCallback, this, std::placeholders::_1, std::placeholders::_2),
+    std::bind(
+      &TrackingModeDecider::modeSwitchCallback, this, std::placeholders::_1,
+      std::placeholders::_2),
     rmw_qos_profile_default,
     callback_group_);
 
@@ -79,7 +81,7 @@ void TrackingModeDecider::modeSwitchCallback(
   std::shared_ptr<mcr_msgs::srv::SwitchMode::Response> response)
 {
   config().blackboard->set<unsigned char>("relative_pos", request->relative_pos);
-  std::cout<<request->relative_pos<<std::endl;
+  std::cout << request->relative_pos << std::endl;
   response->result = true;
 }
 

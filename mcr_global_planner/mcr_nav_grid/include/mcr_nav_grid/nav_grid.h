@@ -73,84 +73,86 @@ namespace mcr_nav_grid
  *
  * The final component is a collection of methods inspired by Costmap2D for converting coordinates of different types.
  */
-template <typename T> class NavGrid
-{
-public:
-  explicit NavGrid(const T default_value = T{}) : default_value_(default_value) {}
-
-  /**
-   * @brief Reset the contents of the grid
-   */
-  virtual void reset() = 0;
-
-  /**
-   * @brief get the value of the grid at (x,y)
-   * @param x[in] Valid x coordinate
-   * @param y[in] Valid y coordinate
-   * @return value at (x,y)
-   */
-  virtual T getValue(const unsigned int x, const unsigned int y) const = 0;
-
-  /**
-   * @brief set the value of the grid at (x,y)
-   * @param x[in] Valid x coordinate
-   * @param y[in] Valid y coordinate
-   * @param value[in] New Value
-   */
-  virtual void setValue(const unsigned int x, const unsigned int y, const T& value) = 0;
-
-  /**@name Convenience Aliases */
-  // Note: You may not be able to use these unless your deriving class declares using NavGrid<T>::operator() or
-  // using NavGrid<T>::getValue
-  /**@{*/
-  T getValue(const Index& index) { return getValue(index.x, index.y); }
-  T operator() (const unsigned int x, const unsigned int y) const { return getValue(x, y); }
-  T operator() (const Index& index) const  { return getValue(index.x, index.y); }
-  void setValue(const Index& index, const T& value) { setValue(index.x, index.y, value); }
-
-  /**@}*/
-
-  /**
-   * @brief Change the info while attempting to keep the values associated with the grid coordinates
-   * @param[in] new_info New grid info
-   */
-  virtual void setInfo(const NavGridInfo& new_info) = 0;
-
-  /**
-   * @brief Change the info while attempting to keep the values associated with the world coordinates
-   *
-   * For example, if the only change to the info is to the origin's x coordinate (increasing by an amount equal to the
-   * resolution), then all the values should be shifted one grid cell to the left.
-   *
-   * @param[in] new_info New grid info
-   */
-  virtual void updateInfo(const NavGridInfo& new_info) { setInfo(new_info); }
-
-  inline NavGridInfo getInfo() const { return info_; }
-
-  /**
-   * @brief Set the default value
-   * @param[in] new_value New Default Value
-   */
-  void setDefaultValue(const T new_value)
+  template < typename T > class NavGrid
   {
-    default_value_ = new_value;
-  }
+public:
+    explicit NavGrid(const T default_value = T {})
+    : default_value_(default_value) {
+    }
 
-  /*****************************************************************************************************
-   * NavGridInfo accessor methods
-   *****************************************************************************************************/
-  inline unsigned int getWidth() const { return info_.width; }
-  inline unsigned int getHeight() const { return info_.height; }
-  inline double getResolution() const { return info_.resolution; }
-  inline std::string getFrameId() const { return info_.frame_id; }
-  inline double getOriginX() const { return info_.origin_x; }
-  inline double getOriginY() const { return info_.origin_y; }
+    /**
+     * @brief Reset the contents of the grid
+     */
+    virtual void reset() = 0;
+
+    /**
+     * @brief get the value of the grid at (x,y)
+     * @param x[in] Valid x coordinate
+     * @param y[in] Valid y coordinate
+     * @return value at (x,y)
+     */
+    virtual T getValue(const unsigned int x, const unsigned int y) const = 0;
+
+    /**
+     * @brief set the value of the grid at (x,y)
+     * @param x[in] Valid x coordinate
+     * @param y[in] Valid y coordinate
+     * @param value[in] New Value
+     */
+    virtual void setValue(const unsigned int x, const unsigned int y, const T & value) = 0;
+
+    /**@name Convenience Aliases */
+    // Note: You may not be able to use these unless your deriving class declares using NavGrid<T>::operator() or
+    // using NavGrid<T>::getValue
+    /**@{*/
+    T getValue(const Index & index) {return getValue(index.x, index.y);}
+    T operator() (const unsigned int x, const unsigned int y) const {return getValue(x, y);}
+    T operator() (const Index & index) const {return getValue(index.x, index.y);}
+    void setValue(const Index & index, const T & value) {setValue(index.x, index.y, value);}
+
+    /**@}*/
+
+    /**
+     * @brief Change the info while attempting to keep the values associated with the grid coordinates
+     * @param[in] new_info New grid info
+     */
+    virtual void setInfo(const NavGridInfo & new_info) = 0;
+
+    /**
+     * @brief Change the info while attempting to keep the values associated with the world coordinates
+     *
+     * For example, if the only change to the info is to the origin's x coordinate (increasing by an amount equal to the
+     * resolution), then all the values should be shifted one grid cell to the left.
+     *
+     * @param[in] new_info New grid info
+     */
+    virtual void updateInfo(const NavGridInfo & new_info) {setInfo(new_info);}
+
+    inline NavGridInfo getInfo() const {return info_;}
+
+    /**
+     * @brief Set the default value
+     * @param[in] new_value New Default Value
+     */
+    void setDefaultValue(const T new_value)
+    {
+      default_value_ = new_value;
+    }
+
+    /*****************************************************************************************************
+     * NavGridInfo accessor methods
+     *****************************************************************************************************/
+    inline unsigned int getWidth() const {return info_.width;}
+    inline unsigned int getHeight() const {return info_.height;}
+    inline double getResolution() const {return info_.resolution;}
+    inline std::string getFrameId() const {return info_.frame_id;}
+    inline double getOriginX() const {return info_.origin_x;}
+    inline double getOriginY() const {return info_.origin_y;}
 
 protected:
-  NavGridInfo info_;
-  T default_value_;
-};
+    NavGridInfo info_;
+    T default_value_;
+  };
 
 }  // namespace mcr_nav_grid
 
