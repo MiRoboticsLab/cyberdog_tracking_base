@@ -1,0 +1,14 @@
+<class_libraries>
+
+  <library path="fake_progress_checker">
+    <class type="mcr_tracking_components::FakeProgressChecker" base_class_type="nav2_core::ProgressChecker">
+      <description>fake , force true.</description>
+    </class>
+  </library>  
+  <library path="xy_goal_checker">
+    <class type="mcr_tracking_components::XYGoalChecker" base_class_type="nav2_core::GoalChecker">
+      <description>Checks if current pose is within goal window for x,y</description>
+    </class>
+  </library>  
+
+</class_libraries>

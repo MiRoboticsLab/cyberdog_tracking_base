@@ -1,0 +1,102 @@
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      always_send_full_costmap: True
+      footprint: "[[0.36, 0.18], [0.36, -0.18], [-0.415, -0.18], [-0.415, 0.18]]"
+      footprint_padding: 0.0
+      global_frame: "map"
+      map_topic: "/map"
+      publish_frequency: 3.0
+      resolution: 0.05
+      robot_base_frame: "base_link"
+      robot_radius: 0.3
+      rolling_window: False
+      width: 5
+      height: 5
+      track_unknown_space: False
+      transform_tolerance: 1.0
+      trinary_costmap: True
+      unknown_cost_value: -1
+      update_frequency: 3.0
+      use_maximum: True
+      use_sim_time: True
+      # lethal_cost_threshold: 250
+
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        enabled: True
+        map_topic: "/map"
+        subscribe_to_updates: False
+        transform_tolerance: 1.0
+        map_subscribe_transient_local: True
+
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan
+        scan:
+          topic: /scan
+          footprint_clearing_enabled: true
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+          # combination_method: max
+
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        enabled: True
+        cost_scaling_factor: 5.0
+        inflation_radius: 0.6
+        inflate_around_unknown: True
+        inflate_unknown: True
+
+
+mcr_planner:
+  ros__parameters:
+    use_sim_time: True
+    planner_name: spline_planner
+    
+
+    potential_planner:
+      use_sim_time: True
+      plugin: mcr_global_planner::MCRGlobalPlanner
+      potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
+      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath  
+      publish_potential: false
+      print_statistics: false
+      neutral_cost: 50
+      scale: 3.0
+      path_caching: true
+      improvement_threshold: -1.0
+      use_kernel: true
+      unknown_interpretation: lethal
+
+    curve_planner:
+      use_sim_time: True
+      plugin: mcr_global_planner::MCRCurvePlanner
+      curve_type: dubs
+      turning_radius: 1.5
+
+
+    spline_planner:
+      use_sim_time: True
+      plugin: mcr_global_planner::MCRSplinePlanner
+      spline_name: bezier
+      pose_topic: "goal_pose1"
+      bezier:
+        plugin: mcr_planner_plugins::PolynomialFitting
+        # plugin: mcr_planner_plugins::BSpliner
+        # plugin: mcr_planner_plugins::PolynomialInterpolation
+        # plugin: mcr_planner_plugins::BezierSpliner
+
+    grid_base:
+      plugin: "astar_planner/AstarPlanner"
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true

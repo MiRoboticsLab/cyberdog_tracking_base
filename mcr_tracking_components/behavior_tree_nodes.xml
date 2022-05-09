@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+  For instructions on using Groot and description of the following BehaviorTree nodes,
+  please refer to the groot_instructions.md and REAMDE.md respectively located in the 
+  nav2_behavior_tree package.
+-->
+<root>
+  <TreeNodesModel>
+    <!-- ############################### ACTION NODES ################################# -->
+    <Action ID="ComputePathSplinePoses">
+      <input_port name="poses">Destinations to plan splined</input_port>
+      <output_port name="path">Path created by ComputePathToPose node</output_port>
+      <input_port name="planner_id"/>
+    </Action>
+   
+    <Action ID="TrackingModeDecider">
+      <input_port name="input_tracking_mode">Original tracking mode</input_port>
+      <output_port name="output_tracking_mode">Output tracking mode by decision</output_port>
+    </Action>
+
+    <Action ID="SpinAndSearch">
+      <input_port name="search_dist">Spin distance</input_port>
+    </Action>
+
+    <!-- ############################### CONDITION NODES ############################## -->
+    <!-- ############################### CONTROL NODES ################################ -->
+    <!-- ############################### DECORATOR NODES ############################## -->
+    <Decorator ID="ExceptionVerify">
+      <input_port name="exception_code">input code</input_port>
+      <input_port name="expected_code">right code</input_port>
+    </Decorator>
+
+    <Decorator ID="TargetUpdater">
+      <input_port name="input_goal">Original goal in</input_port>
+      <input_port name="input_tracking_mode">Original tracking mode</input_port>
+      <output_port name="distance">Distance between target and robot.</output_port>
+      <output_port name="output_goal">Output goal set by subscription</output_port>
+      <output_port name="output_goals">Output goals set by subscription</output_port>
+      <output_port name="output_exception_code">Exception code for the real reason</output_port>
+    </Decorator>
+  </TreeNodesModel>
+</root>

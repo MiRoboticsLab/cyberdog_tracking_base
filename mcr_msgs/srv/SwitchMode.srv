@@ -1,0 +1,13 @@
+# 自主选择跟随位置
+uint8 AUTO = 0   
+# 在目标后侧跟随
+uint8 BEHIND = 1 
+# 在目标的左侧跟随
+uint8 LEFT = 2    
+# 在目标的右侧跟随
+uint8 RIGHT = 3   
+
+# 相对方位，以上方定义的枚举值指定
+uint8 relative_pos     
+---
+bool result

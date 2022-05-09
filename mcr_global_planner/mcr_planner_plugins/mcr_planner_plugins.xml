@@ -1,0 +1,29 @@
+<library path="mcr_planner_plugins">
+	<class type="mcr_planner_plugins::AStar" base_class_type="mcr_global_planner::PotentialCalculator">
+	  <description></description>
+	</class>
+	<class type="mcr_planner_plugins::Dijkstra" base_class_type="mcr_global_planner::PotentialCalculator">
+	  <description></description>
+	</class>
+	<class type="mcr_planner_plugins::GradientPath" base_class_type="mcr_global_planner::Traceback">
+	  <description></description>
+	</class>
+	<class type="mcr_planner_plugins::GridPath" base_class_type="mcr_global_planner::Traceback">
+	  <description></description>
+	</class>
+	<class type="mcr_planner_plugins::VonNeumannPath" base_class_type="mcr_global_planner::Traceback">
+	  <description></description>
+	</class>
+	<class type="mcr_planner_plugins::BSpliner" base_class_type="mcr_global_planner::Spliner">
+	  <description></description>
+	</class>		
+	<class type="mcr_planner_plugins::BezierSpliner" base_class_type="mcr_global_planner::Spliner">
+	  <description></description>
+	</class>	
+	<class type="mcr_planner_plugins::PolynomialInterpolation" base_class_type="mcr_global_planner::Spliner">
+	  <description></description>
+	</class>		
+	<class type="mcr_planner_plugins::PolynomialFitting" base_class_type="mcr_global_planner::Spliner">
+	  <description></description>
+	</class>			
+</library>

@@ -1,0 +1,8 @@
+<class_libraries>
+  <library path="keep_target_insight_critic">
+    <class type="mcr_tracking_components::KeepTargetInsightCritic" base_class_type="dwb_core::TrajectoryCritic">
+      <description>Forces the commanded trajectories to towards the target.
+      </description>
+    </class>    
+  </library>
+</class_libraries>
