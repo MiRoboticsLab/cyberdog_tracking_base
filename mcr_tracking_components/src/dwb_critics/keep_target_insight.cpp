@@ -54,6 +54,8 @@ inline double hypot_sq(double dx, double dy)
 
 void KeepTargetInsightCritic::onInit()
 {
+  normal_sacle_ = 0.0;
+  inuse_ = true;
   auto node = node_.lock();
   if (!node) {
     throw std::runtime_error{"Failed to lock node"};
@@ -69,8 +71,11 @@ void KeepTargetInsightCritic::onInit()
     std::bind(&KeepTargetInsightCritic::poseCallback, this, std::placeholders::_1));
   RCLCPP_INFO(
     node->get_logger(), "Keep target insight critic subscribed to tracking pose: tracking_pose");
-
+  service_ = node->create_service<std_srvs::srv::SetBool>(
+    "is_target_insight_inused",
+    std::bind(&KeepTargetInsightCritic::useCriticCallback, this, std::placeholders::_1, std::placeholders::_2));
   reset();
+  normal_sacle_ = getScale();
 }
 
 void KeepTargetInsightCritic::reset()
@@ -119,4 +124,21 @@ void KeepTargetInsightCritic::poseCallback(const geometry_msgs::msg::PoseStamped
   latest_pose_ = *msg;
   valid_data_ = true;
 }
+
+void KeepTargetInsightCritic::useCriticCallback(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+
+  if(request->data){
+    setScale(normal_sacle_);
+    response->message = "Module KeepTargetInsight started successfully.";
+  }else {
+    setScale(0.0);
+    response->message = "Module KeepTargetInsight stopped successfully.";
+  }
+
+  response->success = true;
+}
+
 }  // namespace mcr_tracking_components
