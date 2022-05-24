@@ -5,9 +5,9 @@
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="zhangchuanfa@xiaomi.com">zhangchuanfa</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache License, Version 2.0</license>
 
-  <buildtool_depend>ament_cmake_ros</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>mcr_global_planner</depend>
   <depend>nav2_core</depend>

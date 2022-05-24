@@ -1,8 +1,23 @@
-#include <mcr_global_planner/mcr_curve_planner.h>
-#include <mcr_nav_grid/coordinate_conversion.h>
-#include <mcr_global_planner/exceptions.h>
-#include <nav2_util/node_utils.hpp>
+// Copyright (c) 2021 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 #include <string>
+#include <memory>
+#include <vector>
+#include "mcr_global_planner/mcr_curve_planner.hpp"
+#include "mcr_nav_grid/coordinate_conversion.hpp"
+#include "mcr_global_planner/exceptions.hpp"
+#include "nav2_util/node_utils.hpp"
 
 namespace mcr_global_planner
 {
@@ -93,7 +108,7 @@ nav_msgs::msg::Path MCRCurvePlanner::createPlan(
   size_t num_pts = space_->distance(from(), to()) / costmap_->getResolution();
 
   for (unsigned int i = 0; i <= num_pts; ++i) {
-    space_->interpolate(from(), to(), (double)i / num_pts, s());
+    space_->interpolate(from(), to(), static_cast<double>(i) / num_pts, s());
     reals = s.reals();
     pose.pose.position.x = reals[0];
     pose.pose.position.y = reals[1];
@@ -120,5 +135,5 @@ nav_msgs::msg::Path MCRCurvePlanner::createPlan(
 }
 
 }  // namespace mcr_global_planner
-#include <pluginlib/class_list_macros.hpp>
+#include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(mcr_global_planner::MCRCurvePlanner, nav2_core::GlobalPlanner)

@@ -12,7 +12,7 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -g -O0)
+  add_compile_options(-Wall -Wextra -Wpedantic -Wno-error=register)
 endif()
 
 # find dependencies
@@ -57,16 +57,15 @@ ament_target_dependencies(
   "ompl"
 )
 target_link_libraries(${library_name} ${OMPL_LIBRARIES})
-  
-add_executable(global_planner 
+
+add_executable(global_planner
               src/global_planner.cpp)
 
 target_include_directories(global_planner PUBLIC
   ${OMPL_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(
-  global_planner
+ament_target_dependencies( global_planner
   "rclcpp"
   "geometry_msgs"
   "nav2_core"
@@ -77,16 +76,13 @@ ament_target_dependencies(
   "nav_2d_msgs"
   "mcr_nav_grid"
   "nav_2d_utils"
-  "ompl"
-  )
-
-
+  "ompl")
 # prevent pluginlib from using boost
 target_compile_definitions(${library_name} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 pluginlib_export_plugin_description_file(nav2_core mcr_global_planner_plugin.xml)
 
 
-install(TARGETS ${library_name} 
+install(TARGETS ${library_name}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
@@ -94,7 +90,7 @@ install(TARGETS ${library_name}
 install(TARGETS global_planner
   DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY launch 
+install(DIRECTORY launch
     DESTINATION share/${PROJECT_NAME})
 
 install(DIRECTORY params
@@ -102,7 +98,7 @@ install(DIRECTORY params
 
 
 install(DIRECTORY include/
-      DESTINATION include)    
+      DESTINATION include)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

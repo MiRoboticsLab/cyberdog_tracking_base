@@ -1,10 +1,26 @@
-#include "mcr_planner_plugins/astar.h"
-#include <mcr_global_planner/exceptions.h>
+// Copyright (c) 2021 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#include <cmath>
+#include <string>
+#include <memory>
+#include "mcr_planner_plugins/astar.hpp"
+#include "mcr_global_planner/exceptions.hpp"
 
-#include <mcr_nav_grid/coordinate_conversion.h>
-#include <mcr_global_planner/kernel_function.h>
+#include "mcr_nav_grid/coordinate_conversion.hpp"
+#include "mcr_global_planner/kernel_function.hpp"
 #include "nav2_util/node_utils.hpp"
-#include <math.h>
+
 
 namespace mcr_planner_plugins
 {
@@ -29,7 +45,6 @@ void AStar::initialize(
     node, name_ + ".minimum_requeue_change", rclcpp::ParameterValue(
       1.0));
   node->get_parameter(name_ + ".minimum_requeue_change", minimum_requeue_change_);
-
 }
 
 unsigned int AStar::updatePotentials(
@@ -131,7 +146,7 @@ float AStar::getHeuristicValue(
   return distance * cost_interpreter_->getNeutralCost();
 }
 
-}  // namespace mcr_plugins
-#include <pluginlib/class_list_macros.hpp>
+}  // namespace mcr_planner_plugins
+#include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(mcr_planner_plugins::AStar, mcr_global_planner::PotentialCalculator)

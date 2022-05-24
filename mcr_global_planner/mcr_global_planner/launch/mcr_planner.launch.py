@@ -20,6 +20,7 @@ import launch_ros.actions
 from nav2_common.launch import RewrittenYaml
 from ament_index_python.packages import get_package_share_directory
 
+
 def generate_launch_description():
     # Parameters
     lifecycle_nodes = ['mcr_planner']
@@ -29,18 +30,15 @@ def generate_launch_description():
     planner_param_file = os.path.join(package_dir, "params/planner_params.yaml")
 
     configured_params = RewrittenYaml(
-        #     source_file="/home/zhangchuanfa/vscode_ros2_workspace/src/global_planner/mcr_global_planner/params/planner_params.yaml",
-            source_file=planner_param_file,
-            param_rewrites={}
-            )
-
-
+        source_file=planner_param_file,
+        param_rewrites={}
+    )
 
     # Nodes launching commands
     planner_cmd = launch_ros.actions.Node(
             package='mcr_global_planner',
             executable='global_planner',
-            name = 'mcr_planner',
+            name='mcr_planner',
             output='screen',
             emulate_tty=True,  # https://github.com/ros2/launch/issues/188
             parameters=[configured_params],

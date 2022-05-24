@@ -1,5 +1,22 @@
-#include <mcr_planner_plugins/b_spliner.h>
-#include <Eigen/Dense>
+// Copyright (c) 2021 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#include <string>
+#include <memory>
+#include <vector>
+
+#include "mcr_planner_plugins/b_spliner.hpp"
+#include "Eigen/Dense"
 
 namespace mcr_planner_plugins
 {
@@ -14,7 +31,6 @@ void BSpliner::initialize(
   name_ = name;
   costmap_ros_ = costmap;
   det_ = 0.05;
-
 }
 
 double BSpliner::deboor_cox(int i, int k, double u)
@@ -71,7 +87,6 @@ nav_msgs::msg::Path BSpliner::spline(
     for (double u = (k - 1.0) / (n + k + 1); u <= (n + 2.0) / (n + k + 1); u += 0.01) {
       double x = 0.0, y = 0.0;
       for (int i = 0; i <= n; i++) {
-
         Bik[i] = deboor_cox(i, k - 1, u);
 
         x += Bik[i] * poses[i].pose.position.x;
@@ -111,7 +126,7 @@ nav_msgs::msg::Path BSpliner::spline(
   return path;
 }
 
-}
+}  // namespace mcr_planner_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(mcr_planner_plugins::BSpliner, mcr_global_planner::Spliner)

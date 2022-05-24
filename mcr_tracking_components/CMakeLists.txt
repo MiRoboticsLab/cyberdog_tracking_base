@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(mcr_tracking_components CXX)
 
-add_compile_options(-g -O0 -Wall -Wextra -Wpedantic -fpermissive -Wunused-parameter)
+add_compile_options( -Wall -Wextra -Wpedantic -fpermissive -Wunused-parameter)
 find_package(ament_cmake REQUIRED)
 find_package(nav2_common REQUIRED)
 find_package(rclcpp REQUIRED)
