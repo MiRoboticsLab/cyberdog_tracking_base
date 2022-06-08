@@ -1,6 +1,19 @@
-#include <mcr_planner_plugins/gradient_path.h>
-#include <mcr_nav_grid/coordinate_conversion.h>
-#include <mcr_global_planner/exceptions.h>
+// Copyright (c) 2021 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#include <mcr_planner_plugins/gradient_path.hpp>
+#include <mcr_nav_grid/coordinate_conversion.hpp>
+#include <mcr_global_planner/exceptions.hpp>
 #include <nav2_util/node_utils.hpp>
 #include <math.h>
 #include <string>
@@ -34,7 +47,8 @@ void GradientPath::initialize(
       4.0));
   node->get_parameter(name_ + ".iteration_factor", iteration_factor_);
 
-  // NavFn would not attempt to calculate a gradient if one of the neighboring cells had not been initialized.
+  // NavFn would not attempt to calculate a gradient if one of the neighboring
+  // cells had not been initialized.
   // Setting this to true will replicate that behavior
   nav2_util::declare_parameter_if_not_declared(
     node, name_ + ".grid_step_near_high", rclcpp::ParameterValue(
@@ -121,7 +135,7 @@ nav_2d_msgs::msg::Path2D GradientPath::getPath(
       index = gridStep(potential_grid, index);
       dx = 0.0;
       dy = 0.0;
-    } else {// have a good gradient here
+    } else {  // have a good gradient here
       /* Calculate the gradient of four cells
        * +----------+----------+----------+
        * |          | index_n  | index_ne |
@@ -184,7 +198,6 @@ nav_2d_msgs::msg::Path2D GradientPath::getPath(
         dy += 1.0;
       }
     }
-
   }
 
   return path;
@@ -333,7 +346,7 @@ void GradientPath::calculateGradient(
     } else if (north_p < HIGH_POTENTIAL) {
       dy = lethal_cost_;
     }
-  } else { // not in an obstacle
+  } else {  // not in an obstacle
     // dx calc, average to sides
     if (west_p < HIGH_POTENTIAL) {
       dx += west_p - cv;
@@ -362,5 +375,5 @@ void GradientPath::calculateGradient(
 
 }  // namespace mcr_planner_plugins
 
-#include <pluginlib/class_list_macros.hpp>
+#include "pluginlib/class_list_macros.hpp"
 PLUGINLIB_EXPORT_CLASS(mcr_planner_plugins::GradientPath, mcr_global_planner::Traceback)

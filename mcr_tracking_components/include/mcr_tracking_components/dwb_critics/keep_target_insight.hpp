@@ -38,6 +38,7 @@
 #include <vector>
 #include "dwb_core/trajectory_critic.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
+#include "std_srvs/srv/set_bool.hpp"
 
 namespace mcr_tracking_components
 {
@@ -57,12 +58,16 @@ public:
 
 private:
   void poseCallback(geometry_msgs::msg::PoseStamped::SharedPtr msg);
-
+  void useCriticCallback(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
   geometry_msgs::msg::PoseStamped latest_pose_;
   double lookahead_time_;
+  double normal_sacle_;
   double goal_yaw_, cur_yaw_;
-  bool valid_data_;
+  bool valid_data_, inuse_;
 };
 
 }  // namespace mcr_tracking_components

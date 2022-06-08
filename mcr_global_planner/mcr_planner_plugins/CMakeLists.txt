@@ -36,17 +36,9 @@ find_package(mcr_nav_grid REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(nav2_util REQUIRED)
 
-add_library(mcr_planner_plugins 
-            src/astar.cpp
-            src/dijkstra.cpp
-            src/gradient_path.cpp
-            src/grid_path.cpp
-            src/von_neumann_path.cpp
-            src/b_spliner.cpp
-            src/bezier_spliner.cpp
-            src/polynomial_interpolation.cpp
-            src/polynomial_fitting.cpp
-            )
+add_library(mcr_planner_plugins src/astar.cpp src/dijkstra.cpp src/gradient_path.cpp
+            src/grid_path.cpp src/von_neumann_path.cpp src/b_spliner.cpp src/bezier_spliner.cpp
+            src/polynomial_interpolation.cpp src/polynomial_fitting.cpp)
 
 target_include_directories(mcr_planner_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

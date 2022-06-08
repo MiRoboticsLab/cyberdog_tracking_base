@@ -30,7 +30,7 @@ def generate_launch_description():
     bt_dir = os.path.join(package_dir, 'behavior_trees')
 
     nav_param_file = 'nav2_params_follow.yaml'
-    bt_file ='target_tracking.xml'
+    bt_file = 'target_tracking.xml'
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -103,14 +103,22 @@ def generate_launch_description():
             parameters=[{configured_params}],
             remappings=remappings),
 
+        # Node(
+        #     package='nav2_planner',
+        #     executable='planner_server',
+        #     name='planner_server',
+        #     output='screen',
+        #     parameters=[configured_params],
+        #     remappings=remappings),
+
         Node(
-            package='nav2_planner',
-            executable='planner_server',
+            package='mcr_planner',
+            executable='mcr_planner_server',
             name='planner_server',
             output='screen',
             parameters=[configured_params],
             remappings=remappings),
-        
+
         Node(
             package='nav2_recoveries',
             executable='recoveries_server',
@@ -119,7 +127,7 @@ def generate_launch_description():
             output='screen',
             parameters=[configured_params],
             remappings=remappings),
-            
+
         Node(
             package='nav2_bt_navigator',
             executable='bt_navigator',
