@@ -73,6 +73,10 @@ local_costmap_tracking:
 controller_server:
   ros__parameters:
     use_sim_time: True
+    fake_progress_checker:
+      plugin: "mcr_tracking_components::FakeProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
     # DWB parameters
     TrackingTarget:
       plugin: "dwb_core::DWBLocalPlanner"

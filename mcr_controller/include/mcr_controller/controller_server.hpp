@@ -49,6 +49,7 @@ class ControllerServer : public nav2_util::LifecycleNode
 public:
   using ControllerMap = std::unordered_map<std::string, nav2_core::Controller::Ptr>;
   using GoalCheckerMap = std::unordered_map<std::string, nav2_core::GoalChecker::Ptr>;
+  using ProgressCheckerMap = std::unordered_map<std::string, nav2_core::ProgressChecker::Ptr>;
   using CostmapMap = std::unordered_map<std::string, std::shared_ptr<nav2_costmap_2d::Costmap2DROS>>;
   using PlannerCostmapMap = std::unordered_map<std::string, std::string>;
   /**
@@ -140,6 +141,7 @@ protected:
    * @return bool Whether it found a valid goal checker to use
    */
   bool findGoalCheckerId(const std::string & c_name, std::string & name);
+  bool findProgressCheckerId(const std::string & c_name, std::string & name);
 
   /**
    * @brief Assigns path to controller
@@ -212,11 +214,12 @@ protected:
 
   // Progress Checker Plugin
   pluginlib::ClassLoader<nav2_core::ProgressChecker> progress_checker_loader_;
-  nav2_core::ProgressChecker::Ptr progress_checker_;
-  std::string default_progress_checker_id_;
-  std::string default_progress_checker_type_;
-  std::string progress_checker_id_;
-  std::string progress_checker_type_;
+  ProgressCheckerMap progress_checkers_;
+  std::vector<std::string> default_progress_checker_ids_;
+  std::vector<std::string> default_progress_checker_types_;
+  std::vector<std::string> progress_checker_ids_;
+  std::vector<std::string> progress_checker_types_;
+  std::string progress_checker_ids_concat_, current_progress_checker_;
 
   // Goal Checker Plugin
   pluginlib::ClassLoader<nav2_core::GoalChecker> goal_checker_loader_;
