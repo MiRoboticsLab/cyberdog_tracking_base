@@ -55,7 +55,7 @@ bt_navigator:
     odom_topic: /map
     bt_loop_duration: 10
     default_server_timeout: 20
-    enable_groot_monitoring: False
+    enable_groot_monitoring: True
     groot_zmq_publisher_port: 1789
     groot_zmq_server_port: 1887    
     default_target_tracking_bt_xml: target_tracking.xml

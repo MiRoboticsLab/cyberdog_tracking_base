@@ -12,10 +12,12 @@
       <output_port name="path">Path created by ComputePathToPose node</output_port>
       <input_port name="planner_id"/>
     </Action>
-   
     <Action ID="TrackingModeDecider">
       <input_port name="input_tracking_mode">Original tracking mode</input_port>
       <output_port name="output_tracking_mode">Output tracking mode by decision</output_port>
+    </Action>
+    <Action ID="ChangeGait">
+      <input_port name="gait">gait to use next. </input_port>
     </Action>
 
     <Action ID="SpinAndSearch">

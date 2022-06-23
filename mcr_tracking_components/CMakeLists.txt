@@ -66,6 +66,9 @@ list(APPEND plugin_libs nav2_tracking_mode_decider_node_bt_node)
 add_library(nav2_target_updater_node_bt_node SHARED src/behavior_tree_nodes/target_updater_node.cpp)
 list(APPEND plugin_libs nav2_target_updater_node_bt_node)
 
+add_library(nav2_change_gait_node_bt_node SHARED src/behavior_tree_nodes/change_gait_node.cpp)
+list(APPEND plugin_libs nav2_change_gait_node_bt_node)
+
 add_library(nav2_exception_verify_bt_node SHARED src/behavior_tree_nodes/exception_verify_node.cpp)
 list(APPEND plugin_libs nav2_exception_verify_bt_node)
 
