@@ -29,13 +29,15 @@ def generate_launch_description():
     param_dir = os.path.join(package_dir, 'params')
     bt_dir = os.path.join(package_dir, 'behavior_trees')
 
-    nav_param_file = 'nav2_params_follow.yaml'
+    nav_param_file = 'nav2_params.yaml'
+    follow_param_file = 'follow_params.yaml'
     bt_file = 'target_tracking.xml'
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
+    follow_params_file = LaunchConfiguration('follow_params_file')
     default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
     map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
 
@@ -65,6 +67,12 @@ def generate_launch_description():
             root_key=namespace,
             param_rewrites=param_substitutions,
             convert_types=True)
+    configured_params_f = RewrittenYaml(
+            source_file=follow_params_file,
+            root_key=namespace,
+            param_rewrites=param_substitutions,
+            convert_types=True)
+
 
     return LaunchDescription([
         # Set env var to print messages to stdout immediately
@@ -88,6 +96,11 @@ def generate_launch_description():
             description='Full path to the ROS2 parameters file to use'),
 
         DeclareLaunchArgument(
+            'follow_params_file',
+            default_value=os.path.join(param_dir, follow_param_file),
+            description='Full path to the ROS2 parameters file to use'),
+
+        DeclareLaunchArgument(
             'default_target_tracking_bt_xml',
             default_value=os.path.join(bt_dir, bt_file),
             description='Full path to the behavior tree xml file to use'),
@@ -97,43 +110,36 @@ def generate_launch_description():
             description='Whether to set the map subscriber QoS to transient local'),
 
         Node(
-            package='nav2_controller',
+            package='mcr_controller',
             executable='controller_server',
             output='screen',
-            parameters=[{configured_params}],
+            # prefix=['xterm -e gdb  --args'],
+            parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
-
-        # Node(
-        #     package='nav2_planner',
-        #     executable='planner_server',
-        #     name='planner_server',
-        #     output='screen',
-        #     parameters=[configured_params],
-        #     remappings=remappings),
 
         Node(
             package='mcr_planner',
             executable='mcr_planner_server',
             name='planner_server',
             output='screen',
-            parameters=[configured_params],
+            parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
 
         Node(
             package='nav2_recoveries',
             executable='recoveries_server',
             name='recoveries_server',
-            # prefix=['xterm -e gdb  --args'],
             output='screen',
-            parameters=[configured_params],
+            parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
 
         Node(
             package='nav2_bt_navigator',
             executable='bt_navigator',
             name='bt_navigator',
+            # prefix=['xterm -e gdb  --args'],
             output='screen',
-            parameters=[configured_params],
+            parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
 
         Node(
@@ -141,7 +147,7 @@ def generate_launch_description():
             executable='waypoint_follower',
             name='waypoint_follower',
             output='screen',
-            parameters=[configured_params],
+            parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
 
         Node(

@@ -11,7 +11,7 @@
                             <ReactiveFallback name="ComputePathActions">
                                 <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="200" planner_id="SplinePlanner" poses="{updated_goals}"/>
                                 <Sequence>
-                                    <Action ID="ComputePathToPose" goal="{updated_goal}" path="{path_full}" planner_id="GridBased" start=""/>
+                                    <Action ID="ComputePathToPose" goal="{updated_goal}" path="{path_full}" planner_id="PotentialPlanner" start=""/>
                                     <TruncatePath distance="1.0" input_path="{path_full}" output_path="{path}"/>
                                 </Sequence>                                
                             </ReactiveFallback>
@@ -19,7 +19,7 @@
                     </Sequence>
                 </Decorator>
                 <KeepRunningUntilFailure>
-                    <Action ID="FollowPath" controller_id="FollowPath" path="{path}" server_timeout="200" />
+                    <Action ID="FollowPath" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" server_timeout="200" />
                 </KeepRunningUntilFailure>
             </Control>
             <ReactiveFallback name="RecoveryActions">
@@ -27,11 +27,11 @@
                     <Action ID="SpinAndSearch" search_dist="1.57"/>
                 </ExceptionVerify>
                 <ExceptionVerify exception_code="{exception}" expected_code="3000">
-                    <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="global_costmap/clear_entirely_global_costmap"/>
+                    <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="rolling_window_costmap/clear_entirely_rolling_window_costmap"/>
                 </ExceptionVerify>
                 <ForceSuccess>
                     <ExceptionVerify exception_code="{exception}" expected_code="4000">
-                        <Action ID="ClearEntireCostmap" name="ClearEntireLocalCostmap" service_name="local_costmap/clear_entirely_local_costmap"/>
+                        <Action ID="ClearEntireCostmap" name="ClearEntireLocalCostmap" service_name="local_costmap_tracking/clear_entirely_local_costmap_tracking"/>
                     </ExceptionVerify>                
                 </ForceSuccess>
             </ReactiveFallback>

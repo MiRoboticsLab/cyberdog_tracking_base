@@ -55,7 +55,7 @@ PlannerServer::PlannerServer()
   if (planner_ids_ == default_ids_ && planner_costmaps_ == default_costmaps_) {
     for (size_t i = 0; i < default_ids_.size(); ++i) {
       declare_parameter(default_ids_[i] + ".plugin", default_types_[i]);
-      declare_parameter(default_ids_[i] + ".costmap", default_types_[i]);
+      declare_parameter(default_ids_[i] + ".costmap", default_costmaps_[i]);
     }
   }
 
@@ -106,7 +106,7 @@ PlannerServer::on_configure(const rclcpp_lifecycle::State & state)
         node, planner_ids_[i]);
 
       if (!node->has_parameter(planner_ids_[i] + ".costmap")) {
-        node->declare_parameter(planner_ids_[i] + ".costmap", "");
+        node->declare_parameter(planner_ids_[i] + ".costmap", "global_costmap");
       }
 
       std::string costmap_name;
@@ -452,6 +452,7 @@ PlannerServer::computePlanSplinePoses()
   // Initialize the ComputePathToPose goal and result
   auto goal = action_server_spline_poses_->get_current_goal();
   auto result = std::make_shared<ActionSplinePoses::Result>();
+  costmap_ros_ = costmaps_[pcmaps_[goal->planner_id]];
   nav_msgs::msg::Path concat_path;
   try {
     if (isServerInactive(action_server_spline_poses_) ||
@@ -513,7 +514,7 @@ PlannerServer::computePlan()
   // Initialize the ComputePathToPose goal and result
   auto goal = action_server_pose_->get_current_goal();
   auto result = std::make_shared<ActionToPose::Result>();
-
+  costmap_ros_ = costmaps_[pcmaps_[goal->planner_id]];
   try {
     if (isServerInactive(action_server_pose_) || isCancelRequested(action_server_pose_)) {
       return;

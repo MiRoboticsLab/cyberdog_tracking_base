@@ -25,6 +25,7 @@
 #include "behaviortree_cpp_v3/decorator_node.h"
 
 #include "rclcpp/rclcpp.hpp"
+#include "nav_msgs/msg/path.hpp"
 
 namespace mcr_tracking_components
 {
@@ -89,9 +90,11 @@ private:
   void checkAndDerivateAngle();
   void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses);
   bool isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-
+  geometry_msgs::msg::PoseStamped derivedOrientation(
+    geometry_msgs::msg::PoseStamped::SharedPtr msg);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr transformed_pose_pub_;
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
   rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr spline_poses_pub_;
   geometry_msgs::msg::PoseStamped last_goal_received_;
   geometry_msgs::msg::PoseStamped last_goal_transformed_;
@@ -104,6 +107,7 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
+  std::deque<geometry_msgs::msg::PoseStamped> historical_raw_poses_;
   int max_pose_inuse_;
   double dist_sq_throttle_;
   float distance_;
