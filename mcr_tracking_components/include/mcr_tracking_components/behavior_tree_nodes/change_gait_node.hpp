@@ -20,7 +20,7 @@
 #include <string>
 
 #include "nav_msgs/msg/path.hpp"
-
+#include "std_msgs/msg/int8.hpp"
 #include "behaviortree_cpp_v3/action_node.h"
 #include "protocol/srv/motion_result_cmd.hpp"
 
@@ -69,6 +69,7 @@ private:
   rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
   BT::NodeStatus tick() override;
   rclcpp::Client<MotionServiceT>::SharedPtr motion_client_;
+  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr change_gait_pub_;
 
 };
 
