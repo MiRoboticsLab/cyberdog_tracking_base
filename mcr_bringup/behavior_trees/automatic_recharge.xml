@@ -4,16 +4,16 @@
     <BehaviorTree ID="MainTree">
         <Control ID="RecoveryNode" name="TargetTracking" number_of_retries="5">
             <SequenceStar>
-                <Action ID="ChangeGait" gait="0"/>
+                <Action ID="ChangeGait" gait="7"/>
                 <Control ID="PipelineSequence" name="NavigateWithReplanning">
                     <Decorator ID="RateController" hz="5.0">
                         <Decorator ID="ChargerUpdater" input_goal="{goal}" output_exception_code="{exception}" output_goals="{updated_goals}">
-                            <Action ID="ComputePathSplinePoses" path="{path}" planner_id="SplinePlannerL" poses="{updated_goals}" server_timeout="200"/>
+                            <Action ID="ComputePathSplinePoses" path="{path}" planner_id="SplinePlannerL" poses="{updated_goals}"/>
                         </Decorator>
                     </Decorator>
-                    <Action ID="FollowPath" controller_id="FollowPath" path="{path}" server_timeout="200"/>
+                    <Action ID="FollowPath" controller_id="FollowPath" goal_checker_id="GoalChecker" path="{path}" progress_checker_id="progress_checker"/>
                 </Control>
-                <Action ID="ChangeGait" gait="0"/>
+                <Action ID="ChangeGait" gait="2"/>
                 <Condition ID="IsBatteryInCharge"/>
             </SequenceStar>
             <ReactiveFallback name="RecoveryActions">
