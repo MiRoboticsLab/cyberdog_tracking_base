@@ -77,6 +77,11 @@ controller_server:
       plugin: "mcr_tracking_components::FakeProgressChecker"
       required_movement_radius: 0.5
       movement_time_allowance: 10.0
+    xy_goal_checker:
+      stateful: True
+      plugin: "mcr_tracking_components::XYGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25      
     # DWB parameters
     TrackingTarget:
       plugin: "dwb_core::DWBLocalPlanner"

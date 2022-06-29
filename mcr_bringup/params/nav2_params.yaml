@@ -114,7 +114,7 @@ controller_server:
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
     progress_checker_plugins: ["progress_checker", "fake_progress_checker"]
-    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
+    goal_checker_plugins: ["general_goal_checker", "xy_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["TrackingTarget", "FollowPath"]
     controller_costmaps: ["local_costmap_tracking", "local_costmap"]
 
