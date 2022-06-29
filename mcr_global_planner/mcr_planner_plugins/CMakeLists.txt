@@ -15,16 +15,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -g -O0)
 endif()
 
-## System dependencies are found with CMake's conventions
-#find_package(Eigen3 REQUIRED)
+# # System dependencies are found with CMake's conventions
+# find_package(Eigen3 REQUIRED)
 # Solution to find Eigen3 with Saucy.
 find_package(Eigen3 QUIET)
-if(NOT EIGEN3_FOUND)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(EIGEN3 REQUIRED eigen3)
-set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
-endif()
 
+if(NOT EIGEN3_FOUND)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(EIGEN3 REQUIRED eigen3)
+  set(EIGEN3_INCLUDE_DIR ${EIGEN3_INCLUDE_DIRS})
+endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -37,8 +37,8 @@ find_package(pluginlib REQUIRED)
 find_package(nav2_util REQUIRED)
 
 add_library(mcr_planner_plugins src/astar.cpp src/dijkstra.cpp src/gradient_path.cpp
-            src/grid_path.cpp src/von_neumann_path.cpp src/b_spliner.cpp src/bezier_spliner.cpp
-            src/polynomial_interpolation.cpp src/polynomial_fitting.cpp)
+  src/grid_path.cpp src/von_neumann_path.cpp src/b_spliner.cpp src/bezier_spliner.cpp
+  src/polynomial_interpolation.cpp src/polynomial_fitting.cpp src/linear_interpolation.cpp)
 
 target_include_directories(mcr_planner_plugins PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -76,15 +76,16 @@ install(
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+
   # the following line skips the linter which checks for copyrights
   # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
+  # set(ament_cmake_copyright_FOUND TRUE)
   # the following line skips cpplint (only works in a git repo)
   # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
+  # set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+endif()
 
-  endif()
 ament_export_include_directories(include ${EIGEN3_INCLUDE_DIR})
 ament_export_libraries(mcr_planner_plugins)
 ament_export_targets(export_${PROJECT_NAME})

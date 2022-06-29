@@ -1,8 +1,8 @@
-bt_navigatortracking_target_rclcpp_node:  
+bt_navigatortracking_target_rclcpp_node:
   ros__parameters:
     use_sim_time: True
     # TargetUpdaterNode
-    global_frame: odom  
+    global_frame: odom
     goal_updater_topic: tracking_pose
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -28,7 +28,7 @@ local_costmap_tracking:
       obstacle_layer:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
-        use_tracking_mode: True 
+        use_tracking_mode: True
         tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose
         observation_sources: scan
@@ -39,7 +39,7 @@ local_costmap_tracking:
           marking: True
           data_type: "LaserScan"
           obstacle_range: 10.0
-          raytrace_range: 10.0        
+          raytrace_range: 10.0
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -109,7 +109,15 @@ controller_server:
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
-      critics: [ "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist", "KeepTargetInsight"]
+      critics:
+        [
+          "BaseObstacle",
+          "GoalAlign",
+          "PathAlign",
+          "PathDist",
+          "GoalDist",
+          "KeepTargetInsight",
+        ]
       BaseObstacle.scale: 0.02
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
@@ -121,8 +129,6 @@ controller_server:
       KeepTargetInsight.scale: 42.0
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
-          
-
 
 rolling_window_costmap:
   rolling_window_costmap:
@@ -144,7 +150,7 @@ rolling_window_costmap:
         enabled: True
         use_tracking_mode: True
         tracking_pose_invisible_radius: 0.8
-        tracking_pose_topic: tracking_pose        
+        tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
           topic: /scan
@@ -171,7 +177,6 @@ rolling_window_costmap:
     ros__parameters:
       use_sim_time: True
 
-
 planner_server:
   ros__parameters:
     SplinePlanner:
@@ -190,8 +195,8 @@ planner_server:
       use_sim_time: True
       plugin: mcr_global_planner/MCRGlobalPlanner
       costmap: rolling_window_costmap
-      potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
-      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath  
+      potential_calculator: mcr_planner_plugins::AStar #Dijkstra
+      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath
       publish_potential: false
       print_statistics: false
       neutral_cost: 50
@@ -200,4 +205,3 @@ planner_server:
       improvement_threshold: -1.0
       use_kernel: true
       unknown_interpretation: lethal
-

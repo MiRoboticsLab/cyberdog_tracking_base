@@ -16,53 +16,48 @@
 #ifndef mcr_tracking_components__PLUGINS__DECORATOR__CHARGER_UPDATER_NODE_HPP_
 #define mcr_tracking_components__PLUGINS__DECORATOR__CHARGER_UPDATER_NODE_HPP_
 
-#include <memory>
-#include <string>
-#include <mutex>
 #include <deque>
-#include "geometry_msgs/msg/pose_stamped.hpp"
+#include <memory>
+#include <mutex>
+#include <string>
 #include <visualization_msgs/msg/marker.hpp>
+
 #include "behaviortree_cpp_v3/decorator_node.h"
-
-#include "rclcpp/rclcpp.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 #include "nav_msgs/msg/path.hpp"
-
-namespace mcr_tracking_components
-{
+#include "rclcpp/rclcpp.hpp"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
+namespace mcr_tracking_components {
 
 /**
  * @brief A BT::DecoratorNode that subscribes to a goal topic and updates
  * the current goal on the blackboard
  */
-class ChargerUpdater : public BT::DecoratorNode
-{
-public:
+class ChargerUpdater : public BT::DecoratorNode {
+ public:
   /**
    * @brief A constructor for mcr_tracking_components::ChargerUpdater
    * @param xml_tag_name Name for the XML tag for this node
    * @param conf BT node configuration
    */
-  ChargerUpdater(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  ChargerUpdater(const std::string& xml_tag_name,
+                 const BT::NodeConfiguration& conf);
 
   /**
    * @brief Creates list of BT ports
    * @return BT::PortsList Containing node-specific ports
    */
-  static BT::PortsList providedPorts()
-  {
+  static BT::PortsList providedPorts() {
     return {
-      BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
-        "output_goals",
-        "Received Goals by subscription"),
-      BT::OutputPort<unsigned int>(
-        "output_exception_code",
-        "Exception code for the real reason."),
+        BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
+            "output_goals", "Received Goals by subscription"),
+        BT::OutputPort<unsigned int>("output_exception_code",
+                                     "Exception code for the real reason."),
     };
   }
 
-private:
+ private:
   /**
    * @brief The main override required by a BT action
    * @return BT::NodeStatus Status of tick execution
@@ -73,12 +68,15 @@ private:
    * @brief Callback function for goal update topic
    * @param msg Shared pointer to geometry_msgs::msg::PoseStamped message
    */
-  void callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-  void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses);
+  void callback_updated_goal(
+      const geometry_msgs::msg::PoseStamped::SharedPtr msg);
+  void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped>& poses);
   bool isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-  geometry_msgs::msg::PoseStamped translatePose(const geometry_msgs::msg::PoseStamped & pose);
+  geometry_msgs::msg::PoseStamped translatePose(
+      const geometry_msgs::msg::PoseStamped& pose);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr transformed_pose_pub_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr
+      transformed_pose_pub_;
   geometry_msgs::msg::PoseStamped last_goal_received_;
   geometry_msgs::msg::PoseStamped last_goal_transformed_;
   rclcpp::Time latest_timestamp_;
