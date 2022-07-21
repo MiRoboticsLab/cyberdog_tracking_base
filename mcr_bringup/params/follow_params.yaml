@@ -4,14 +4,15 @@ bt_navigatortracking_target_rclcpp_node:
     # TargetUpdaterNode
     global_frame: odom  
     goal_updater_topic: tracking_pose
+    overtime: 1.50
     max_pose_inuse: 0
     dist_throttle: 0.0
 
 local_costmap_tracking:
   local_costmap_tracking:
     ros__parameters:
-      update_frequency: 5.0
-      publish_frequency: 2.0
+      update_frequency: 0.0
+      publish_frequency: 1.0
       global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
@@ -52,13 +53,14 @@ local_costmap_tracking:
         observation_sources: scan
         scan:
           topic: /scan
-          max_obstacle_height: 2.0
+          max_obstacle_height: 10.0
+          min_obstacle_height: -10.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 6.0
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 5.5
           obstacle_min_range: 0.0
       static_layer:
         map_subscribe_transient_local: True
@@ -81,15 +83,15 @@ controller_server:
       stateful: True
       plugin: "mcr_tracking_components::XYGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25      
+      yaw_goal_tolerance: 0.25
     # DWB parameters
     TrackingTarget:
       plugin: "dwb_core::DWBLocalPlanner"
       costmap: local_costmap_tracking
       debug_trajectory_details: True
-      min_vel_x: -1.5
+      min_vel_x: -1.0
       min_vel_y: -0.5
-      max_vel_x: 1.5
+      max_vel_x: 1.0
       max_vel_y: 0.5
       max_vel_theta: 1.57
       min_speed_xy: 0.0
@@ -115,7 +117,7 @@ controller_server:
       short_circuit_trajectory_evaluation: True
       stateful: True
       critics: [ "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist", "KeepTargetInsight"]
-      BaseObstacle.scale: 0.02
+      BaseObstacle.scale: 30.0
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
       GoalAlign.scale: 24.0
@@ -132,14 +134,14 @@ controller_server:
 rolling_window_costmap:
   rolling_window_costmap:
     ros__parameters:
-      update_frequency: 1.0
+      update_frequency: 0.0
       publish_frequency: 1.0
       global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
       use_sim_time: True
-      width: 18
-      height: 18
+      width: 10
+      height: 10
       robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: false
@@ -153,13 +155,14 @@ rolling_window_costmap:
         observation_sources: scan
         scan:
           topic: /scan
-          max_obstacle_height: 2.0
+          max_obstacle_height: 10.0
+          min_obstacle_height: -10.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 6.0
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 5.5
           obstacle_min_range: 0.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
@@ -187,10 +190,10 @@ planner_server:
       pose_topic: "tracking_pose_in_map"
       # pose_topic: "target_traces"
       bezier:
-        plugin: mcr_planner_plugins::BezierSpliner
+        # plugin: mcr_planner_plugins::BezierSpliner
         # plugin: mcr_planner_plugins::PolynomialFitting
         # plugin: mcr_planner_plugins::BSpliner
-        # plugin: mcr_planner_plugins::PolynomialInterpolation
+        plugin: mcr_planner_plugins::PolynomialInterpolation
     PotentialPlanner:
       use_sim_time: True
       plugin: mcr_global_planner/MCRGlobalPlanner
