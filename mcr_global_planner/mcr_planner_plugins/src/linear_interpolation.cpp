@@ -30,13 +30,11 @@ void LinearInterpolation::initialize(
   node_ = node;
   name_ = name;
   costmap_ros_ = costmap;
-
   double max_speed_ = 1.0;
   double dist_scale_ = 1.0;
   nav2_util::declare_parameter_if_not_declared(node_, name_ + ".max_speed",
                                                rclcpp::ParameterValue(1.0));
   node_->get_parameter(name_ + ".max_speed", max_speed_);
-
   nav2_util::declare_parameter_if_not_declared(node_, name_ + ".dist_scale",
                                                rclcpp::ParameterValue(2.0));
   node_->get_parameter(name_ + ".dist_scale", dist_scale_);
@@ -45,6 +43,7 @@ void LinearInterpolation::initialize(
 nav_msgs::msg::Path LinearInterpolation::spline(
     const std::vector<geometry_msgs::msg::PoseStamped>& poses) {
   nav_msgs::msg::Path path;
+  RCLCPP_INFO(node_->get_logger(), "pose size: %d", poses.size());
   path.header.stamp = node_->now();
   if (poses.size() < 2) {
     return path;
@@ -55,7 +54,6 @@ nav_msgs::msg::Path LinearInterpolation::spline(
     control_points.clear();
     control_points.push_back(poses[i]);
     control_points.push_back(poses[i + 1]);
-
     std::vector<geometry_msgs::msg::PoseStamped>&& poses_t =
         interpolation(control_points);
     path.poses.insert(path.poses.end(), poses_t.begin(), poses_t.end());
@@ -79,11 +77,14 @@ LinearInterpolation::interpolation(
   double x1 = control_points.back().pose.position.x,
          y1 = control_points.back().pose.position.y;
 
+  RCLCPP_INFO(node_->get_logger(), "interpolation path (%f, %f), (%f,%f)", x0,
+              y0, x1, y1);
   double dx = x0 - x1, dy = y0 - y1;
   double full_distance = hypot(dx, dy);
   int interpolation_num = static_cast<int>(
       full_distance / costmap_ros_->getCostmap()->getResolution());
 
+  path.push_back(control_points.front());
   for (int i = 0; i < interpolation_num; ++i) {
     double x_t =
         (x0 * (interpolation_num - i) + x1 * i) / float(interpolation_num);
@@ -92,9 +93,10 @@ LinearInterpolation::interpolation(
     geometry_msgs::msg::PoseStamped pose;
     pose.pose.position.x = x_t;
     pose.pose.position.y = y_t;
+    pose.pose.position.z = 0;
     path.push_back(pose);
   }
-
+  path.push_back(control_points.back());
   return std::move(path);
 }
 }  //  namespace mcr_planner_plugins

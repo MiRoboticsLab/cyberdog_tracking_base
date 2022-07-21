@@ -12,8 +12,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef MCR_PLANNER_PLUGINS__POLYNOMIAL_INTERPOLATION_HPP_
-#define MCR_PLANNER_PLUGINS__POLYNOMIAL_INTERPOLATION_HPP_
+#ifndef MCR_PLANNER_PLUGINS__LINEAR_INTERPOLATION_HPP_
+#define MCR_PLANNER_PLUGINS__LINEAR_INTERPOLATION_HPP_
 #include <memory>
 #include <string>
 #include <vector>
@@ -44,11 +44,6 @@ class LinearInterpolation : public mcr_global_planner::Spliner {
   nav2_util::LifecycleNode::SharedPtr node_;
   std::string name_;
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
-
-  Eigen::Matrix<double, 6, 6> T;
-  Eigen::Matrix<double, 6, 1> A, B;
-  Eigen::Matrix<double, 6, 1> X;
-  Eigen::Matrix<double, 6, 1> Y;
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

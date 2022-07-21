@@ -33,27 +33,25 @@
  */
 
 #include "mcr_tracking_components/dwb_critics/keep_target_insight.hpp"
+
 #include <string>
 #include <vector>
-#include "nav_2d_utils/parameters.hpp"
-#include "dwb_core/exceptions.hpp"
-#include "pluginlib/class_list_macros.hpp"
-#include "dwb_core/trajectory_utils.hpp"
+
 #include "angles/angles.h"
+#include "dwb_core/exceptions.hpp"
+#include "dwb_core/trajectory_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
+#include "nav_2d_utils/parameters.hpp"
+#include "pluginlib/class_list_macros.hpp"
 
-PLUGINLIB_EXPORT_CLASS(mcr_tracking_components::KeepTargetInsightCritic, dwb_core::TrajectoryCritic)
+PLUGINLIB_EXPORT_CLASS(mcr_tracking_components::KeepTargetInsightCritic,
+                       dwb_core::TrajectoryCritic)
 
-namespace mcr_tracking_components
-{
+namespace mcr_tracking_components {
 
-inline double hypot_sq(double dx, double dy)
-{
-  return dx * dx + dy * dy;
-}
+inline double hypot_sq(double dx, double dy) { return dx * dx + dy * dy; }
 
-void KeepTargetInsightCritic::onInit()
-{
+void KeepTargetInsightCritic::onInit() {
   normal_sacle_ = 0.0;
   inuse_ = true;
   auto node = node_.lock();
@@ -62,55 +60,55 @@ void KeepTargetInsightCritic::onInit()
   }
 
   lookahead_time_ = nav_2d_utils::searchAndGetParam(
-    node,
-    dwb_plugin_name_ + "." + name_ + ".lookahead_time", -1.0);
+      node, dwb_plugin_name_ + "." + name_ + ".lookahead_time", -1.0);
 
   pose_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-    "/tracking_pose",
-    rclcpp::SensorDataQoS(),
-    std::bind(&KeepTargetInsightCritic::poseCallback, this, std::placeholders::_1));
+      "/chargetolidar_transformed", rclcpp::SensorDataQoS(),
+      std::bind(&KeepTargetInsightCritic::poseCallback, this,
+                std::placeholders::_1));
   RCLCPP_INFO(
-    node->get_logger(), "Keep target insight critic subscribed to tracking pose: tracking_pose");
+      node->get_logger(),
+      "Keep target insight critic subscribed to tracking pose: tracking_pose");
   service_ = node->create_service<std_srvs::srv::SetBool>(
-    "is_target_insight_inused",
-    std::bind(&KeepTargetInsightCritic::useCriticCallback, this, std::placeholders::_1, std::placeholders::_2));
+      "is_target_insight_inused",
+      std::bind(&KeepTargetInsightCritic::useCriticCallback, this,
+                std::placeholders::_1, std::placeholders::_2));
   reset();
   normal_sacle_ = getScale();
 }
 
-void KeepTargetInsightCritic::reset()
-{
-  valid_data_ = false;
-}
+void KeepTargetInsightCritic::reset() { valid_data_ = false; }
 
 bool KeepTargetInsightCritic::prepare(
-  const geometry_msgs::msg::Pose2D & pose, const nav_2d_msgs::msg::Twist2D & /*vel*/,
-  const geometry_msgs::msg::Pose2D & /*goal*/,
-  const nav_2d_msgs::msg::Path2D &)
-{
+    const geometry_msgs::msg::Pose2D &pose,
+    const nav_2d_msgs::msg::Twist2D & /*vel*/,
+    const geometry_msgs::msg::Pose2D & /*goal*/,
+    const nav_2d_msgs::msg::Path2D &) {
   goal_yaw_ = atan2(latest_pose_.pose.position.y, latest_pose_.pose.position.x);
   cur_yaw_ = pose.theta;
   return true;
 }
 
-double KeepTargetInsightCritic::scoreTrajectory(const dwb_msgs::msg::Trajectory2D & traj)
-{
-  // If we're not sufficiently close to the goal, we don't care what the twist is
+double KeepTargetInsightCritic::scoreTrajectory(
+    const dwb_msgs::msg::Trajectory2D &traj) {
+  // If we're not sufficiently close to the goal, we don't care what the twist
+  // is
   if (!valid_data_) {
     return 0.0;
   }
   return scoreRotation(traj);
 }
 
-double KeepTargetInsightCritic::scoreRotation(const dwb_msgs::msg::Trajectory2D & traj)
-{
+double KeepTargetInsightCritic::scoreRotation(
+    const dwb_msgs::msg::Trajectory2D &traj) {
   if (traj.poses.empty()) {
     throw dwb_core::IllegalTrajectoryException(name_, "Empty trajectory.");
   }
 
   double end_yaw;
   if (lookahead_time_ >= 0.0) {
-    geometry_msgs::msg::Pose2D eval_pose = dwb_core::projectPose(traj, lookahead_time_);
+    geometry_msgs::msg::Pose2D eval_pose =
+        dwb_core::projectPose(traj, lookahead_time_);
     end_yaw = eval_pose.theta;
   } else {
     end_yaw = traj.poses.back().theta;
@@ -119,21 +117,19 @@ double KeepTargetInsightCritic::scoreRotation(const dwb_msgs::msg::Trajectory2D 
   return fabs(angles::shortest_angular_distance(end_yaw - cur_yaw_, goal_yaw_));
 }
 
-void KeepTargetInsightCritic::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
-{
+void KeepTargetInsightCritic::poseCallback(
+    const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
   latest_pose_ = *msg;
   valid_data_ = true;
 }
 
 void KeepTargetInsightCritic::useCriticCallback(
-  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
-{
-
-  if(request->data){
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+  if (request->data) {
     setScale(normal_sacle_);
     response->message = "Module KeepTargetInsight started successfully.";
-  }else {
+  } else {
     setScale(0.0);
     response->message = "Module KeepTargetInsight stopped successfully.";
   }

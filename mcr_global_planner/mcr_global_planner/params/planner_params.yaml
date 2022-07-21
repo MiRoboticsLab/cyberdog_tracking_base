@@ -34,9 +34,9 @@ global_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan
+        observation_sources: scans
         scan:
-          topic: /scan
+          topic: /scans
           footprint_clearing_enabled: true
           max_obstacle_height: 2.0
           clearing: True
@@ -56,18 +56,16 @@ global_costmap:
         inflate_around_unknown: True
         inflate_unknown: True
 
-
 mcr_planner:
   ros__parameters:
     use_sim_time: True
     planner_name: spline_planner
-    
 
     potential_planner:
       use_sim_time: True
       plugin: mcr_global_planner::MCRGlobalPlanner
-      potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
-      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath  
+      potential_calculator: mcr_planner_plugins::AStar #Dijkstra
+      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath
       publish_potential: false
       print_statistics: false
       neutral_cost: 50
@@ -82,7 +80,6 @@ mcr_planner:
       plugin: mcr_global_planner::MCRCurvePlanner
       curve_type: dubs
       turning_radius: 1.5
-
 
     spline_planner:
       use_sim_time: True

@@ -54,6 +54,7 @@ class ChargerUpdater : public BT::DecoratorNode {
             "output_goals", "Received Goals by subscription"),
         BT::OutputPort<unsigned int>("output_exception_code",
                                      "Exception code for the real reason."),
+        BT::InputPort<unsigned int>("phase", "current autocharing phase"),
     };
   }
 
@@ -84,16 +85,19 @@ class ChargerUpdater : public BT::DecoratorNode {
   std::mutex mutex_;
 
   std::string global_frame_;
+  std::string robot_base_frame_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
   int max_pose_inuse_;
   float distance_;
   double offset_x_, offset_y_;
-
+  std::deque<geometry_msgs::msg::PoseStamped> average_poses_;
   rclcpp::Node::SharedPtr node_;
   rclcpp::CallbackGroup::SharedPtr callback_group_;
   rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
+  geometry_msgs::msg::PoseStamped final_goal_;
+  bool final_goal_got_;
 };
 
 }  // namespace mcr_tracking_components

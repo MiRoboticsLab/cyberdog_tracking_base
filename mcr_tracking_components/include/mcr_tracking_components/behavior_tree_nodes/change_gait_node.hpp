@@ -19,42 +19,38 @@
 #include <memory>
 #include <string>
 
-#include "nav_msgs/msg/path.hpp"
-#include "std_msgs/msg/int8.hpp"
 #include "behaviortree_cpp_v3/action_node.h"
+#include "nav_msgs/msg/path.hpp"
 #include "protocol/srv/motion_result_cmd.hpp"
-
-namespace mcr_tracking_components
-{
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int8.hpp"
+namespace mcr_tracking_components {
 
 using MotionServiceT = protocol::srv::MotionResultCmd;
 /**
  * @brief A BT::ActionNodeBase to make decision for tracking mode
  */
-class ChangeGait : public BT::ActionNodeBase
-{
-public:
+class ChangeGait : public BT::ActionNodeBase {
+ public:
   /**
    * @brief A mcr_tracking_components::ChangeGait constructor
    * @param xml_tag_name Name for the XML tag for this node
    * @param conf BT node configuration
    */
-  ChangeGait(
-    const std::string & xml_tag_name,
-    const BT::NodeConfiguration & conf);
+  ChangeGait(const std::string& xml_tag_name,
+             const BT::NodeConfiguration& conf);
 
   /**
    * @brief Creates list of BT ports
    * @return BT::PortsList Containing basic ports along with node-specific ports
    */
-  static BT::PortsList providedPorts()
-  {
+  static BT::PortsList providedPorts() {
     return {
-      BT::InputPort<int>("gait", "the gait for next step."),
+        BT::InputPort<int>("gait", "the gait for next step."),
     };
   }
 
-private:
+ private:
   /**
    * @brief The other (optional) override required by a BT action.
    */
@@ -70,7 +66,6 @@ private:
   BT::NodeStatus tick() override;
   rclcpp::Client<MotionServiceT>::SharedPtr motion_client_;
   rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr change_gait_pub_;
-
 };
 
 }  // namespace mcr_tracking_components

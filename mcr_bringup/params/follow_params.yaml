@@ -2,7 +2,7 @@ bt_navigatortracking_target_rclcpp_node:
   ros__parameters:
     use_sim_time: True
     # TargetUpdaterNode
-    global_frame: odom
+    global_frame: base_link_leg
     goal_updater_topic: tracking_pose
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -12,8 +12,8 @@ local_costmap_tracking:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: odom
-      robot_base_frame: base_link
+      global_frame: base_link_leg
+      robot_base_frame: base_link_leg
       use_sim_time: True
       rolling_window: true
       width: 8
@@ -33,7 +33,7 @@ local_costmap_tracking:
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scans
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -51,7 +51,7 @@ local_costmap_tracking:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scans
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -135,8 +135,8 @@ rolling_window_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 1.0
-      global_frame: odom
-      robot_base_frame: base_link
+      global_frame: base_link_leg
+      robot_base_frame: base_link_leg
       rolling_window: true
       use_sim_time: True
       width: 18
@@ -153,7 +153,7 @@ rolling_window_costmap:
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scans
           max_obstacle_height: 2.0
           clearing: True
           marking: True

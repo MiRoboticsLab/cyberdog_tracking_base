@@ -22,7 +22,10 @@
 	</class>	
 	<class type="mcr_planner_plugins::PolynomialInterpolation" base_class_type="mcr_global_planner::Spliner">
 	  <description></description>
-	</class>		
+	</class>
+	<class type="mcr_planner_plugins::LinearInterpolation" base_class_type="mcr_global_planner::Spliner">
+	  <description></description>
+	</class>	
 	<class type="mcr_planner_plugins::PolynomialFitting" base_class_type="mcr_global_planner::Spliner">
 	  <description></description>
 	</class>			

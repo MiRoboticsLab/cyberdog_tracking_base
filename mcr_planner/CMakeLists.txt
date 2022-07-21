@@ -24,7 +24,7 @@ nav2_package()
 include_directories(
   include
 )
-
+add_compile_options(-g)
 set(executable_name mcr_planner_server)
 set(library_name ${executable_name}_core)
 
