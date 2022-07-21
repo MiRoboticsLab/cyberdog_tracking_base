@@ -44,8 +44,7 @@ def generate_launch_description():
     lifecycle_nodes = ['controller_server',
                        'planner_server',
                        'recoveries_server',
-                       'bt_navigator',
-                       'waypoint_follower']
+                       'bt_navigator']
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -115,6 +114,7 @@ def generate_launch_description():
             output='screen',
             # prefix=['xterm -e gdb  --args'],
             parameters=[{configured_params},{configured_params_f}],
+            # arguments=['--ros-args', '--log-level', 'DEBUG'],
             remappings=remappings),
 
         Node(
@@ -142,13 +142,6 @@ def generate_launch_description():
             parameters=[{configured_params},{configured_params_f}],
             remappings=remappings),
 
-        Node(
-            package='nav2_waypoint_follower',
-            executable='waypoint_follower',
-            name='waypoint_follower',
-            output='screen',
-            parameters=[{configured_params},{configured_params_f}],
-            remappings=remappings),
 
         Node(
             package='nav2_lifecycle_manager',
