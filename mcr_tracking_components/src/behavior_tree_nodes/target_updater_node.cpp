@@ -80,6 +80,10 @@ TargetUpdater::TargetUpdater(
   node_->get_parameter("dist_throttle", dist_sq_throttle_);
   dist_sq_throttle_ *= dist_sq_throttle_;
 
+  nav2_util::declare_parameter_if_not_declared(
+    node_, "overtime", rclcpp::ParameterValue(6.0));
+  node_->get_parameter("overtime", overtime_);
+
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node_->get_clock());
   auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
     node_->get_node_base_interface(),
@@ -122,8 +126,8 @@ inline BT::NodeStatus TargetUpdater::tick()
   getInput("input_goal", goal);
   getInput("input_tracking_mode", current_mode_);
 
-  if ((node_->now().seconds() - latest_timestamp_.seconds()) > 1.5) {
-    RCLCPP_WARN(node_->get_logger(), "The target pose may be lost.");
+  if ((node_->now().seconds() - latest_timestamp_.seconds()) > overtime_) {
+    RCLCPP_WARN(node_->get_logger(), "The target pose may be lost. %lf", overtime_);
     historical_poses_.clear();
     setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
     config().blackboard->set<int>("exception_code", nav2_core::DETECTOREXCEPTION);
@@ -141,7 +145,7 @@ inline BT::NodeStatus TargetUpdater::tick()
   config().blackboard->set<float>("distance", distance_);
   setOutput("distance", distance_);
   setOutput("output_goal", goal);
-  if (historical_poses_.size() >= 1) {
+  if (historical_poses_.size() >= 2) {
     setOutput(
       "output_goals",
       std::vector<geometry_msgs::msg::PoseStamped>(
@@ -166,6 +170,7 @@ geometry_msgs::msg::PoseStamped
 TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
 {
   geometry_msgs::msg::TransformStamped transform;
+  geometry_msgs::msg::PoseStamped tpose = pose;
   transform.header = pose.header;
   transform.child_frame_id = pose.header.frame_id;
 
@@ -199,12 +204,19 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
         transform.transform.translation.y = -1.0 * sin(yaw);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
+
+        tf2::Quaternion qtn;
+        qtn.setRPY(0,0,yaw);  // 单位是弧度
+        tpose.pose.orientation.x = qtn.getX();
+        tpose.pose.orientation.y = qtn.getY();
+        tpose.pose.orientation.z = qtn.getZ();
+        tpose.pose.orientation.w = qtn.getW();
         break;
       }
   }
   //当前跟随模式对应的方位
   geometry_msgs::msg::PoseStamped transformed_pose;
-  tf2::doTransform(pose, transformed_pose, transform);
+  tf2::doTransform(tpose, transformed_pose, transform);
 
   //该模式下的跟随位姿对应在全局坐标系上的位姿
   geometry_msgs::msg::PoseStamped global_frame_pose;
@@ -310,6 +322,7 @@ geometry_msgs::msg::PoseStamped TargetUpdater::derivedOrientation(
 void
 TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
+
   std::lock_guard<std::mutex> guard(mutex_);
   latest_timestamp_ = node_->now();
   distance_ = hypot(msg->pose.position.x, msg->pose.position.y);
@@ -317,8 +330,7 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     return;
   }
 
-  geometry_msgs::msg::PoseStamped msg_with_orientation = derivedOrientation(msg);
-  last_goal_transformed_ = translatePoseByMode(msg_with_orientation);
+  last_goal_transformed_ = translatePoseByMode(*msg);
   //visu debug info
   if (transformed_pose_pub_ != nullptr &&
     node_->count_subscribers(transformed_pose_pub_->get_topic_name()) > 0)

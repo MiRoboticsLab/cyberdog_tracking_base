@@ -4,14 +4,14 @@
     <BehaviorTree ID="MainTree">
         <Control ID="RecoveryNode" name="TargetTracking" number_of_retries="500">
             <Control ID="PipelineSequence" name="NavigateWithReplanning">
-                <Decorator ID="RateController" hz="5.0">
+                <Decorator ID="RateController" hz="2.0">
                     <Sequence>
                         <Action ID="TrackingModeDecider" input_tracking_mode="{relative_pos}" output_tracking_mode="{mode_decided}"/>
                         <Decorator ID="TargetUpdater" input_goal="{goal}" input_tracking_mode="{mode_decided}" output_goal="{updated_goal}" output_goals="{updated_goals}" output_exception_code="{exception}" >
                             <ReactiveFallback name="ComputePathActions">
                                 <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="200" planner_id="SplinePlanner" poses="{updated_goals}"/>
                                 <Sequence>
-                                    <Action ID="ComputePathToPose" goal="{updated_goal}" path="{path_full}" planner_id="PotentialPlanner" start=""/>
+                                    <Action ID="ComputePathToPose" goal="{updated_goal}" server_timeout="4000" path="{path_full}" planner_id="PotentialPlanner" start=""/>
                                     <TruncatePath distance="1.0" input_path="{path_full}" output_path="{path}"/>
                                 </Sequence>                                
                             </ReactiveFallback>
@@ -24,7 +24,7 @@
             </Control>
             <ReactiveFallback name="RecoveryActions">
                 <ExceptionVerify exception_code="{exception}" expected_code="1000">
-                    <Action ID="SpinAndSearch" search_dist="1.57"/>
+                    <Action ID="SpinAndSearch" search_dist="1.57" server_timeout="4000"/>
                 </ExceptionVerify>
                 <ExceptionVerify exception_code="{exception}" expected_code="3000">
                     <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="rolling_window_costmap/clear_entirely_rolling_window_costmap"/>
