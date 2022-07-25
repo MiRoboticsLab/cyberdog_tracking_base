@@ -9,7 +9,7 @@
                         <Action ID="TrackingModeDecider" input_tracking_mode="{relative_pos}" output_tracking_mode="{mode_decided}"/>
                         <Decorator ID="TargetUpdater" input_goal="{goal}" input_tracking_mode="{mode_decided}" output_goal="{updated_goal}" output_goals="{updated_goals}" output_exception_code="{exception}" >
                             <ReactiveFallback name="ComputePathActions">
-                                <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="200" planner_id="SplinePlanner" poses="{updated_goals}"/>
+                                <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="1000" planner_id="SplinePlanner" poses="{updated_goals}"/>
                                 <Sequence>
                                     <Action ID="ComputePathToPose" goal="{updated_goal}" server_timeout="4000" path="{path_full}" planner_id="PotentialPlanner" start=""/>
                                     <TruncatePath distance="1.0" input_path="{path_full}" output_path="{path}"/>
@@ -19,7 +19,7 @@
                     </Sequence>
                 </Decorator>
                 <KeepRunningUntilFailure>
-                    <Action ID="FollowPath" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" server_timeout="200" />
+                    <Action ID="FollowPath" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" server_timeout="1000" />
                 </KeepRunningUntilFailure>
             </Control>
             <ReactiveFallback name="RecoveryActions">

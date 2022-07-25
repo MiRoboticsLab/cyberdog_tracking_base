@@ -36,6 +36,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav2_util/node_utils.hpp"
+#include "nav2_util/geometry_utils.hpp"
 #include "nav2_core/exceptions.hpp"
 #include "Eigen/Dense"
 #include "Eigen/QR"
@@ -45,8 +46,6 @@ namespace mcr_tracking_components
 {
 
 using std::placeholders::_1;
-nav_msgs::msg::Path spline(
-  const std::vector<geometry_msgs::msg::PoseStamped> & poses);
 TargetUpdater::TargetUpdater(
   const std::string & name,
   const BT::NodeConfiguration & conf)
@@ -204,13 +203,8 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
         transform.transform.translation.y = -1.0 * sin(yaw);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
-
-        tf2::Quaternion qtn;
-        qtn.setRPY(0,0,yaw);  // 单位是弧度
-        tpose.pose.orientation.x = qtn.getX();
-        tpose.pose.orientation.y = qtn.getY();
-        tpose.pose.orientation.z = qtn.getZ();
-        tpose.pose.orientation.w = qtn.getW();
+        tpose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
+        
         break;
       }
   }
@@ -262,11 +256,11 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
 }
 
 
-geometry_msgs::msg::PoseStamped TargetUpdater::derivedOrientation(
+geometry_msgs::msg::Quaternion TargetUpdater::derivedOrientation(
   geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
 
-  geometry_msgs::msg::PoseStamped msg_with_orientation;
+  geometry_msgs::msg::PoseStamped msg_with_orientation, msg_with_orientation1;
 
 
   //该模式下的跟随位姿对应在全局坐标系上的位姿
@@ -279,43 +273,39 @@ geometry_msgs::msg::PoseStamped TargetUpdater::derivedOrientation(
   }
 
   //push pose when robot has moved a little.
-  historical_raw_poses_.push_front(msg_with_orientation);
+  if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3) {
+    historical_raw_poses_.push_front(msg_with_orientation);
+  }
   // deal with pose's orientation
-  while (historical_raw_poses_.size() > 15 &&
-    poseDistanceSq(historical_raw_poses_.front().pose, historical_raw_poses_.back().pose) > 0.8)
-  {
+  while (historical_raw_poses_.size() > 4) {
     historical_raw_poses_.pop_back();
   }
   double theta = 0.0;
-  nav_msgs::msg::Path p = spline(
-    std::vector<geometry_msgs::msg::PoseStamped>(
-      historical_raw_poses_.rbegin(),
-      historical_raw_poses_.rend()));
-  size_t len = p.poses.size();
-  p.header.frame_id = global_frame_;
-  p.header.stamp = node_->now();
-  plan_publisher_->publish(p);
-  if (len > 2) {
-    if (poseDistanceSq(p.poses.front().pose, msg_with_orientation.pose) <
-      poseDistanceSq(p.poses.back().pose, msg_with_orientation.pose))
-    {
-      theta = atan2(
-        p.poses[0].pose.position.y - p.poses[1].pose.position.y,
-        p.poses[0].pose.position.x - p.poses[1].pose.position.x);
-    } else {
-      theta = atan2(
-        p.poses[len - 1].pose.position.y - p.poses[len - 2].pose.position.y,
-        p.poses[len - 1].pose.position.x - p.poses[len - 2].pose.position.x);
-    }
 
-    tf2::Quaternion qtn;
-    qtn.setRPY(0, 0, theta);    // 单位是弧度
-    msg_with_orientation.pose.orientation.x = qtn.getX();
-    msg_with_orientation.pose.orientation.y = qtn.getY();
-    msg_with_orientation.pose.orientation.z = qtn.getZ();
-    msg_with_orientation.pose.orientation.w = qtn.getW();
+  int k = 0;
+  for (auto it = historical_raw_poses_.begin() + 1; it < historical_raw_poses_.end(); it++) {
+    double t = atan2(
+      msg_with_orientation.pose.position.y - it->pose.position.y,
+      msg_with_orientation.pose.position.x - it->pose.position.x);
+    if(t > -M_PI && t < -M_PI_2) t += 2 * M_PI;
+    theta += t;
+    k += 1;
   }
-  return msg_with_orientation;
+  theta = theta / k;
+
+  msg_with_orientation.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(theta);
+
+  if (!nav2_util::transformPoseInTargetFrame(
+      msg_with_orientation, msg_with_orientation1, *tf_buffer_,
+      msg->header.frame_id))
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(), "Faild transform target pose to %s", msg->header.frame_id.c_str());
+    throw nav2_core::TFException("Transformed error in target updater node");
+  }
+
+
+  return msg_with_orientation1.pose.orientation;
 }
 
 
@@ -330,7 +320,12 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     return;
   }
 
-  last_goal_transformed_ = translatePoseByMode(*msg);
+  geometry_msgs::msg::PoseStamped msg_with_orientation = *msg;
+  msg_with_orientation.pose.orientation = derivedOrientation(msg);
+
+  last_goal_transformed_ = translatePoseByMode(msg_with_orientation);
+
+  // last_goal_transformed_ = translatePoseByMode(*msg);
   //visu debug info
   if (transformed_pose_pub_ != nullptr &&
     node_->count_subscribers(transformed_pose_pub_->get_topic_name()) > 0)
@@ -479,12 +474,7 @@ void TargetUpdater::checkAndDerivateAngle()
     double dety = latest_pose.pose.position.y - prev_pose.pose.position.y;
     double yaw = atan2(dety, detx);
 
-    tf2::Quaternion qtn;
-    qtn.setRPY(0, 0, yaw);
-    latest_pose.pose.orientation.x = qtn.getX();
-    latest_pose.pose.orientation.y = qtn.getY();
-    latest_pose.pose.orientation.z = qtn.getZ();
-    latest_pose.pose.orientation.w = qtn.getW();
+    latest_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
   }
 
 }
@@ -526,64 +516,6 @@ void TargetUpdater::truncatHinderPosesAndAppendCurPose()
 
 }
 
-
-std::vector<double> polyfit(
-  const std::vector<double> & x,
-  const std::vector<double> & y,
-  int order = 3)
-{
-  std::vector<double> coeff;
-  // Create Matrix Placeholder of size n x k, n= number of datapoints, k = order of polynomial,
-  // for exame k = 3 for cubic polynomial
-  Eigen::MatrixXd T(x.size(), order + 1);
-  Eigen::VectorXd V = Eigen::VectorXd::Map(&y.front(), y.size());
-  Eigen::VectorXd result;
-
-  // check to make sure inputs are correct
-  assert(x.size() == y.size());
-
-  // Populate the matrix
-  for (size_t i = 0; i < x.size(); ++i) {
-    for (int j = 0; j < order + 1; ++j) {
-      T(i, j) = pow(x.at(i), j);
-    }
-  }
-
-  // Solve for linear least square fit
-  result = T.householderQr().solve(V);
-  coeff.resize(order + 1);
-  for (int k = 0; k < order + 1; k++) {
-    coeff[k] = result[k];
-  }
-  return coeff;
-}
-nav_msgs::msg::Path spline(
-  const std::vector<geometry_msgs::msg::PoseStamped> & poses)
-{
-  nav_msgs::msg::Path path;
-  if (poses.size() < 2) {return path;}
-
-  std::vector<double> x, y;
-  for (auto p : poses) {
-    x.push_back(p.pose.position.x);
-    y.push_back(p.pose.position.y);
-  }
-
-  double max_x = *std::max_element(x.begin(), x.end());
-  double min_x = *std::min_element(x.begin(), x.end());
-  std::vector<double> A = polyfit(x, y);
-  geometry_msgs::msg::PoseStamped pose;
-  double cx = min_x;
-  while (cx <= max_x + 0.001) {
-    double cy = A[0] + A[1] * cx + A[2] *
-      (pow(cx, 2)) + A[3] * (pow(cx, 3));
-    pose.pose.position.x = cx;
-    pose.pose.position.y = cy;
-    path.poses.push_back(pose);
-    cx += 0.05;
-  }
-  return path;
-}
 }  // namespace mcr_tracking_components
 
 #include "behaviortree_cpp_v3/bt_factory.h"

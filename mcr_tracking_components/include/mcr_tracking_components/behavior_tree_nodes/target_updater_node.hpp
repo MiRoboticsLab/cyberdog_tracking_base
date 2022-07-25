@@ -68,6 +68,14 @@ public:
     };
   }
 
+protected:
+  double det_ = 0.05;
+  std::vector<std::vector<double>> cheat_sheet_;
+  nav_msgs::msg::Path spline(
+    const std::vector<geometry_msgs::msg::PoseStamped> & poses);
+  std::vector<geometry_msgs::msg::PoseStamped>&& bezier(
+    const std::vector<geometry_msgs::msg::PoseStamped>&control_points);
+
 private:
   /**
    * @brief The main override required by a BT action
@@ -90,7 +98,7 @@ private:
   void checkAndDerivateAngle();
   void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses);
   bool isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-  geometry_msgs::msg::PoseStamped derivedOrientation(
+  geometry_msgs::msg::Quaternion derivedOrientation(
     geometry_msgs::msg::PoseStamped::SharedPtr msg);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr transformed_pose_pub_;
