@@ -269,10 +269,7 @@ bool PlannerServer::isServerInactive(
 void PlannerServer::waitForCostmap()
 {
   // Don't compute a plan until costmap is valid (after clear costmap)
-  rclcpp::Rate r(100);
-  while (!costmap_ros_->isCurrent()) {
-    r.sleep();
-  }
+  costmap_ros_->updateMap();
 }
 
 template<typename T>
@@ -458,6 +455,11 @@ PlannerServer::computePlanSplinePoses()
     if (isServerInactive(action_server_spline_poses_) ||
       isCancelRequested(action_server_spline_poses_))
     {
+      RCLCPP_WARN(
+        get_logger(),
+        "action server is inactive or cancelled, returning.");
+      action_server_spline_poses_->terminate_current();
+
       return;
     }
 
