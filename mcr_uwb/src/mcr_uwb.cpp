@@ -125,7 +125,7 @@ MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
   geometry_msgs::msg::PoseStamped pose;
   pose.header = uwb->header;
 
-  RCLCPP_INFO(get_logger(), "received uwb raw data, frame id: %s, dist: %f, angle: %f.", uwb->header.frame_id.c_str(), uwb->dist, uwb->angle);
+  RCLCPP_DEBUG(get_logger(), "received uwb raw data, frame id: %s, dist: %f, angle: %f.", uwb->header.frame_id.c_str(), uwb->dist, uwb->angle);
 
   pose.pose.position.x = uwb->dist * cos(-uwb->angle);
   pose.pose.position.y = uwb->dist * sin(-uwb->angle);
