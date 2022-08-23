@@ -286,7 +286,7 @@ void ChargerUpdater::callback_updated_goal(
     historical_poses_.push_front(std::move(global_frame_pose_b));
   } else if (current_phase == 1) {
     historical_poses_.push_front(std::move(global_frame_pose_b));
-    historical_poses_.push_front(std::move(global_frame_pose));
+    historical_poses_.push_front(std::move(global_frame_pose_adj));
   }
 }
 

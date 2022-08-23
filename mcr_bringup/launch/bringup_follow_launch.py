@@ -200,7 +200,7 @@ def generate_launch_description():
                         {'node_names': lifecycle_nodes}]),
 
         tf2_node_vodom_map,
-        start_odom_cmd,
+        #start_odom_cmd,
         Node(
             package='motion_sender',
             executable='sendlcm',

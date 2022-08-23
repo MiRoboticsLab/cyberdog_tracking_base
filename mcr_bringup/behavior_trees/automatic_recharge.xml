@@ -9,18 +9,18 @@
                 <Control ID="PipelineSequence" name="NavigateWithReplanning">
                     <Decorator ID="RateController" hz="5.0">
                         <Decorator ID="ChargerUpdater"  phase="0"  output_exception_code="{exception}" output_goals="{updated_goals}">
-                            <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="200" planner_id="SplinePlannerL" poses="{updated_goals}"/>
+                            <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="1000" planner_id="SplinePlannerL" poses="{updated_goals}"/>
                         </Decorator>
                     </Decorator>
-                    <Action ID="FollowPath" controller_id="TrackingTargetL" goal_checker_id="general_goal_checker" path="{path}" progress_checker_id="fake_progress_checker"/>
+                    <Action ID="FollowPath" controller_id="TrackingTargetL" server_timeout="1000"  goal_checker_id="general_goal_checker" path="{path}" progress_checker_id="fake_progress_checker"/>
                 </Control>
                 <Control ID="PipelineSequence" name="NavigateWithReplanning">
                     <Decorator ID="RateController" hz="5.0">
                         <Decorator ID="ChargerUpdater" phase="1" output_exception_code="{exception}" output_goals="{updated_goals}">
-                            <Action ID="ComputePathSplinePoses" path="{path}"  server_timeout="200" planner_id="SplinePlannerL" poses="{updated_goals}"/>
+                            <Action ID="ComputePathSplinePoses" path="{path}"  server_timeout="1000" planner_id="SplinePlannerL" poses="{updated_goals}"/>
                         </Decorator>
                     </Decorator>
-                    <Action ID="FollowPath" controller_id="TrackingTargetL" goal_checker_id="general_goal_checkerL" path="{path}" progress_checker_id="fake_progress_checker"/>
+                    <Action ID="FollowPath" controller_id="TrackingTargetL" server_timeout="1000"  goal_checker_id="general_goal_checkerL" path="{path}" progress_checker_id="fake_progress_checker"/>
                 </Control>
              </SequenceStar>
                 <Action ID="ChangeGait" gait="2"/>
