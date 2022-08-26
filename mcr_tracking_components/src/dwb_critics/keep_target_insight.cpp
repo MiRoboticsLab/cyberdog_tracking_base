@@ -40,6 +40,18 @@
 #include "pluginlib/class_list_macros.hpp"
 #include "dwb_core/trajectory_utils.hpp"
 #include "angles/angles.h"
+#include <tf2/convert.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include "tf2_ros/transform_broadcaster.h"
+#include <tf2/LinearMath/Quaternion.h>
+#include "tf2_ros/transform_listener.h"
+#include "tf2/utils.h"
+#include "tf2/LinearMath/Transform.h"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/buffer_interface.h"
+#include "tf2/buffer_core.h"
+#include "tf2_ros/message_filter.h"
+#include "tf2_ros/create_timer_ros.h"
 #include "nav2_util/robot_utils.hpp"
 
 PLUGINLIB_EXPORT_CLASS(mcr_tracking_components::KeepTargetInsightCritic, dwb_core::TrajectoryCritic)
@@ -65,6 +77,13 @@ void KeepTargetInsightCritic::onInit()
     node,
     dwb_plugin_name_ + "." + name_ + ".lookahead_time", -1.0);
 
+  tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
+  auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
+    node->get_node_base_interface(),
+    node->get_node_timers_interface());
+  tf_buffer_->setCreateTimerInterface(timer_interface);
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
+  
   pose_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
     "/tracking_pose",
     rclcpp::SensorDataQoS(),
@@ -121,7 +140,13 @@ double KeepTargetInsightCritic::scoreRotation(const dwb_msgs::msg::Trajectory2D 
 
 void KeepTargetInsightCritic::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
-  latest_pose_ = *msg;
+  if (!nav2_util::transformPoseInTargetFrame(
+      *msg, latest_pose_, *tf_buffer_,
+      "base_link"))
+  {
+    throw nav2_core::TFException("Transformed error in target updater node");
+  }
+
   valid_data_ = true;
 }
 

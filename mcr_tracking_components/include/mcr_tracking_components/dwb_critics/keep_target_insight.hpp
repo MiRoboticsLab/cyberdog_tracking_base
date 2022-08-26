@@ -64,6 +64,8 @@ private:
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
   geometry_msgs::msg::PoseStamped latest_pose_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   double lookahead_time_;
   double normal_sacle_;
   double goal_yaw_, cur_yaw_;
