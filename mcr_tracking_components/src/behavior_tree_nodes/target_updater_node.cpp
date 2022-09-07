@@ -78,10 +78,10 @@ TargetUpdater::TargetUpdater(
 
   std::string deriver_name;
   nav2_util::declare_parameter_if_not_declared(
-      node_, name + ".orientation_deriver",
+      node_, "orientation_deriver",
       rclcpp::ParameterValue(
           std::string("mcr_tracking_components::MeanOrientationDeriver")));
-  node_->get_parameter(name + ".orientation_deriver", deriver_name);
+  node_->get_parameter("orientation_deriver", deriver_name);
 
   nav2_util::declare_parameter_if_not_declared(
     node_, "dist_throttle", rclcpp::ParameterValue(0.3));

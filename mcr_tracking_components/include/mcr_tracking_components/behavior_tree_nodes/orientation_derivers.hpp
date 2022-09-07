@@ -70,6 +70,18 @@ public:
   geometry_msgs::msg::PoseStamped deriveOrientation(const geometry_msgs::msg::PoseStamped::SharedPtr msg) override;
 };
 
+#include "nav_msgs/msg/path.hpp"
+class FittingOrientationDeriver : public OrientationDeriver{
+public:
+  void initialize(const rclcpp::Node::SharedPtr node, 
+                  const std::string &global_frame, 
+                  const std::shared_ptr<tf2_ros::Buffer> tf_buffer) override;
+  geometry_msgs::msg::PoseStamped deriveOrientation(const geometry_msgs::msg::PoseStamped::SharedPtr msg) override;
+private:
+  nav_msgs::msg::Path spline(const std::vector<geometry_msgs::msg::PoseStamped> & poses);
+  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
+
+};
 
 }  // namespace mcr_tracking_components
 

@@ -7,6 +7,7 @@ bt_navigatortracking_target_rclcpp_node:
     overtime: 1.50
     max_pose_inuse: 0
     dist_throttle: 0.0
+    orientation_deriver: mcr_tracking_components::FittingOrientationDeriver
 
 local_costmap_tracking:
   local_costmap_tracking:
