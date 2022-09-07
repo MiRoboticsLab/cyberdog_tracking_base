@@ -23,13 +23,20 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include <visualization_msgs/msg/marker.hpp>
 #include "behaviortree_cpp_v3/decorator_node.h"
-
+#include "pluginlib/class_list_macros.hpp"
+#include "pluginlib/class_loader.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "nav_msgs/msg/path.hpp"
+#include "mcr_tracking_components/behavior_tree_nodes/orientation_derivers.hpp"
 
 namespace mcr_tracking_components
 {
-
+static double poseDistanceSq(const geometry_msgs::msg::Pose & p1, const geometry_msgs::msg::Pose & p2)
+{
+  double dx = p2.position.x - p1.position.x;
+  double dy = p2.position.y - p1.position.y;
+  return dx * dx + dy * dy;
+}
 /**
  * @brief A BT::DecoratorNode that subscribes to a goal topic and updates
  * the current goal on the blackboard
@@ -98,8 +105,6 @@ private:
   void checkAndDerivateAngle();
   void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses);
   bool isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
-  geometry_msgs::msg::Quaternion derivedOrientation(
-    geometry_msgs::msg::PoseStamped::SharedPtr msg);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr transformed_pose_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
@@ -115,7 +120,6 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
-  std::deque<geometry_msgs::msg::PoseStamped> historical_raw_poses_;
   int max_pose_inuse_;
   double dist_sq_throttle_, overtime_;
   float distance_;
@@ -123,6 +127,8 @@ private:
   rclcpp::Node::SharedPtr node_;
   rclcpp::CallbackGroup::SharedPtr callback_group_;
   rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
+  pluginlib::ClassLoader<OrientationDeriver> deriver_loader_;  
+  OrientationDeriver::Ptr orientation_deriver_;
 };
 
 }  // namespace mcr_tracking_components

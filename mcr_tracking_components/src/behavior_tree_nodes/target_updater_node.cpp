@@ -49,7 +49,9 @@ using std::placeholders::_1;
 TargetUpdater::TargetUpdater(
   const std::string & name,
   const BT::NodeConfiguration & conf)
-: BT::DecoratorNode(name, conf)
+: BT::DecoratorNode(name, conf),
+  deriver_loader_("mcr_tracking_components", "mcr_tracking_components::OrientationDeriver")
+
 {
   node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
 
@@ -73,6 +75,13 @@ TargetUpdater::TargetUpdater(
   nav2_util::declare_parameter_if_not_declared(
     node_, "max_pose_inuse", rclcpp::ParameterValue(5));
   node_->get_parameter("max_pose_inuse", max_pose_inuse_);
+
+  std::string deriver_name;
+  nav2_util::declare_parameter_if_not_declared(
+      node_, name + ".orientation_deriver",
+      rclcpp::ParameterValue(
+          std::string("mcr_tracking_components::MeanOrientationDeriver")));
+  node_->get_parameter(name + ".orientation_deriver", deriver_name);
 
   nav2_util::declare_parameter_if_not_declared(
     node_, "dist_throttle", rclcpp::ParameterValue(0.3));
@@ -113,6 +122,9 @@ TargetUpdater::TargetUpdater(
         1)).transient_local().reliable());
 
   last_goal_received_.header.frame_id = global_frame_;
+
+  orientation_deriver_ = deriver_loader_.createUniqueInstance(deriver_name);
+  orientation_deriver_->initialize(node_, global_frame_, tf_buffer_);
 }
 
 inline BT::NodeStatus TargetUpdater::tick()
@@ -226,12 +238,7 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
   return global_frame_pose;
 }
 
-double poseDistanceSq(const geometry_msgs::msg::Pose & p1, const geometry_msgs::msg::Pose & p2)
-{
-  double dx = p2.position.x - p1.position.x;
-  double dy = p2.position.y - p1.position.y;
-  return dx * dx + dy * dy;
-}
+
 
 bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
@@ -255,60 +262,6 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
   return true;
 }
 
-
-geometry_msgs::msg::Quaternion TargetUpdater::derivedOrientation(
-  geometry_msgs::msg::PoseStamped::SharedPtr msg)
-{
-
-  geometry_msgs::msg::PoseStamped msg_with_orientation, msg_with_orientation1;
-
-
-  //该模式下的跟随位姿对应在全局坐标系上的位姿
-  if (!nav2_util::transformPoseInTargetFrame(
-      *msg, msg_with_orientation, *tf_buffer_,
-      global_frame_))
-  {
-    RCLCPP_ERROR(node_->get_logger(), "Faild transform target pose to %s", global_frame_.c_str());
-    throw nav2_core::TFException("Transformed error in target updater node");
-  }
-
-  //push pose when robot has moved a little.
-  if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3) {
-    historical_raw_poses_.push_front(msg_with_orientation);
-  }
-  // deal with pose's orientation
-  while (historical_raw_poses_.size() > 4) {
-    historical_raw_poses_.pop_back();
-  }
-  double theta = 0.0;
-
-  int k = 0;
-  for (auto it = historical_raw_poses_.begin() + 1; it < historical_raw_poses_.end(); it++) {
-    double t = atan2(
-      msg_with_orientation.pose.position.y - it->pose.position.y,
-      msg_with_orientation.pose.position.x - it->pose.position.x);
-    if(t > -M_PI && t < -M_PI_2) t += 2 * M_PI;
-    theta += t;
-    k += 1;
-  }
-  theta = theta / k;
-
-  msg_with_orientation.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(theta);
-
-  if (!nav2_util::transformPoseInTargetFrame(
-      msg_with_orientation, msg_with_orientation1, *tf_buffer_,
-      msg->header.frame_id))
-  {
-    RCLCPP_ERROR(
-      node_->get_logger(), "Faild transform target pose to %s", msg->header.frame_id.c_str());
-    throw nav2_core::TFException("Transformed error in target updater node");
-  }
-
-
-  return msg_with_orientation1.pose.orientation;
-}
-
-
 void
 TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
@@ -320,8 +273,7 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     return;
   }
 
-  geometry_msgs::msg::PoseStamped msg_with_orientation = *msg;
-  msg_with_orientation.pose.orientation = derivedOrientation(msg);
+  geometry_msgs::msg::PoseStamped msg_with_orientation = orientation_deriver_->deriveOrientation(msg);
 
   last_goal_transformed_ = translatePoseByMode(msg_with_orientation);
 
