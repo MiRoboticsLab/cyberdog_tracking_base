@@ -19,8 +19,7 @@
 #include "nav2_util/node_utils.hpp"
 #include "nav2_util/geometry_utils.hpp"
 #include "nav2_core/exceptions.hpp"
-#include "Eigen/Dense"
-#include "Eigen/QR"
+
 
 
 namespace mcr_tracking_components
@@ -212,6 +211,88 @@ nav_msgs::msg::Path FittingOrientationDeriver::spline(
 
 
 
+
+void KalmanOrientationDeriver::initialize(const rclcpp::Node::SharedPtr node,
+                                        const std::string &global_frame, 
+                                        const std::shared_ptr<tf2_ros::Buffer> tf_buffer){
+  OrientationDeriver::initialize(node, global_frame, tf_buffer);
+  x_ << 0.0,0.0,0.0,0.0;            // 4x1  initial state.
+  U_ << 0.0,0.0,0.0,0.0;            // 4x1  external motion.
+  P_ << 10.0, 0.0, 0.0, 0.0,
+        0.0, 10.0, 0.0, 0.0,
+        0.0, 0.0, 10.0, 0.0,
+        0.0, 0.0, 0.0, 10.0;        // initial uncertainty.
+  F_ << 1.0, 0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0, 1.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0;         // next state function.
+  I_ = Eigen::Matrix4d::Identity(); // identity matrix.
+  H_ << 1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0;         // measurement function.
+  R_ << 1.0, 0.0, 0.0, 10;          // measurement uncertainty.
+
+}
+
+geometry_msgs::msg::PoseStamped 
+KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStamped::SharedPtr msg){
+  geometry_msgs::msg::PoseStamped msg_with_orientation, msg_with_orientation1;
+  //该模式下的跟随位姿对应在全局坐标系上的位姿
+  if (!nav2_util::transformPoseInTargetFrame(
+      *msg, msg_with_orientation, *tf_buffer_,
+      global_frame_))
+  {
+    RCLCPP_ERROR(node_->get_logger(), "Faild transform target pose to %s", global_frame_.c_str());
+    throw nav2_core::TFException("Transformed error in target updater node");
+  }
+
+  //push pose when robot has moved a little.
+  if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3) {
+    historical_raw_poses_.push_front(msg_with_orientation);
+  }
+  // deal with pose's orientation
+  while (historical_raw_poses_.size() > 4) {
+    historical_raw_poses_.pop_back();
+  }
+  double theta = 0.0;
+
+  double x = historical_raw_poses_.back().pose.position.x;
+  double y = historical_raw_poses_.back().pose.position.y;
+
+  x_ << x, y, 0.0, 0.0;
+  for(auto it = historical_raw_poses_.rbegin(); it != historical_raw_poses_.rend(); it++){
+    // measurement update
+    Eigen::Matrix<double, 2, 1> z;
+    z << it->pose.position.x, it->pose.position.y;
+    Eigen::Matrix<double, 2, 1> y = z - (H_ * x_);
+    Eigen::Matrix<double, 2, 2> S = H_ * P_ * H_.transpose() + R_;
+    Eigen::Matrix<double, 4, 2> K = P_ * H_.transpose() * S.inverse();
+    x_ = x_ + (K * y);
+    P_ = (I_ - (K * H_)) * P_;
+
+    // prediction
+    x_ = (F_ * x_) + U_;
+    P_ = F_ * P_ * F_.transpose();
+  }
+
+
+  theta = atan2(x_(3,0), x_(2,0));
+
+  msg_with_orientation.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(theta);
+
+  if (!nav2_util::transformPoseInTargetFrame(
+      msg_with_orientation, msg_with_orientation1, *tf_buffer_,
+      msg->header.frame_id))
+  {
+    RCLCPP_ERROR(
+      node_->get_logger(), "Faild transform target pose to %s", msg->header.frame_id.c_str());
+    throw nav2_core::TFException("Transformed error in target updater node");
+  }
+
+  msg_with_orientation1.pose.position = msg->pose.position;
+
+  return msg_with_orientation1;
+}
+
 } // namespace mcr_tracking_components
 
 #include "pluginlib/class_list_macros.hpp"
@@ -222,4 +303,8 @@ PLUGINLIB_EXPORT_CLASS(
 
 PLUGINLIB_EXPORT_CLASS(
   mcr_tracking_components::FittingOrientationDeriver,
+  mcr_tracking_components::OrientationDeriver)  
+
+PLUGINLIB_EXPORT_CLASS(
+  mcr_tracking_components::KalmanOrientationDeriver,
   mcr_tracking_components::OrientationDeriver)  

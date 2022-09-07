@@ -6,5 +6,8 @@
     <class type="mcr_tracking_components::FittingOrientationDeriver" base_class_type="mcr_tracking_components::OrientationDeriver">
       <description>least-square polynomial fitting for orientation from the target's historical poses.</description>
     </class>
+    <class type="mcr_tracking_components::KalmanOrientationDeriver" base_class_type="mcr_tracking_components::OrientationDeriver">
+      <description>kalman filter for orientation from the target's historical poses.</description>
+    </class>
   </library>  
 </class_libraries>

@@ -38,6 +38,9 @@
 #include "tf2_ros/create_timer_ros.h"
 #include "rclcpp/rclcpp.hpp"
 #include "nav_msgs/msg/path.hpp"
+#include "Eigen/Eigen"
+#include "Eigen/Dense"
+#include "Eigen/QR"
 
 namespace mcr_tracking_components
 {
@@ -80,6 +83,21 @@ public:
 private:
   nav_msgs::msg::Path spline(const std::vector<geometry_msgs::msg::PoseStamped> & poses);
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr plan_publisher_;
+
+};
+
+class KalmanOrientationDeriver : public OrientationDeriver{
+public:
+  void initialize(const rclcpp::Node::SharedPtr node, 
+                  const std::string &global_frame, 
+                  const std::shared_ptr<tf2_ros::Buffer> tf_buffer) override;
+  geometry_msgs::msg::PoseStamped deriveOrientation(const geometry_msgs::msg::PoseStamped::SharedPtr msg) override;
+
+private:
+  Eigen::Matrix<double, 4, 1> x_, U_;   // initial state, external motion.
+  Eigen::Matrix4d P_, F_, I_;  // initial uncertainty, next state function, identity matrix.
+  Eigen::Matrix<double, 2, 4> H_; // measurement function.
+  Eigen::Matrix2d R_; // measurement uncertainty.
 
 };
 
