@@ -147,7 +147,6 @@ inline BT::NodeStatus TargetUpdater::tick()
 
   if (rclcpp::Time(last_goal_received_.header.stamp) > rclcpp::Time(goal.header.stamp)) {
     goal = last_goal_received_;
-    // goal = historical_poses_.front();
   }
 
   if (node_->count_subscribers(spline_poses_pub_->get_topic_name()) > 0) {
@@ -446,7 +445,7 @@ void TargetUpdater::truncatHinderPosesAndAppendCurPose()
   double p1_x, p1_y, p2_x, p2_y;
   p2_x = cos(yaw);
   p2_y = sin(yaw);
-  while (historical_poses_.size() > 0) {
+  while (historical_poses_.size() > 1) {
 
     p1_x = historical_poses_.back().pose.position.x -
       pose_based_on_global_frame.pose.position.x;
