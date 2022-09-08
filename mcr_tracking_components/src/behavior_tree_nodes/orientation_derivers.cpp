@@ -218,10 +218,10 @@ void KalmanOrientationDeriver::initialize(const rclcpp::Node::SharedPtr node,
   OrientationDeriver::initialize(node, global_frame, tf_buffer);
   x_ << 0.0,0.0,0.0,0.0;            // 4x1  initial state.
   U_ << 0.0,0.0,0.0,0.0;            // 4x1  external motion.
-  P_ << 10.0, 0.0, 0.0, 0.0,
-        0.0, 10.0, 0.0, 0.0,
-        0.0, 0.0, 10.0, 0.0,
-        0.0, 0.0, 0.0, 10.0;        // initial uncertainty.
+  P_ << 0.1, 0.0, 0.0, 0.0,
+        0.0, 0.1, 0.0, 0.0,
+        0.0, 0.0, 0.1, 0.0,
+        0.0, 0.0, 0.0, 0.1;        // initial uncertainty.
   F_ << 1.0, 0.0, 1.0, 0.0,
         0.0, 1.0, 0.0, 1.0,
         0.0, 0.0, 1.0, 0.0,
@@ -229,7 +229,7 @@ void KalmanOrientationDeriver::initialize(const rclcpp::Node::SharedPtr node,
   I_ = Eigen::Matrix4d::Identity(); // identity matrix.
   H_ << 1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0;         // measurement function.
-  R_ << 1.0, 0.0, 0.0, 10;          // measurement uncertainty.
+  R_ << 1.0, 0.0, 0.0, 1.0;          // measurement uncertainty.
 
 }
 
@@ -257,9 +257,10 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
 
   double x = historical_raw_poses_.back().pose.position.x;
   double y = historical_raw_poses_.back().pose.position.y;
+  rclcpp::Time t1 = historical_raw_poses_.back().header.stamp;
 
   x_ << x, y, 0.0, 0.0;
-  for(auto it = historical_raw_poses_.rbegin(); it != historical_raw_poses_.rend(); it++){
+  for(auto it = historical_raw_poses_.rbegin() + 1; it != historical_raw_poses_.rend(); it++){
     // measurement update
     Eigen::Matrix<double, 2, 1> z;
     z << it->pose.position.x, it->pose.position.y;
@@ -268,14 +269,19 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     Eigen::Matrix<double, 4, 2> K = P_ * H_.transpose() * S.inverse();
     x_ = x_ + (K * y);
     P_ = (I_ - (K * H_)) * P_;
-
     // prediction
+    rclcpp::Time t2 = it->header.stamp;
+    double dt = (t2 - t1).seconds();
+    F_(0, 2) = dt;
+    F_(1, 3) = dt;
     x_ = (F_ * x_) + U_;
     P_ = F_ * P_ * F_.transpose();
+    t1 = t2;
   }
 
 
   theta = atan2(x_(3,0), x_(2,0));
+  
 
   msg_with_orientation.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(theta);
 
