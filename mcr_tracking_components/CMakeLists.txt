@@ -60,7 +60,11 @@ list(APPEND plugin_libs nav2_compute_path_spline_poses_action_bt_node)
 add_library(nav2_spin_and_search_action_bt_node SHARED src/behavior_tree_nodes/spin_and_search_action.cpp)
 list(APPEND plugin_libs nav2_spin_and_search_action_bt_node)
 
-add_library(nav2_tracking_mode_decider_node_bt_node SHARED src/behavior_tree_nodes/tracking_mode_decider_node.cpp)
+add_library(nav2_tracking_mode_decider_node_bt_node 
+            SHARED 
+            src/behavior_tree_nodes/tracking_mode_decider_node.cpp
+            src/behavior_tree_nodes/orientation_derivers.cpp
+            )
 list(APPEND plugin_libs nav2_tracking_mode_decider_node_bt_node)
 
 add_library(nav2_target_updater_node_bt_node SHARED src/behavior_tree_nodes/target_updater_node.cpp)
@@ -124,6 +128,7 @@ install(DIRECTORY include/
 
 install(FILES behavior_tree_nodes.xml DESTINATION share/${PROJECT_NAME})
 install(FILES controller_plugins.xml DESTINATION share/${PROJECT_NAME})
+install(FILES orientation_derivers.xml DESTINATION share/${PROJECT_NAME})
 install(FILES dwb_critics.xml DESTINATION share/${PROJECT_NAME})
 install(FILES recoveries.xml DESTINATION share/${PROJECT_NAME})
 install(FILES costmap_plugins.xml DESTINATION share/${PROJECT_NAME})
@@ -151,6 +156,7 @@ ament_export_libraries(
 ament_export_dependencies(${dependencies})
 pluginlib_export_plugin_description_file(nav2_core controller_plugins.xml)
 pluginlib_export_plugin_description_file(dwb_core dwb_critics.xml)
+pluginlib_export_plugin_description_file(mcr_tracking_components orientation_derivers.xml)
 pluginlib_export_plugin_description_file(nav2_core recoveries.xml)
 pluginlib_export_plugin_description_file(nav2_costmap_2d costmap_plugins.xml)
 ament_package()

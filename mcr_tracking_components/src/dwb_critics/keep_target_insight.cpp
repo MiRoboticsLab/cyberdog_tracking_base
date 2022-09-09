@@ -107,7 +107,11 @@ bool KeepTargetInsightCritic::prepare(
   const geometry_msgs::msg::Pose2D & /*goal*/,
   const nav_2d_msgs::msg::Path2D &)
 {
-  goal_yaw_ = atan2(latest_pose_.pose.position.y, latest_pose_.pose.position.x);
+  if(inuse_){
+    goal_yaw_ = atan2(latest_pose_.pose.position.y, latest_pose_.pose.position.x);
+  }else{
+    goal_yaw_ = tf2::getYaw(latest_pose_.pose.orientation);
+  }
   cur_yaw_ = pose.theta;
   return true;
 }
@@ -156,10 +160,12 @@ void KeepTargetInsightCritic::useCriticCallback(
 {
 
   if(request->data){
-    setScale(normal_sacle_);
+    // setScale(normal_sacle_);
+    inuse_ = true;
     response->message = "Module KeepTargetInsight started successfully.";
   }else {
-    setScale(0.0);
+    // setScale(0.0);
+    inuse_ = false;
     response->message = "Module KeepTargetInsight stopped successfully.";
   }
 
