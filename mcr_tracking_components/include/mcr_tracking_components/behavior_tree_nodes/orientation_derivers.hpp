@@ -54,11 +54,14 @@ public:
     node_ = node;
     global_frame_ = global_frame;
     tf_buffer_ = tf_buffer;
-    
+    vx_ = 0.0, vy_ = 0.0;
   }
   virtual geometry_msgs::msg::PoseStamped deriveOrientation(const geometry_msgs::msg::PoseStamped::SharedPtr msg)=0;
+  virtual double getVx(){return vx_;}
+  virtual double getVy(){return vy_;}
 protected:
   rclcpp::Node::SharedPtr node_;
+  double vx_, vy_;
   std::string global_frame_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::deque<geometry_msgs::msg::PoseStamped> historical_raw_poses_;

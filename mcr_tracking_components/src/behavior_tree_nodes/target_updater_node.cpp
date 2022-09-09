@@ -183,23 +183,30 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
   geometry_msgs::msg::PoseStamped tpose = pose;
   transform.header = pose.header;
   transform.child_frame_id = pose.header.frame_id;
-
+  double vx = orientation_deriver_->getVx();
+  double vy = orientation_deriver_->getVy();
+  double N = 4.0;
+  if(fabs(vx) < 0.1 && fabs(vy) < 0.1){
+    N = 2.0;
+  }else{
+    N = 4.0;
+  }
   switch (current_mode_) {
 
     case mcr_msgs::action::TargetTracking::Goal::LEFT: {
         //左侧 1m
         double yaw = tf2::getYaw(pose.pose.orientation);
-        transform.transform.translation.x = cos(yaw + 3.14 / 2);
-        transform.transform.translation.y = sin(yaw + 3.14 / 2);
+        transform.transform.translation.x = 1.5 * cos(yaw + 3.14 / N);
+        transform.transform.translation.y = 1.5 * sin(yaw + 3.14 / N);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         break;
       }
-    case mcr_msgs::action::TargetTracking::Goal::RIGHT:    {
+    case mcr_msgs::action::TargetTracking::Goal::RIGHT: {
         //右侧 1m
         double yaw = tf2::getYaw(pose.pose.orientation);
-        transform.transform.translation.x = cos(yaw - 3.14 / 2);
-        transform.transform.translation.y = sin(yaw - 3.14 / 2);
+        transform.transform.translation.x = 1.5 * cos(yaw - 3.14 / N);
+        transform.transform.translation.y = 1.5 * sin(yaw - 3.14 / N);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         break;
@@ -252,11 +259,11 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
       global_frame_.c_str());
     return false;
   }
-  if (poseDistanceSq(last_goal_received_.pose, pose_based_on_global_frame.pose) <
-    dist_sq_throttle_)
-  {
-    return false;
-  }
+  // if (poseDistanceSq(last_goal_received_.pose, pose_based_on_global_frame.pose) <
+  //   dist_sq_throttle_)
+  // {
+  //   return false;
+  // }
   last_goal_received_ = pose_based_on_global_frame;
   return true;
 }
@@ -276,7 +283,6 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
 
   last_goal_transformed_ = translatePoseByMode(msg_with_orientation);
 
-  // last_goal_transformed_ = translatePoseByMode(*msg);
   //visu debug info
   if (transformed_pose_pub_ != nullptr &&
     node_->count_subscribers(transformed_pose_pub_->get_topic_name()) > 0)

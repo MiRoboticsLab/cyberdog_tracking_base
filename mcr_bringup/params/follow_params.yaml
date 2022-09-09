@@ -90,9 +90,9 @@ controller_server:
       plugin: "dwb_core::DWBLocalPlanner"
       costmap: local_costmap_tracking
       debug_trajectory_details: True
-      min_vel_x: -1.0
+      min_vel_x: -0.5
       min_vel_y: -0.5
-      max_vel_x: 1.0
+      max_vel_x: 1.5
       max_vel_y: 0.5
       max_vel_theta: 1.57
       min_speed_xy: 0.0

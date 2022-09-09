@@ -245,6 +245,14 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     throw nav2_core::TFException("Transformed error in target updater node");
   }
 
+  if(historical_raw_poses_.size() > 1){
+    rclcpp::Time t1 = msg->header.stamp;
+    rclcpp::Time t0 = historical_raw_poses_[0].header.stamp;
+    double dt = (t1 - t0).seconds();
+    vx_ = (msg_with_orientation.pose.position.x - historical_raw_poses_[0].pose.position.x) / dt;
+    vy_ = (msg_with_orientation.pose.position.y - historical_raw_poses_[0].pose.position.y) / dt;
+  }
+
   //push pose when robot has moved a little.
   if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3) {
     historical_raw_poses_.push_front(msg_with_orientation);
@@ -257,8 +265,7 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
 
   double x = historical_raw_poses_.back().pose.position.x;
   double y = historical_raw_poses_.back().pose.position.y;
-  rclcpp::Time t1 = historical_raw_poses_.back().header.stamp;
-
+  
   x_ << x, y, 0.0, 0.0;
   for(auto it = historical_raw_poses_.rbegin() + 1; it != historical_raw_poses_.rend(); it++){
     // measurement update
@@ -270,18 +277,11 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     x_ = x_ + (K * y);
     P_ = (I_ - (K * H_)) * P_;
     // prediction
-    rclcpp::Time t2 = it->header.stamp;
-    double dt = (t2 - t1).seconds();
-    F_(0, 2) = dt;
-    F_(1, 3) = dt;
     x_ = (F_ * x_) + U_;
     P_ = F_ * P_ * F_.transpose();
-    t1 = t2;
   }
 
-
-  theta = atan2(x_(3,0), x_(2,0));
-  
+  theta = atan2(x_(3, 0), x_(2, 0));
 
   msg_with_orientation.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(theta);
 
