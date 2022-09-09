@@ -72,6 +72,7 @@ inline BT::NodeStatus ChangeGait::tick() {
   // RCLCPP_ERROR(node_->get_logger(), "ChangeGait failed: didn't wait for
   // respose."); return BT::NodeStatus::FAILURE;
   std_msgs::msg::Int8 gait;
+  unsigned int next_start;
   gait.data = 3;
   change_gait_pub_->publish(gait);
   RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.",
@@ -86,6 +87,8 @@ inline BT::NodeStatus ChangeGait::tick() {
   change_gait_pub_->publish(gait);
   RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.",
               gait.data);
+  next_start = 1;
+  setOutput("next_action_start", next_start);
   sleep(2);
   return BT::NodeStatus::SUCCESS;
 }

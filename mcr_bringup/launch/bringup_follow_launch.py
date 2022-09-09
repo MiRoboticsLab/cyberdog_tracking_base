@@ -26,14 +26,14 @@ from nav2_common.launch import RewrittenYaml
 def generate_launch_description():
     # Get the launch directory
 
-    sudoPassword = '123'
-    command = 'chmod a+rw /dev/ttyTHS0'
-    command1 = 'usermod -aG dialout mi'
-    command_route = 'route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0'
+    # sudoPassword = '123'
+    # command = 'chmod a+rw /dev/ttyTHS0'
+    # command1 = 'usermod -aG dialout mi'
+    # command_route = 'route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0'
 
-    os.system('echo %s|sudo -S %s' % (sudoPassword, command))
-    os.system('echo %s|sudo -S %s' % (sudoPassword, command1))
-    os.system('echo %s|sudo -S %s' % (sudoPassword, command_route))
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command))
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command1))
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command_route))
 
     package_dir = get_package_share_directory('mcr_bringup')
     param_dir = os.path.join(package_dir, 'params')
@@ -101,6 +101,14 @@ def generate_launch_description():
                                 name='static_tf_pub_laser',
                                 arguments=['0.179', '0', '0.0837','0', '0', '0', '1','base_link_leg','lidar_link'],
                                 )
+
+    velocity_adaptor_cmd = Node(
+        package='velocity_adaptor',
+        executable='velocity_adaptor',
+        name='velocity_adaptor',
+        output='screen',
+        namespace='/')
+
     start_odom_cmd = Node(
         package='odom_publisher',
         executable='odom_publisher',
@@ -200,12 +208,13 @@ def generate_launch_description():
                         {'node_names': lifecycle_nodes}]),
 
         tf2_node_vodom_map,
+        velocity_adaptor_cmd,
         #start_odom_cmd,
-        Node(
-            package='motion_sender',
-            executable='sendlcm',
-            name='motion_sender',
-            output='screen',
-            namespace='/'),
+        # Node(
+        #     package='motion_sender',
+        #     executable='sendlcm',
+        #     name='motion_sender',
+        #     output='screen',
+        #     namespace='/'),
         tf2_node
     ])

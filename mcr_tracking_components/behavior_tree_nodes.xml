@@ -18,12 +18,20 @@
     </Action>
     <Action ID="ChangeGait">
       <input_port name="gait">gait to use next. </input_port>
+      <output_port name="next_action_start">start signal to next action</output_port>
     </Action>
 
     <Action ID="SpinAndSearch">
       <input_port name="search_dist">Spin distance</input_port>
     </Action>
-
+    <Action ID="SeatAdjustClient">
+      <input_port name="start">To start the action. </input_port>
+    </Action>
+    <Action ID="TruncatePath">
+        <input_port name="distance">Distance before goal to truncate</input_port>
+        <input_port name="input_path">Path to truncate</input_port>
+        <output_port name="output_path">Truncated path to utilize</output_port>
+    </Action>
     <!-- ############################### CONDITION NODES ############################## -->
     <Condition ID="IsBatteryInCharge">
       <input_port name="min_battery">Min battery % or voltage before triggering</input_port>

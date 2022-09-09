@@ -102,6 +102,7 @@ bt_navigator:
       - nav2_goal_checker_selector_bt_node
       - nav2_charger_updater_node_bt_node
       - nav2_change_gait_node_bt_node
+      - nav2_seat_adjust_client_node_bt_node
       - nav2_is_battery_in_charge_condition_bt_node
 
 bt_navigator_rclcpp_node:

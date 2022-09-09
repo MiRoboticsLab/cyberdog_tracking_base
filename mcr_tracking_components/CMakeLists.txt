@@ -72,6 +72,9 @@ list(APPEND plugin_libs nav2_charger_updater_node_bt_node)
 add_library(nav2_change_gait_node_bt_node SHARED src/behavior_tree_nodes/change_gait_node.cpp)
 list(APPEND plugin_libs nav2_change_gait_node_bt_node)
 
+add_library(nav2_seat_adjust_client_node_bt_node SHARED src/behavior_tree_nodes/seat_adjust_client_node.cpp)
+list(APPEND plugin_libs nav2_seat_adjust_client_node_bt_node)
+
 add_library(nav2_is_battery_in_charge_condition_bt_node SHARED src/behavior_tree_nodes/is_battery_in_charge_condition.cpp)
 list(APPEND plugin_libs nav2_is_battery_in_charge_condition_bt_node)
 
