@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="MainTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="MainTree">
+        <Control ID="RecoveryNode" name="TargetTracking" number_of_retries="5">
+            <SequenceStar>
+                <Action ID="ChangeGait" gait="7"/>
+                <Control ID="PipelineSequence" name="NavigateWithReplanning">
+                    <Decorator ID="RateController" hz="5.0">
+                        <Decorator ID="ChargerUpdater" output_exception_code="{exception}" output_goals="{updated_goals}">
+                            <Action ID="ComputePathSplinePoses" path="{path}" planner_id="SplinePlannerL" poses="{updated_goals}"/>
+                        </Decorator>
+                    </Decorator>
+                    <Action ID="FollowPath" controller_id="FollowPath" goal_checker_id="general_goal_checker" path="{path}" progress_checker_id="fake_progress_checker"/>
+                </Control>
+                <Action ID="ChangeGait" gait="2"/>
+                <Condition ID="IsBatteryInCharge"/>
+            </SequenceStar>
+            <ReactiveFallback name="RecoveryActions">
+                <Decorator ID="ExceptionVerify" exception_code="{exception}" expected_code="1000">
+                    <Action ID="SpinAndSearch" search_dist="1.57"/>
+                </Decorator>
+                <Decorator ID="ExceptionVerify" exception_code="{exception}" expected_code="3000">
+                    <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="global_costmap/clear_entirely_global_costmap"/>
+                </Decorator>
+                <ForceSuccess>
+                    <Decorator ID="ExceptionVerify" exception_code="{exception}" expected_code="4000">
+                        <Action ID="ClearEntireCostmap" name="ClearEntireLocalCostmap" service_name="local_costmap/clear_entirely_local_costmap"/>
+                    </Decorator>
+                </ForceSuccess>
+            </ReactiveFallback>
+        </Control>
+    </BehaviorTree>
+</root>
+

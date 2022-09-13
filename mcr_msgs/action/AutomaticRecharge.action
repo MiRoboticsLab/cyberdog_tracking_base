@@ -1,0 +1,16 @@
+
+# 行为树的名字（预留）
+string behavior_tree
+---
+#result definition
+# 结果（预留）
+std_msgs/Empty result
+---
+# 当前与目标之间的实际距离
+float32 current_distance    
+# 跟随当前目标总计时间 
+builtin_interfaces/Duration tracking_time  
+# 经历过异常自恢复的次数
+int16 number_of_recoveries    
+# 异常码
+int16 exception_code

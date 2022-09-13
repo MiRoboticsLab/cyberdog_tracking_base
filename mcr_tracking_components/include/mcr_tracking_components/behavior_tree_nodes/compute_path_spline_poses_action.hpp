@@ -19,30 +19,29 @@
 #include <vector>
 
 #include "mcr_msgs/action/compute_path_spline_poses.hpp"
-#include "nav_msgs/msg/path.h"
 #include "nav2_behavior_tree/bt_action_node.hpp"
+#include "nav_msgs/msg/path.h"
 
-namespace mcr_tracking_components
-{
-
+namespace mcr_tracking_components {
 
 /**
- * @brief A mcr_tracking_components::BtActionNode class that wraps nav2_msgs::action::ComputePathSplinePoses
+ * @brief A mcr_tracking_components::BtActionNode class that wraps
+ * nav2_msgs::action::ComputePathSplinePoses
  */
 class ComputePathSplinePosesAction
-  : public nav2_behavior_tree::BtActionNode<mcr_msgs::action::ComputePathSplinePoses>
-{
-public:
+    : public nav2_behavior_tree::BtActionNode<
+          mcr_msgs::action::ComputePathSplinePoses> {
+ public:
   /**
-   * @brief A constructor for mcr_tracking_components::ComputePathSplinePosesAction
+   * @brief A constructor for
+   * mcr_tracking_components::ComputePathSplinePosesAction
    * @param xml_tag_name Name for the XML tag for this node
    * @param action_name Action name this node creates a client for
    * @param conf BT node configuration
    */
-  ComputePathSplinePosesAction(
-    const std::string & xml_tag_name,
-    const std::string & action_name,
-    const BT::NodeConfiguration & conf);
+  ComputePathSplinePosesAction(const std::string& xml_tag_name,
+                               const std::string& action_name,
+                               const BT::NodeConfiguration& conf);
 
   /**
    * @brief Function to perform some user-defined operation on tick
@@ -50,7 +49,8 @@ public:
   void on_tick() override;
 
   /**
-   * @brief Function to perform some user-defined operation upon successful completion of the action
+   * @brief Function to perform some user-defined operation upon successful
+   * completion of the action
    */
   BT::NodeStatus on_success() override;
 
@@ -58,16 +58,14 @@ public:
    * @brief Creates list of BT ports
    * @return BT::PortsList Containing basic ports along with node-specific ports
    */
-  static BT::PortsList providedPorts()
-  {
-    return providedBasicPorts(
-      {
-        BT::OutputPort<nav_msgs::msg::Path>("path", "Path created by ComputePathThroughPoses node"),
+  static BT::PortsList providedPorts() {
+    return providedBasicPorts({
+        BT::OutputPort<nav_msgs::msg::Path>(
+            "path", "Path created by ComputePathThroughPoses node"),
         BT::InputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
-          "poses",
-          "Destinations to plan splined"),
+            "poses", "Destinations to plan splined"),
         BT::InputPort<std::string>("planner_id", ""),
-      });
+    });
   }
 };
 

@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/SwitchMode.srv"
   "action/ComputePathSplinePoses.action"
   "action/TargetTracking.action"
+  "action/AutomaticRecharge.action"
   DEPENDENCIES builtin_interfaces geometry_msgs std_msgs action_msgs nav_msgs
 )
 

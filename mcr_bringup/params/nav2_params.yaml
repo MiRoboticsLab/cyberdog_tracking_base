@@ -1,51 +1,3 @@
-amcl:
-  ros__parameters:
-    use_sim_time: True
-    alpha1: 0.2
-    alpha2: 0.2
-    alpha3: 0.2
-    alpha4: 0.2
-    alpha5: 0.2
-    base_frame_id: "base_footprint"
-    beam_skip_distance: 0.5
-    beam_skip_error_threshold: 0.9
-    beam_skip_threshold: 0.3
-    do_beamskip: false
-    global_frame_id: "map"
-    lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
-    laser_max_range: 100.0
-    laser_min_range: -1.0
-    laser_model_type: "likelihood_field"
-    max_beams: 60
-    max_particles: 2000
-    min_particles: 500
-    odom_frame_id: "odom"
-    pf_err: 0.05
-    pf_z: 0.99
-    recovery_alpha_fast: 0.0
-    recovery_alpha_slow: 0.0
-    resample_interval: 1
-    robot_model_type: "differential"
-    save_pose_rate: 0.5
-    sigma_hit: 0.2
-    tf_broadcast: true
-    transform_tolerance: 1.0
-    update_min_a: 0.2
-    update_min_d: 0.25
-    z_hit: 0.5
-    z_max: 0.05
-    z_rand: 0.5
-    z_short: 0.05
-    scan_topic: scan
-
-amcl_map_client:
-  ros__parameters:
-    use_sim_time: True
-
-amcl_rclcpp_node:
-  ros__parameters:
-    use_sim_time: True
 
 bt_navigator:
   ros__parameters:
@@ -57,49 +9,53 @@ bt_navigator:
     default_server_timeout: 20
     enable_groot_monitoring: False
     groot_zmq_publisher_port: 1789
-    groot_zmq_server_port: 1887    
+    groot_zmq_server_port: 1887
     default_target_tracking_bt_xml: target_tracking.xml
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
     # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
     plugin_lib_names:
-    - nav2_compute_path_to_pose_action_bt_node
-    - nav2_compute_path_spline_poses_action_bt_node
-    - nav2_compute_path_through_poses_action_bt_node
-    - nav2_follow_path_action_bt_node
-    - nav2_back_up_action_bt_node
-    - nav2_spin_action_bt_node
-    - nav2_spin_and_search_action_bt_node
-    - nav2_wait_action_bt_node
-    - nav2_clear_costmap_service_bt_node
-    - nav2_is_stuck_condition_bt_node
-    - nav2_goal_reached_condition_bt_node
-    - nav2_goal_updated_condition_bt_node
-    - nav2_initial_pose_received_condition_bt_node
-    - nav2_reinitialize_global_localization_service_bt_node
-    - nav2_rate_controller_bt_node
-    - nav2_distance_controller_bt_node
-    - nav2_speed_controller_bt_node
-    - nav2_truncate_path_action_bt_node
-    - nav2_goal_updater_node_bt_node
-    - nav2_tracking_mode_decider_node_bt_node
-    - nav2_target_updater_node_bt_node
-    - nav2_recovery_node_bt_node
-    - nav2_pipeline_sequence_bt_node
-    - nav2_round_robin_node_bt_node
-    - nav2_transform_available_condition_bt_node
-    - nav2_time_expired_condition_bt_node
-    - nav2_distance_traveled_condition_bt_node
-    - nav2_single_trigger_bt_node
-    - nav2_exception_verify_bt_node
-    - nav2_is_battery_low_condition_bt_node
-    - nav2_navigate_through_poses_action_bt_node
-    - nav2_navigate_to_pose_action_bt_node
-    - nav2_remove_passed_goals_action_bt_node
-    - nav2_planner_selector_bt_node
-    - nav2_controller_selector_bt_node
-    - nav2_goal_checker_selector_bt_node
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_compute_path_spline_poses_action_bt_node
+      - nav2_compute_path_through_poses_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_back_up_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_spin_and_search_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_clear_costmap_service_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_reinitialize_global_localization_service_bt_node
+      - nav2_rate_controller_bt_node
+      - nav2_distance_controller_bt_node
+      - nav2_speed_controller_bt_node
+      - nav2_truncate_path_action_bt_node
+      - nav2_goal_updater_node_bt_node
+      - nav2_tracking_mode_decider_node_bt_node
+      - nav2_target_updater_node_bt_node
+      - nav2_recovery_node_bt_node
+      - nav2_pipeline_sequence_bt_node
+      - nav2_round_robin_node_bt_node
+      - nav2_transform_available_condition_bt_node
+      - nav2_time_expired_condition_bt_node
+      - nav2_distance_traveled_condition_bt_node
+      - nav2_single_trigger_bt_node
+      - nav2_exception_verify_bt_node
+      - nav2_is_battery_low_condition_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      - nav2_navigate_to_pose_action_bt_node
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_planner_selector_bt_node
+      - nav2_controller_selector_bt_node
+      - nav2_goal_checker_selector_bt_node
+      - nav2_charger_updater_node_bt_node
+      - nav2_change_gait_node_bt_node
+      - nav2_seat_adjust_client_node_bt_node
+      - nav2_is_battery_in_charge_condition_bt_node
 
 bt_navigator_rclcpp_node:
   ros__parameters:
@@ -114,9 +70,9 @@ controller_server:
     min_theta_velocity_threshold: 0.001
     failure_tolerance: 0.3
     progress_checker_plugins: ["progress_checker", "fake_progress_checker"]
-    goal_checker_plugins: ["general_goal_checker", "xy_goal_checker"] # "precise_goal_checker"
-    controller_plugins: ["TrackingTarget", "FollowPath"]
-    controller_costmaps: ["local_costmap_tracking", "local_costmap"]
+    goal_checker_plugins: ["general_goal_checker", "xy_goal_checker", "general_goal_checkerL"] # "precise_goal_checker"
+    controller_plugins: ["TrackingTarget", "FollowPath", "TrackingTargetL"]
+    controller_costmaps: ["local_costmap_tracking", "local_costmap", "local_costmap_charging"]
 
     # Progress checker parameters
     progress_checker:
@@ -164,7 +120,16 @@ controller_server:
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      critics:
+        [
+          "RotateToGoal",
+          "Oscillation",
+          "BaseObstacle",
+          "GoalAlign",
+          "PathAlign",
+          "PathDist",
+          "GoalDist",
+        ]
       BaseObstacle.scale: 0.02
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
@@ -175,7 +140,7 @@ controller_server:
       RotateToGoal.scale: 32.0
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
-      
+
 controller_server_rclcpp_node:
   ros__parameters:
     use_sim_time: True
@@ -201,7 +166,7 @@ local_costmap:
       obstacle_layer:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
-        use_tracking_mode: False 
+        use_tracking_mode: False
         tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose
         observation_sources: scan
@@ -212,7 +177,7 @@ local_costmap:
           marking: True
           data_type: "LaserScan"
           obstacle_range: 10.0
-          raytrace_range: 10.0        
+          raytrace_range: 10.0
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -241,7 +206,7 @@ local_costmap:
       use_sim_time: True
   local_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True      
+      use_sim_time: True
 
 global_costmap:
   global_costmap:
@@ -301,8 +266,9 @@ planner_server:
   ros__parameters:
     expected_planner_frequency: 5.0
     use_sim_time: True
-    planner_plugins: ["GridBased", "SplinePlanner", "PotentialPlanner"]
-    planner_costmaps: ["rolling_window_costmap", "global_costmap"]
+    planner_plugins:
+      ["GridBased", "SplinePlanner", "PotentialPlanner", "SplinePlannerL"]
+    planner_costmaps: ["rolling_window_costmap", "global_costmap", "rolling_costmap_charging"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: global_costmap
@@ -322,7 +288,7 @@ recoveries_server:
     spin:
       plugin: "nav2_recoveries/Spin"
     spin_and_search:
-      plugin: "mcr_tracking_components/SpinAndSearch"      
+      plugin: "mcr_tracking_components/SpinAndSearch"
     backup:
       plugin: "nav2_recoveries/BackUp"
     wait:
@@ -340,12 +306,3 @@ robot_state_publisher:
   ros__parameters:
     use_sim_time: True
 
-waypoint_follower:
-  ros__parameters:
-    loop_rate: 20
-    stop_on_failure: false
-    waypoint_task_executor_plugin: "wait_at_waypoint"   
-    wait_at_waypoint:
-      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
-      enabled: True
-      waypoint_pause_duration: 200

@@ -25,12 +25,23 @@ from nav2_common.launch import RewrittenYaml
 
 def generate_launch_description():
     # Get the launch directory
+
+    # sudoPassword = '123'
+    # command = 'chmod a+rw /dev/ttyTHS0'
+    # command1 = 'usermod -aG dialout mi'
+    # command_route = 'route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0'
+
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command))
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command1))
+    # os.system('echo %s|sudo -S %s' % (sudoPassword, command_route))
+
     package_dir = get_package_share_directory('mcr_bringup')
     param_dir = os.path.join(package_dir, 'params')
     bt_dir = os.path.join(package_dir, 'behavior_trees')
 
     nav_param_file = 'nav2_params.yaml'
     follow_param_file = 'follow_params.yaml'
+    auto_charing_file = 'auto_charging.yaml'
     bt_file = 'target_tracking.xml'
 
     namespace = LaunchConfiguration('namespace')
@@ -38,6 +49,7 @@ def generate_launch_description():
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
     follow_params_file = LaunchConfiguration('follow_params_file')
+    auto_charings_file = LaunchConfiguration('auto_charing_file')
     default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
     map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
 
@@ -71,7 +83,12 @@ def generate_launch_description():
             root_key=namespace,
             param_rewrites=param_substitutions,
             convert_types=True)
-
+            
+    configured_params_a = RewrittenYaml(
+            source_file=auto_charings_file,
+            root_key=namespace,
+            param_rewrites=param_substitutions,
+            convert_types=True)
 
     return LaunchDescription([
         # Set env var to print messages to stdout immediately
@@ -100,6 +117,11 @@ def generate_launch_description():
             description='Full path to the ROS2 parameters file to use'),
 
         DeclareLaunchArgument(
+            'auto_charing_file',
+            default_value=os.path.join(param_dir, auto_charing_file),
+            description='Full path to the ROS2 parameters file to use'),
+
+        DeclareLaunchArgument(
             'default_target_tracking_bt_xml',
             default_value=os.path.join(bt_dir, bt_file),
             description='Full path to the behavior tree xml file to use'),
@@ -113,8 +135,7 @@ def generate_launch_description():
             executable='controller_server',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params},{configured_params_f}],
-            # arguments=['--ros-args', '--log-level', 'DEBUG'],
+            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -122,7 +143,8 @@ def generate_launch_description():
             executable='mcr_planner_server',
             name='planner_server',
             output='screen',
-            parameters=[{configured_params},{configured_params_f}],
+           # prefix=['xterm -e gdb  --args'],
+            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -130,7 +152,7 @@ def generate_launch_description():
             executable='recoveries_server',
             name='recoveries_server',
             output='screen',
-            parameters=[{configured_params},{configured_params_f}],
+            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -139,7 +161,7 @@ def generate_launch_description():
             name='bt_navigator',
             # prefix=['xterm -e gdb  --args'],
             output='screen',
-            parameters=[{configured_params},{configured_params_f}],
+            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
 
@@ -151,5 +173,4 @@ def generate_launch_description():
             parameters=[{'use_sim_time': use_sim_time},
                         {'autostart': autostart},
                         {'node_names': lifecycle_nodes}]),
-
     ])
