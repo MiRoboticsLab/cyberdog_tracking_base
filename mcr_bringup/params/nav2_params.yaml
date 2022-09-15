@@ -1,10 +1,9 @@
-
 bt_navigator:
   ros__parameters:
     use_sim_time: True
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: /map
+    odom_topic: vodom
     bt_loop_duration: 10
     default_server_timeout: 20
     enable_groot_monitoring: False
@@ -72,7 +71,7 @@ controller_server:
     progress_checker_plugins: ["progress_checker", "fake_progress_checker"]
     goal_checker_plugins: ["general_goal_checker", "xy_goal_checker", "general_goal_checkerL"] # "precise_goal_checker"
     controller_plugins: ["TrackingTarget", "FollowPath", "TrackingTargetL"]
-    controller_costmaps: ["local_costmap_tracking", "local_costmap", "local_costmap_charging"]
+    controller_costmaps: ["local_costmap_tracking", "local_costmap_charging", "local_costmap"]
 
     # Progress checker parameters
     progress_checker:
@@ -150,7 +149,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 2.0
-      global_frame: odom
+      global_frame: vodom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
@@ -268,7 +267,7 @@ planner_server:
     use_sim_time: True
     planner_plugins:
       ["GridBased", "SplinePlanner", "PotentialPlanner", "SplinePlannerL"]
-    planner_costmaps: ["rolling_window_costmap", "global_costmap", "rolling_costmap_charging"]
+    planner_costmaps: ["rolling_costmap_charging" , "rolling_window_costmap", "global_costmap"]
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: global_costmap
@@ -293,7 +292,7 @@ recoveries_server:
       plugin: "nav2_recoveries/BackUp"
     wait:
       plugin: "nav2_recoveries/Wait"
-    global_frame: odom
+    global_frame: vodom
     robot_base_frame: base_link
     transform_timeout: 0.1
     use_sim_time: true
