@@ -191,7 +191,21 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
   }else{
     N = 4.0;
   }
-  switch (current_mode_) {
+
+  unsigned char cur_mode = current_mode_;
+
+  if(cur_mode == mcr_msgs::action::TargetTracking::Goal::AUTO){
+    double yaw = tf2::getYaw(pose.pose.orientation);
+    double x0 = pose.pose.position.x;
+    double y0 = pose.pose.position.y;
+    double x1 = x0 + cos(yaw);
+    double y1 = y0 + sin(yaw);
+    cur_mode = (x0 * y1 - x1 * y0) > 0 ? 
+                mcr_msgs::action::TargetTracking::Goal::LEFT : 
+                mcr_msgs::action::TargetTracking::Goal::RIGHT;
+  }
+
+  switch (cur_mode) {
 
     case mcr_msgs::action::TargetTracking::Goal::LEFT: {
         //左侧 1m

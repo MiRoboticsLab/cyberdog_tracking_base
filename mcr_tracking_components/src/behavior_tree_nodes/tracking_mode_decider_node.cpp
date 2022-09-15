@@ -62,9 +62,9 @@ inline BT::NodeStatus TrackingModeDecider::tick()
   unsigned char current_mode;
 
   getInput("input_tracking_mode", current_mode);
-  if (current_mode == mcr_msgs::action::TargetTracking::Goal::AUTO) {
-    current_mode = mcr_msgs::action::TargetTracking::Goal::BEHIND;
-  }
+  // if (current_mode == mcr_msgs::action::TargetTracking::Goal::AUTO) {
+  //   current_mode = mcr_msgs::action::TargetTracking::Goal::BEHIND;
+  // }
   setOutput("output_tracking_mode", current_mode);
   if (last_mode_ != current_mode) {
     last_mode_ = current_mode;
