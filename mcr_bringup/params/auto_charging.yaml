@@ -50,7 +50,7 @@ local_costmap_charging:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scans
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -192,9 +192,9 @@ rolling_costmap_charging:
         cost_scaling_factor: 3.0
         inflation_radius: 0.55
       always_send_full_costmap: True
-  rolling_window_costmap_client:
+  rolling_costmap_charging_client:
     ros__parameters:
       use_sim_time: True
-  rolling_window_costmap_rclcpp_node:
+  rolling_costmap_charging_rclcpp_node:
     ros__parameters:
       use_sim_time: True
