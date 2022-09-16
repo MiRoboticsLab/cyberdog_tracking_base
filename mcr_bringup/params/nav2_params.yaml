@@ -3,7 +3,7 @@ bt_navigator:
     use_sim_time: True
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: vodom
+    odom_topic: odom
     bt_loop_duration: 10
     default_server_timeout: 20
     enable_groot_monitoring: False
@@ -149,7 +149,7 @@ local_costmap:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 2.0
-      global_frame: vodom
+      global_frame: odom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
@@ -292,7 +292,7 @@ recoveries_server:
       plugin: "nav2_recoveries/BackUp"
     wait:
       plugin: "nav2_recoveries/Wait"
-    global_frame: vodom
+    global_frame: odom
     robot_base_frame: base_link
     transform_timeout: 0.1
     use_sim_time: true

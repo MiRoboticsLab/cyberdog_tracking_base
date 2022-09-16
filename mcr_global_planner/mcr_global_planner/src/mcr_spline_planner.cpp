@@ -130,20 +130,15 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
   path.poses.push_back(goal);
   path.header.frame_id = global_frame_;
 
-  // if (!isPlanValid(path)) {
-  //   std::stringstream ss;
-  //   ss << "No valid path is calculated from"
-  //         " ["
-  //      << start.pose.position.x << ", " << start.pose.position.y
-  //      << "] "
-  //         "to ["
-  //      << goal.pose.position.x << ", " << goal.pose.position.y
-  //      << "]"
-  //         "by forwardx_spline_planner: "
-  //      << spliner_name_;
+  if (!isPlanValid(path)) {
+    std::stringstream ss;
+    ss << "No valid path is calculated from"
+      " [" << start.pose.position.x << ", " << start.pose.position.y << "] "
+      "to [" << goal.pose.position.x << ", " << goal.pose.position.y << "]"
+      "by forwardx_spline_planner: " << spliner_name_;
 
-  //   throw mcr_global_planner::NoGlobalPathException(ss.str());
-  // }
+    throw mcr_global_planner::NoGlobalPathException(ss.str());
+  }
 
   return path;
 }
@@ -160,14 +155,12 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
     nav_msgs::msg::Path path = spliner_->spline(poses);
     path.header.frame_id = global_frame_;
 
-    // if (!isPlanValid(path)) {
-    //   std::stringstream ss;
-    //   ss << "No valid path is calculated from " << poses.size()
-    //      << " poses "
-    //         "by forwardx_spline_planner: "
-    //      << spliner_name_;
-    //   throw mcr_global_planner::NoGlobalPathException(ss.str());
-    // }
+    if (!isPlanValid(path)) {
+      std::stringstream ss;
+      ss << "No valid path is calculated from " << poses.size() << " poses "
+        "by forwardx_spline_planner: " << spliner_name_;
+      throw mcr_global_planner::NoGlobalPathException(ss.str());
+    }
     return path;
   }
 }

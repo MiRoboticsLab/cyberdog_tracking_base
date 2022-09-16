@@ -71,9 +71,13 @@ void KeepTargetInsightCritic::onInit() {
   if (!node) {
     throw std::runtime_error{"Failed to lock node"};
   }
+  nav2_util::declare_parameter_if_not_declared(node, dwb_plugin_name_ + "." + name_ + ".target_topic", 
+    rclcpp::ParameterValue("/tracking_pose"));
+  node->get_parameter(dwb_plugin_name_ + "." + name_ + ".target_topic", target_topic_);
 
   lookahead_time_ = nav_2d_utils::searchAndGetParam(
       node, dwb_plugin_name_ + "." + name_ + ".lookahead_time", -1.0);
+
 
   tf_buffer_ = std::make_shared<tf2_ros::Buffer>(node->get_clock());
   auto timer_interface = std::make_shared<tf2_ros::CreateTimerROS>(
@@ -83,9 +87,9 @@ void KeepTargetInsightCritic::onInit() {
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   
   pose_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-      "/chargetolidar_transformed", rclcpp::SensorDataQoS(),
-      std::bind(&KeepTargetInsightCritic::poseCallback, this,
-                std::placeholders::_1));
+    target_topic_,
+    rclcpp::SensorDataQoS(),
+    std::bind(&KeepTargetInsightCritic::poseCallback, this, std::placeholders::_1));
   RCLCPP_INFO(
       node->get_logger(),
       "Keep target insight critic subscribed to tracking pose: tracking_pose");
@@ -147,7 +151,8 @@ void KeepTargetInsightCritic::poseCallback(const geometry_msgs::msg::PoseStamped
       *msg, latest_pose_, *tf_buffer_,
       "base_link"))
   {
-    throw nav2_core::TFException("Transformed error in target updater node");
+    return;
+    // throw nav2_core::TFException("Transformed error in target updater node");
   }
 
   valid_data_ = true;

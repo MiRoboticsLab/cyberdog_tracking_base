@@ -24,7 +24,6 @@
                 </Control>
                 </SequenceStar>
                 <Action ID="ChangeGait" gait="2" next_action_start="{next_start}"/>
-                <Action ID="SeatAdjustClient" start="{next_start}" server_timeout="15000" />
                 <Condition ID="IsBatteryInCharge"/>
             </SequenceStar>
             <ReactiveFallback name="RecoveryActions">
