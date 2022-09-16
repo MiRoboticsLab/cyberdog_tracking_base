@@ -135,6 +135,7 @@ controller_server:
       RotateToGoal.lookahead_time: -1.0
       KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
       KeepTargetInsight.scale: 42.0
+      KeepTargetInsight.target_topic: /chargetolidar
 
 planner_server:
   ros__parameters:

@@ -127,6 +127,7 @@ controller_server:
       GoalDist.scale: 24.0
       KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
       KeepTargetInsight.scale: 42.0
+      KeepTargetInsight.target_topic: /tracking_pose
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
 

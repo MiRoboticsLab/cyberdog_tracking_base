@@ -70,6 +70,7 @@ private:
   double normal_sacle_;
   double goal_yaw_, cur_yaw_;
   bool valid_data_, inuse_;
+  std::string target_topic_;
 };
 
 }  // namespace mcr_tracking_components
