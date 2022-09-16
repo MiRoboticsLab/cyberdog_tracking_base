@@ -34,9 +34,9 @@ global_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scans
+        observation_sources: scan
         scan:
-          topic: /scans
+          topic: /scan
           footprint_clearing_enabled: true
           max_obstacle_height: 2.0
           clearing: True

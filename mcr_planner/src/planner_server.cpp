@@ -93,14 +93,13 @@ nav2_util::CallbackReturn PlannerServer::on_configure(
     RCLCPP_DEBUG(get_logger(), "Costmap %s size: %d,%d", it->first.c_str(),
                  costmap->getSizeInCellsX(), costmap->getSizeInCellsY());
   }
-  RCLCPP_INFO(get_logger(), "planner_ids_.size() %ld", planner_ids_.size());
+
   planner_types_.resize(planner_ids_.size());
 
   auto node = shared_from_this();
   // TF buffer
   std::shared_ptr<tf2_ros::Buffer> tf;
   for (size_t i = 0; i != planner_ids_.size(); i++) {
-    RCLCPP_INFO(get_logger(), "Configuring i: %ld", i);
     try {
       planner_types_[i] =
           nav2_util::get_plugin_type_param(node, planner_ids_[i]);
@@ -120,13 +119,9 @@ nav2_util::CallbackReturn PlannerServer::on_configure(
           gp_loader_.createUniqueInstance(planner_types_[i]);
       costmap_ros_ = costmaps_[costmap_name];
       tf = costmap_ros_->getTfBuffer();
-      RCLCPP_INFO(get_logger(), "Configuring i: %d", __LINE__);
       planner->configure(node, planner_ids_[i], tf, costmap_ros_);
-      RCLCPP_INFO(get_logger(), "Configuring i: %d", __LINE__);
       planners_.insert({planner_ids_[i], planner});
-      RCLCPP_INFO(get_logger(), "Configuring i: %d", __LINE__);
       pcmaps_.insert({planner_ids_[i], costmap_name});
-      RCLCPP_INFO(get_logger(), "Configuring i: %d", __LINE__);
       RCLCPP_INFO(get_logger(),
                   "Created global planner plugin %s of type %s with costmap %s",
                   planner_ids_[i].c_str(), planner_types_[i].c_str(),

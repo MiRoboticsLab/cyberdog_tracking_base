@@ -15,7 +15,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Wno-error=register)
 endif()
 
-add_compile_options(-g)
+# add_compile_options(-g)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)

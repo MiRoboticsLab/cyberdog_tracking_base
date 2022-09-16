@@ -83,9 +83,9 @@ void KeepTargetInsightCritic::onInit() {
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
   
   pose_sub_ = node->create_subscription<geometry_msgs::msg::PoseStamped>(
-      "/chargetolidar_transformed", rclcpp::SensorDataQoS(),
-      std::bind(&KeepTargetInsightCritic::poseCallback, this,
-                std::placeholders::_1));
+    "/tracking_pose",
+    rclcpp::SensorDataQoS(),
+    std::bind(&KeepTargetInsightCritic::poseCallback, this, std::placeholders::_1));
   RCLCPP_INFO(
       node->get_logger(),
       "Keep target insight critic subscribed to tracking pose: tracking_pose");

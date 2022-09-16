@@ -1,7 +1,7 @@
 bt_navigatorautomatic_recharge_rclcpp_node:
   ros__parameters:
     use_sim_time: True
-    global_frame: base_link_leg
+    global_frame: base_link
     charger_updater_topic: chargetolidar
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -11,8 +11,8 @@ local_costmap_charging:
     ros__parameters:
       update_frequency: 5.0
       publish_frequency: 2.0
-      global_frame: base_link_leg
-      robot_base_frame: base_link_leg
+      global_frame: base_link
+      robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
       width: 8
@@ -157,8 +157,8 @@ rolling_costmap_charging:
     ros__parameters:
       update_frequency: 0.0
       publish_frequency: 1.0
-      global_frame: base_link_leg
-      robot_base_frame: base_link_leg
+      global_frame: base_link
+      robot_base_frame: base_link
       rolling_window: true
       use_sim_time: True
       width: 10

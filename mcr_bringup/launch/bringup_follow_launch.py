@@ -25,16 +25,6 @@ from nav2_common.launch import RewrittenYaml
 
 def generate_launch_description():
     # Get the launch directory
-
-    # sudoPassword = '123'
-    # command = 'chmod a+rw /dev/ttyTHS0'
-    # command1 = 'usermod -aG dialout mi'
-    # command_route = 'route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0'
-
-    # os.system('echo %s|sudo -S %s' % (sudoPassword, command))
-    # os.system('echo %s|sudo -S %s' % (sudoPassword, command1))
-    # os.system('echo %s|sudo -S %s' % (sudoPassword, command_route))
-
     package_dir = get_package_share_directory('mcr_bringup')
     param_dir = os.path.join(package_dir, 'params')
     bt_dir = os.path.join(package_dir, 'behavior_trees')
@@ -143,7 +133,6 @@ def generate_launch_description():
             executable='mcr_planner_server',
             name='planner_server',
             output='screen',
-           # prefix=['xterm -e gdb  --args'],
             parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
