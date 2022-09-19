@@ -100,7 +100,6 @@ TargetUpdater::TargetUpdater(
 
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-
   rclcpp::SubscriptionOptions sub_option;
   sub_option.callback_group = callback_group_;
   goal_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -134,10 +133,11 @@ inline BT::NodeStatus TargetUpdater::tick()
   geometry_msgs::msg::PoseStamped goal;
   setOutput("output_exception_code", nav2_core::NOEXCEPTION);
 
-  getInput("input_goal", goal);
+  // getInput("input_goal", goal);
   getInput("input_tracking_mode", current_mode_);
 
-  if ((node_->now().seconds() - latest_timestamp_.seconds()) > overtime_) {
+  if (last_goal_received_.header.frame_id == "" || 
+      (node_->now().seconds() - latest_timestamp_.seconds()) > overtime_) {
     RCLCPP_WARN(node_->get_logger(), "The target pose may be lost. %lf", overtime_);
     historical_poses_.clear();
     setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
@@ -162,7 +162,6 @@ inline BT::NodeStatus TargetUpdater::tick()
         historical_poses_.rbegin(),
         historical_poses_.rend()));
   }
-
 
   BT::NodeStatus status = child_node_->executeTick();
 
@@ -262,6 +261,10 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
 
 bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
+  if(msg->header.frame_id == ""){
+    RCLCPP_WARN(node_->get_logger(), "target's frame id is null.");
+    return false;
+  }
   geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
   try {
     pose_based_on_global_frame = tf_buffer_->transform(

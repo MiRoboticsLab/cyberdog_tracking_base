@@ -86,9 +86,12 @@ bool MCRSplinePlanner::isPlanValid(const nav_msgs::msg::Path& path) const {
   const mcr_nav_grid::NavGridInfo& info = infoFromCostmap(costmap_ros_);
   for (geometry_msgs::msg::PoseStamped pose : path.poses) {
     if (!mcr_nav_grid::worldToGridBounded(info, pose.pose.position.x,
-                                          pose.pose.position.y, x, y) ||
-        costmap_->getCost(x, y) >=
-            nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE) {
+                                          pose.pose.position.y, x, y)){
+      continue;
+    }
+
+    if(costmap_->getCost(x, y) >=
+       nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE) {
       return false;
     }
   }
