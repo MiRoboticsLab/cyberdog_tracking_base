@@ -122,6 +122,9 @@ MCRUwb::on_shutdown(const rclcpp_lifecycle::State &)
 void
 MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
 {
+  if(!pose_pub_->is_activated()){
+    return;
+  }  
   geometry_msgs::msg::PoseStamped pose;
   pose.header = uwb->header;
 
