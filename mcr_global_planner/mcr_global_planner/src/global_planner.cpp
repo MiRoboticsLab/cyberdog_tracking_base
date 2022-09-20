@@ -114,6 +114,8 @@ protected:
     plan_publisher_->on_activate();
     costmap_ros_->on_activate(state);
     planner_->activate();
+    // create bond connection
+    createBond();    
     return nav2_util::CallbackReturn::SUCCESS;
   }
   /**
@@ -128,6 +130,8 @@ protected:
     plan_publisher_->on_deactivate();
     costmap_ros_->on_deactivate(state);
     planner_->activate();
+    // destroy bond connection
+    destroyBond();
 
     return nav2_util::CallbackReturn::SUCCESS;
   }
