@@ -18,6 +18,7 @@
 #include "nav_2d_utils/conversions.hpp"
 #include "nav_2d_utils/path_ops.hpp"
 #include "nav2_util/node_utils.hpp"
+#include "nav2_util/line_iterator.hpp"
 
 namespace mcr_global_planner
 {
@@ -169,7 +170,7 @@ nav_msgs::msg::Path MCRGlobalPlanner::createPlan(
 
 
   // Check Start / Goal Quality
-  unsigned int x, y;
+  unsigned int x, y, sx, sy;
   if (!worldToGridBounded(info, local_start.x, local_start.y, x, y)) {
     cached_path_cost_ = -1.0;
     throw StartBoundsException(start);
@@ -178,13 +179,27 @@ nav_msgs::msg::Path MCRGlobalPlanner::createPlan(
     cached_path_cost_ = -1.0;
     throw OccupiedStartException(start);
   }
+  sx = x; sy = y;
   if (!worldToGridBounded(info, local_goal.x, local_goal.y, x, y)) {
-    cached_path_cost_ = -1.0;
-    throw GoalBoundsException(goal);
+    int cx, cy;
+    costmap_->worldToMapEnforceBounds(local_goal.x, local_goal.y, cx, cy);
+    costmap_->mapToWorld(cx, cy, local_goal.x, local_goal.y);
+    x = cx; y = cy;
   }
-  if (costmap_->getCost(x, y) >= nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE) {
-    cached_path_cost_ = -1.0;
-    throw OccupiedGoalException(goal);
+
+  if (costmap_->getCost(x, y) >= nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE / 2) {
+    nav2_util::LineIterator iter(x, y, sx, sy);
+
+    while (iter.isValid())
+    {
+      x = iter.getX();
+      y = iter.getY();
+      if (costmap_->getCost(x, y) < nav2_costmap_2d::INSCRIBED_INFLATED_OBSTACLE / 2) {
+        break;
+      }
+      iter.advance();
+    }
+    costmap_->mapToWorld(x, y, local_goal.x, local_goal.y);
   }
 
   bool cached_plan_available = false;
@@ -200,9 +215,8 @@ nav_msgs::msg::Path MCRGlobalPlanner::createPlan(
   // potential_pub_.publish();
   double path_cost = 0.0;  // right now we don't do anything with the cost
   nav_2d_msgs::msg::Path2D path = traceback_->getPath(
-    potential_grid_,
-    nav_2d_utils::poseToPose2D(start.pose),
-    nav_2d_utils::poseToPose2D(goal.pose),
+    potential_grid_, 
+    local_start, local_goal,
     path_cost);
 
   if (print_statistics_) {
