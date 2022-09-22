@@ -148,7 +148,6 @@ def generate_launch_description():
             package='nav2_bt_navigator',
             executable='bt_navigator',
             name='bt_navigator',
-            # prefix=['xterm -e gdb  --args'],
             output='screen',
             parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
             remappings=remappings),

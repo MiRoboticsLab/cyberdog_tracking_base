@@ -147,6 +147,7 @@ double KeepTargetInsightCritic::scoreRotation(
 
 void KeepTargetInsightCritic::poseCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
+  if(msg->header.frame_id == "" || msg->header.stamp.sec == 0) return;
   if (!nav2_util::transformPoseInTargetFrame(
       *msg, latest_pose_, *tf_buffer_,
       "base_link"))

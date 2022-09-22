@@ -120,7 +120,7 @@ TargetUpdater::TargetUpdater(
       rclcpp::KeepLast(
         1)).transient_local().reliable());
 
-  last_goal_received_.header.frame_id = global_frame_;
+  // last_goal_received_.header.frame_id = global_frame_;
 
   orientation_deriver_ = deriver_loader_.createUniqueInstance(deriver_name);
   orientation_deriver_->initialize(node_, global_frame_, tf_buffer_);
@@ -138,7 +138,7 @@ inline BT::NodeStatus TargetUpdater::tick()
 
   if (last_goal_received_.header.frame_id == "" || 
       (node_->now().seconds() - latest_timestamp_.seconds()) > overtime_) {
-    RCLCPP_WARN(node_->get_logger(), "The target pose may be lost. %lf", overtime_);
+    RCLCPP_WARN(node_->get_logger(), "The target pose may be lost or invalid. %lf", overtime_);
     historical_poses_.clear();
     setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
     config().blackboard->set<int>("exception_code", nav2_core::DETECTOREXCEPTION);
@@ -262,7 +262,7 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
 bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
 {
   if(msg->header.frame_id == ""){
-    RCLCPP_WARN(node_->get_logger(), "target's frame id is null.");
+    RCLCPP_WARN(node_->get_logger(), "invalid data for target's frame id is null.");
     return false;
   }
   geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
