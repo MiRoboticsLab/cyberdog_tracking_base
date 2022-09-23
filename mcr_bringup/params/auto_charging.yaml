@@ -2,6 +2,7 @@ bt_navigatorautomatic_recharge_rclcpp_node:
   ros__parameters:
     use_sim_time: True
     global_frame: base_link
+    robot_base_frame: base_link
     charger_updater_topic: chargetolidar
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -26,13 +27,13 @@ local_costmap_charging:
         inflation_radius: 0.55
       obstacle_layer:
         plugin: "mcr_tracking_components::ObstacleLayer"
-        enabled: True
+        enabled: False
         use_tracking_mode: True
         tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
-          topic: /scans
+          topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -170,7 +171,7 @@ rolling_costmap_charging:
       plugins: ["obstacle_layer", "inflation_layer"]
       obstacle_layer:
         plugin: "mcr_tracking_components::ObstacleLayer"
-        enabled: True
+        enabled: False
         use_tracking_mode: True
         tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose
