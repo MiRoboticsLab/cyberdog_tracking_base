@@ -251,6 +251,11 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
     speed_limit_topic, rclcpp::QoS(10),
     std::bind(&ControllerServer::speedLimitCallback, this, std::placeholders::_1));
 
+  service_ = rclcpp_node_->create_service<std_srvs::srv::SetBool>(
+      "tracking_command",
+      std::bind(&ControllerServer::commandCallback, this,
+                std::placeholders::_1, std::placeholders::_2));
+
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
@@ -609,9 +614,24 @@ void ControllerServer::updateGlobalPath()
     setPlannerPath(goal->path);
   }
 }
+void ControllerServer::commandCallback(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  if(request->data){
+    pub_on_ = true;
+    response->message = "controller's velocity command is start publishing.";
+  }else {
+    pub_on_ = false;
+    response->message = "controller's velocity command is stop publishing.";
+  }
+  response->success = true;
+}
+
 
 void ControllerServer::publishVelocity(const geometry_msgs::msg::TwistStamped & velocity)
 {
+  if(!pub_on_)return;
   auto cmd_vel = std::make_unique<geometry_msgs::msg::Twist>(velocity.twist);
   if (vel_publisher_->is_activated() && vel_publisher_->get_subscription_count() > 0) {
     vel_publisher_->publish(std::move(cmd_vel));
