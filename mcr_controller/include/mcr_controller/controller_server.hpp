@@ -34,7 +34,7 @@
 #include "nav2_util/robot_utils.hpp"
 #include "pluginlib/class_loader.hpp"
 #include "pluginlib/class_list_macros.hpp"
-
+#include "std_srvs/srv/set_bool.hpp"
 namespace mcr_controller
 {
 
@@ -202,7 +202,9 @@ protected:
     twist_thresh.theta = getThresholdedVelocity(twist.theta, min_theta_velocity_threshold_);
     return twist_thresh;
   }
-
+  void commandCallback(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
   // The controller needs a costmap node
   std::shared_ptr<nav2_costmap_2d::Costmap2DROS> costmap_ros_;
   std::vector<std::unique_ptr<nav2_util::NodeThread>> costmap_threads_;
@@ -211,6 +213,7 @@ protected:
   std::unique_ptr<nav_2d_utils::OdomSubscriber> odom_sub_;
   rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::Twist>::SharedPtr vel_publisher_;
   rclcpp::Subscription<nav2_msgs::msg::SpeedLimit>::SharedPtr speed_limit_sub_;
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
 
   // Progress Checker Plugin
   pluginlib::ClassLoader<nav2_core::ProgressChecker> progress_checker_loader_;
@@ -259,7 +262,7 @@ protected:
 
   // Current path container
   nav_msgs::msg::Path current_path_;
-
+  bool pub_on_=true;
 private:
   /**
     * @brief Callback for speed limiting messages
