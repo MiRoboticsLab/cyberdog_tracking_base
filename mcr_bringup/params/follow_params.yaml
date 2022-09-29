@@ -2,7 +2,7 @@ bt_navigatortracking_target_rclcpp_node:
   ros__parameters:
     use_sim_time: True
     # TargetUpdaterNode
-    global_frame: odom  
+    global_frame: vodom  
     goal_updater_topic: tracking_pose
     overtime: 1.50
     max_pose_inuse: 0
@@ -14,7 +14,7 @@ local_costmap_tracking:
     ros__parameters:
       update_frequency: 0.0
       publish_frequency: 1.0
-      global_frame: odom
+      global_frame: vodom
       robot_base_frame: base_link
       use_sim_time: True
       rolling_window: true
@@ -136,7 +136,7 @@ rolling_window_costmap:
     ros__parameters:
       update_frequency: 0.0
       publish_frequency: 1.0
-      global_frame: odom
+      global_frame: vodom
       robot_base_frame: base_link
       rolling_window: true
       use_sim_time: True

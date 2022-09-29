@@ -122,7 +122,7 @@ private:
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
   int max_pose_inuse_;
   double dist_sq_throttle_, overtime_;
-  float distance_;
+  float distance_, keep_distance_;
 
   rclcpp::Node::SharedPtr node_;
   rclcpp::CallbackGroup::SharedPtr callback_group_;

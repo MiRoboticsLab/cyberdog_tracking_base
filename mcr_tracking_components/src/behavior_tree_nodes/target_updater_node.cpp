@@ -132,6 +132,10 @@ inline BT::NodeStatus TargetUpdater::tick()
   std::lock_guard<std::mutex> guard(mutex_);
   geometry_msgs::msg::PoseStamped goal;
   setOutput("output_exception_code", nav2_core::NOEXCEPTION);
+  double dist = 0.0;
+  config().blackboard->get<double>("keep_distance", dist);
+  if(dist > 0.2)
+    keep_distance_ = dist;
 
   // getInput("input_goal", goal);
   getInput("input_tracking_mode", current_mode_);
@@ -230,8 +234,8 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
         // 后方1m
         // double yaw = tf2::getYaw(pose.pose.orientation);
         double yaw = atan2(pose.pose.position.y, pose.pose.position.x);
-        transform.transform.translation.x = -1.0 * cos(yaw);
-        transform.transform.translation.y = -1.0 * sin(yaw);
+        transform.transform.translation.x = -1.0 * keep_distance_ * cos(yaw);
+        transform.transform.translation.y = -1.0 * keep_distance_ * sin(yaw);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         tpose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
