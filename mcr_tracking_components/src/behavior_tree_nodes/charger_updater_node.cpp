@@ -55,7 +55,6 @@ ChargerUpdater::ChargerUpdater(const std::string& name,
       rclcpp::CallbackGroupType::MutuallyExclusive, false);
   callback_group_executor_.add_callback_group(callback_group_,
                                               node_->get_node_base_interface());
-  distance_ = 2.0;
   std::string goal_updater_topic;
 
   nav2_util::declare_parameter_if_not_declared(node_, "global_frame",
@@ -70,8 +69,12 @@ ChargerUpdater::ChargerUpdater(const std::string& name,
   node_->get_parameter("charger_updater_topic", goal_updater_topic);
 
   nav2_util::declare_parameter_if_not_declared(node_, "distance",
-                                               rclcpp::ParameterValue(2.0));
+                                               rclcpp::ParameterValue(1.5));
   node_->get_parameter("distance", distance_);
+
+  nav2_util::declare_parameter_if_not_declared(node_, "distance_final",
+                                               rclcpp::ParameterValue(0.05));
+  node_->get_parameter("distance_final", distance_final_);
 
   nav2_util::declare_parameter_if_not_declared(node_, "offset_x",
                                                rclcpp::ParameterValue(0.0));
@@ -236,15 +239,15 @@ void ChargerUpdater::callback_updated_goal(
   transform.header = global_frame_pose.header;
   transform.child_frame_id = global_frame_pose.header.frame_id;
   double yaw = tf2::getYaw(global_frame_pose.pose.orientation);
-  transform.transform.translation.x = -2.0 * cos(yaw);
-  transform.transform.translation.y = -2.0 * sin(yaw);
+  transform.transform.translation.x = -1*distance_ * cos(yaw);
+  transform.transform.translation.y = -1*distance_ * sin(yaw);
   transform.transform.translation.z = 0.0;
   transform.transform.rotation.w = 1.0;
   tf2::doTransform(global_frame_pose, global_frame_pose_b, transform);
 
   global_frame_pose_adj = global_frame_pose;
-  transform.transform.translation.x = -0.05 * cos(yaw);
-  transform.transform.translation.y = -0.05 * sin(yaw);
+  transform.transform.translation.x = -1*distance_final_ * cos(yaw);
+  transform.transform.translation.y = -1*distance_final_ * sin(yaw);
   tf2::doTransform(global_frame_pose, global_frame_pose_adj, transform);
 
   RCLCPP_ERROR(node_->get_logger(), "2m back global_frame_: %s phase: %d",
@@ -285,7 +288,7 @@ void ChargerUpdater::callback_updated_goal(
     historical_poses_.push_front(std::move(pose_based_on_global_frame));
     historical_poses_.push_front(std::move(global_frame_pose_b));
   } else if (current_phase == 1) {
-    historical_poses_.push_front(std::move(global_frame_pose_b));
+    historical_poses_.push_front(std::move(pose_based_on_global_frame));
     historical_poses_.push_front(std::move(global_frame_pose_adj));
   }
 }

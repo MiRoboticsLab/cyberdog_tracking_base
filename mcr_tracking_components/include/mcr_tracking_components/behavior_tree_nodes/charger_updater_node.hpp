@@ -91,6 +91,7 @@ class ChargerUpdater : public BT::DecoratorNode {
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
   int max_pose_inuse_;
   float distance_;
+  float distance_final_;
   double offset_x_, offset_y_;
   std::deque<geometry_msgs::msg::PoseStamped> average_poses_;
   rclcpp::Node::SharedPtr node_;
