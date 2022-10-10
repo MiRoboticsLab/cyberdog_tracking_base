@@ -3,6 +3,8 @@ bt_navigatorautomatic_recharge_rclcpp_node:
     use_sim_time: True
     global_frame: base_link
     robot_base_frame: base_link
+    distance: 1.5
+    distance_final: 0.05
     charger_updater_topic: chargetolidar
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -81,17 +83,17 @@ controller_server:
     general_goal_checkerL:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.35
       yaw_goal_tolerance: 3.1
     TrackingTargetL:
       plugin: "dwb_core::DWBLocalPlanner"
       costmap: local_costmap_charging
       debug_trajectory_details: True
-      min_vel_x: 0.1
-      min_vel_y: 0.0
+      min_vel_x: -0.1
+      min_vel_y: -0.1
       max_vel_x: 0.1
-      max_vel_y: 0.01
-      max_vel_theta: 0.6
+      max_vel_y: 0.1
+      max_vel_theta: 0.2
       min_speed_xy: 0.0
       max_speed_xy: 0.10
       min_speed_theta: 0.0
@@ -103,9 +105,9 @@ controller_server:
       decel_lim_x: -2.5
       decel_lim_y: -2.5
       decel_lim_theta: -3.2
-      vx_samples: 10
-      vy_samples: 5
-      vtheta_samples: 20
+      vx_samples: 4
+      vy_samples: 4
+      vtheta_samples: 6
       sim_time: 1.7
       linear_granularity: 0.05
       angular_granularity: 0.025
