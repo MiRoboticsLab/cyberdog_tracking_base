@@ -17,7 +17,9 @@
       <output_port name="output_tracking_mode">Output tracking mode by decision</output_port>
     </Action>
     <Action ID="ChangeGait">
-      <input_port name="gait">gait to use next. </input_port>
+      <input_port name="gait_motion_id">gait to use next. </input_port>
+      <input_port name="gait_shape_value">gait to use next. </input_port>
+      <input_port name="gait_step_height">gait to use next. </input_port>
       <output_port name="next_action_start">start signal to next action</output_port>
     </Action>
 
