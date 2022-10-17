@@ -134,8 +134,12 @@ inline BT::NodeStatus TargetUpdater::tick()
   setOutput("output_exception_code", nav2_core::NOEXCEPTION);
   double dist = 0.0;
   config().blackboard->get<double>("keep_distance", dist);
-  if(dist > 0.2)
+  if(dist > 0.2){
     keep_distance_ = dist;
+  }else{
+    keep_distance_ = 1.2;
+  }
+    
 
   // getInput("input_goal", goal);
   getInput("input_tracking_mode", current_mode_);
