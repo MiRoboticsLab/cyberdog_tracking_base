@@ -50,7 +50,8 @@ inline BT::NodeStatus ChangeGait::tick() {
 
   getInput("gait_motion_id", request->motion_id);
   getInput("gait_shape_value", request->value);
-  getInput("gait_step_height", request->step_height);
+  getInput("gait_step_height", request->step_height[0]);
+  getInput("gait_step_height", request->step_height[1]);
 
   if (!motion_client_->service_is_ready()) {
     RCLCPP_ERROR(node_->get_logger(), "ChangeGait error: motion service is not ready."); 

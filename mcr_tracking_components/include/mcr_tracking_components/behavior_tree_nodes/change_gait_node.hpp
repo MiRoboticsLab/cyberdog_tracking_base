@@ -46,7 +46,9 @@ class ChangeGait : public BT::ActionNodeBase {
    */
   static BT::PortsList providedPorts() {
     return {
-        BT::InputPort<int>("gait", "the gait for next step."),
+        BT::InputPort<int>("gait_motion_id", "the gait for next step."),
+        BT::InputPort<float>("gait_shape_value", "the gait for next step."),
+        BT::InputPort<float>("gait_step_height", "the gait for next step."),
         BT::OutputPort<unsigned int>("next_action_start",
                               "start signal to next action."),
     };
