@@ -72,7 +72,7 @@ void KeepTargetInsightCritic::onInit() {
     throw std::runtime_error{"Failed to lock node"};
   }
   nav2_util::declare_parameter_if_not_declared(node, dwb_plugin_name_ + "." + name_ + ".target_topic", 
-    rclcpp::ParameterValue("/tracking_pose"));
+    rclcpp::ParameterValue("tracking_pose"));
   node->get_parameter(dwb_plugin_name_ + "." + name_ + ".target_topic", target_topic_);
 
   lookahead_time_ = nav_2d_utils::searchAndGetParam(

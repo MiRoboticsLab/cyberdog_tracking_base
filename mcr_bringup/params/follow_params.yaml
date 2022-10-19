@@ -82,7 +82,7 @@ controller_server:
       movement_time_allowance: 10.0
     xy_goal_checker:
       stateful: True
-      plugin: "mcr_tracking_components::XYGoalChecker"
+      plugin: "mcr_tracking_components::UnreachableGoalChecker"
       xy_goal_tolerance: 0.25
       yaw_goal_tolerance: 0.25
     # DWB parameters
@@ -127,7 +127,7 @@ controller_server:
       GoalDist.scale: 24.0
       KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
       KeepTargetInsight.scale: 42.0
-      KeepTargetInsight.target_topic: /tracking_pose
+      KeepTargetInsight.target_topic: tracking_pose
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
 
@@ -190,10 +190,11 @@ planner_server:
       pose_topic: "tracking_pose_in_map"
       # pose_topic: "target_traces"
       bezier:
+        plugin: mcr_planner_plugins::LinearInterpolation
         # plugin: mcr_planner_plugins::BezierSpliner
         # plugin: mcr_planner_plugins::PolynomialFitting
         # plugin: mcr_planner_plugins::BSpliner
-        plugin: mcr_planner_plugins::PolynomialInterpolation
+        # plugin: mcr_planner_plugins::PolynomialInterpolation
     PotentialPlanner:
       use_sim_time: True
       plugin: mcr_global_planner/MCRGlobalPlanner
