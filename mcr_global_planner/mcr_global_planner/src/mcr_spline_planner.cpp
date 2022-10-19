@@ -138,7 +138,7 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
     ss << "No valid path is calculated from"
       " [" << start.pose.position.x << ", " << start.pose.position.y << "] "
       "to [" << goal.pose.position.x << ", " << goal.pose.position.y << "]"
-      "by forwardx_spline_planner: " << spliner_name_;
+      "by mcr_spline_planner: " << spliner_name_;
 
     throw mcr_global_planner::NoGlobalPathException(ss.str());
   }
@@ -161,7 +161,7 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
     if (!isPlanValid(path)) {
       std::stringstream ss;
       ss << "No valid path is calculated from " << poses.size() << " poses "
-        "by forwardx_spline_planner: " << spliner_name_;
+        "by mcr_spline_planner: " << spliner_name_;
       throw mcr_global_planner::NoGlobalPathException(ss.str());
     }
     return path;
