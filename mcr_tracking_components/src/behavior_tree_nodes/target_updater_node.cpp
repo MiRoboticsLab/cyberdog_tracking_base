@@ -175,7 +175,12 @@ inline BT::NodeStatus TargetUpdater::tick()
   }
   poses_cur_target.push_back(pose_based_on_global_frame);
   poses_cur_target.push_back(last_goal_transformed_);
-
+  if(nav2_util::geometry_utils::euclidean_distance(pose_based_on_global_frame, last_goal_transformed_) > 30.0){
+      RCLCPP_WARN(
+        node_->get_logger(),
+        "The target is too far away to continue tracking.");
+    return BT::NodeStatus::FAILURE;
+  }
   setOutput("output_goals", poses_cur_target);
 
   BT::NodeStatus status = child_node_->executeTick();
@@ -184,7 +189,6 @@ inline BT::NodeStatus TargetUpdater::tick()
     setOutput("output_exception_code", nav2_core::PLANNEREXECPTION);
     config().blackboard->set<int>("exception_code", nav2_core::PLANNEREXECPTION);
   }
-  config().blackboard->set<int>("exception_code", nav2_core::NOEXCEPTION);
 
   return status;
 }
