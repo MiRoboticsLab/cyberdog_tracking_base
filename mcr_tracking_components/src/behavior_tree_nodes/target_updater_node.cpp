@@ -163,13 +163,20 @@ inline BT::NodeStatus TargetUpdater::tick()
   config().blackboard->set<float>("distance", distance_);
   setOutput("distance", distance_);
   setOutput("output_goal", goal);
-  if (historical_poses_.size() >= 2) {
-    setOutput(
-      "output_goals",
-      std::vector<geometry_msgs::msg::PoseStamped>(
-        historical_poses_.rbegin(),
-        historical_poses_.rend()));
+
+  geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
+  std::vector<geometry_msgs::msg::PoseStamped> poses_cur_target;
+  poses_cur_target.clear();
+  if (!nav2_util::getCurrentPose(pose_based_on_global_frame, *tf_buffer_, global_frame_)) {
+    RCLCPP_WARN(
+      node_->get_logger(),
+      "truncat overdue poses failed to obtain current pose based on map coordinate system.");
+    return BT::NodeStatus::FAILURE;
   }
+  poses_cur_target.push_back(pose_based_on_global_frame);
+  poses_cur_target.push_back(last_goal_transformed_);
+
+  setOutput("output_goals", poses_cur_target);
 
   BT::NodeStatus status = child_node_->executeTick();
 
@@ -315,7 +322,7 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     transformed_pose_pub_->publish(last_goal_transformed_);
   }
 
-  historyPoseUpdate(last_goal_transformed_);
+  // historyPoseUpdate(last_goal_transformed_);
 }
 
 
