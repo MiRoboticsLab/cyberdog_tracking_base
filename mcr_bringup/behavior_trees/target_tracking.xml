@@ -7,9 +7,9 @@
                 <Decorator ID="RateController" hz="3.0">
                     <Sequence>
                         <Action ID="TrackingModeDecider" input_tracking_mode="{relative_pos}" output_tracking_mode="{mode_decided}"/>
-                        <Decorator ID="TargetUpdater" input_goal="{goal}" input_tracking_mode="{mode_decided}" output_goal="{updated_goal}" output_goals="{updated_goals}" output_exception_code="{exception}" >
+                        <Decorator ID="TargetUpdater" input_goal="{goal}" input_tracking_mode="{mode_decided}" transformed_goal="{transformed_goal}" output_goal="{updated_goal}" output_goals="{updated_goals}" output_exception_code="{exception}" >
                             <ReactiveFallback name="ComputePathActions">
-                                <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="4000" planner_id="SplinePlanner" poses="{updated_goals}"/>
+                                <Action ID="ComputePathToPose" goal="{transformed_goal}" server_timeout="4000" path="{path}" planner_id="SplinePlanner" start=""/>
                                 <Sequence>
                                     <Action ID="ComputePathToPose" goal="{updated_goal}" server_timeout="4000" path="{path_full}" planner_id="PotentialPlanner" start=""/>
                                     <TruncatePath distance="1.0" input_path="{path_full}" output_path="{path}"/>
