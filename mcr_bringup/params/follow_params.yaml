@@ -1,6 +1,6 @@
 bt_navigatortracking_target_rclcpp_node:  
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     # TargetUpdaterNode
     global_frame: vodom  
     goal_updater_topic: tracking_pose
@@ -16,7 +16,7 @@ local_costmap_tracking:
       publish_frequency: 1.0
       global_frame: vodom
       robot_base_frame: base_link
-      use_sim_time: True
+      use_sim_time: False
       rolling_window: true
       width: 8
       height: 8
@@ -68,14 +68,14 @@ local_costmap_tracking:
       always_send_full_costmap: True
   local_costmap_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   local_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
 
 controller_server:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     fake_progress_checker:
       plugin: "mcr_tracking_components::FakeProgressChecker"
       required_movement_radius: 0.5
@@ -139,7 +139,7 @@ rolling_window_costmap:
       global_frame: vodom
       robot_base_frame: base_link
       rolling_window: true
-      use_sim_time: True
+      use_sim_time: False
       width: 10
       height: 10
       robot_radius: 0.22
@@ -174,16 +174,16 @@ rolling_window_costmap:
       always_send_full_costmap: True
   rolling_window_costmap_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   rolling_window_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
 
 
 planner_server:
   ros__parameters:
     SplinePlanner:
-      use_sim_time: True
+      use_sim_time: False
       plugin: mcr_global_planner/MCRSplinePlanner
       costmap: rolling_window_costmap
       spline_name: bezier
@@ -196,7 +196,7 @@ planner_server:
         # plugin: mcr_planner_plugins::BSpliner
         # plugin: mcr_planner_plugins::PolynomialInterpolation
     PotentialPlanner:
-      use_sim_time: True
+      use_sim_time: False
       plugin: mcr_global_planner/MCRGlobalPlanner
       costmap: rolling_window_costmap
       potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
