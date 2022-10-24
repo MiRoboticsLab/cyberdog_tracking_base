@@ -133,7 +133,9 @@ inline BT::NodeStatus TargetUpdater::tick()
   geometry_msgs::msg::PoseStamped goal;
   setOutput("output_exception_code", nav2_core::NOEXCEPTION);
   double dist = 0.0;
+  unsigned int exception_code = 0;
   config().blackboard->get<double>("keep_distance", dist);
+  config().blackboard->get<unsigned int>("exception_code", exception_code);
   if(dist > 0.2){
     keep_distance_ = dist;
   }else{
@@ -151,6 +153,9 @@ inline BT::NodeStatus TargetUpdater::tick()
     setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
     config().blackboard->set<int>("exception_code", nav2_core::DETECTOREXCEPTION);
     return BT::NodeStatus::FAILURE;
+  }
+  if(exception_code == nav2_core::DETECTOREXCEPTION){
+    config().blackboard->set<int>("exception_code", nav2_core::NOEXCEPTION);
   }
 
   if (rclcpp::Time(last_goal_received_.header.stamp) > rclcpp::Time(goal.header.stamp)) {
@@ -179,6 +184,8 @@ inline BT::NodeStatus TargetUpdater::tick()
       RCLCPP_WARN(
         node_->get_logger(),
         "The target is too far away to continue tracking.");
+    setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
+    config().blackboard->set<int>("exception_code", nav2_core::DETECTOREXCEPTION);        
     return BT::NodeStatus::FAILURE;
   }
   setOutput("output_goals", poses_cur_target);
@@ -188,6 +195,8 @@ inline BT::NodeStatus TargetUpdater::tick()
   if (status == BT::NodeStatus::FAILURE) {
     setOutput("output_exception_code", nav2_core::PLANNEREXECPTION);
     config().blackboard->set<int>("exception_code", nav2_core::PLANNEREXECPTION);
+  }else{
+    config().blackboard->set<int>("exception_code", nav2_core::NOEXCEPTION);
   }
 
   return status;

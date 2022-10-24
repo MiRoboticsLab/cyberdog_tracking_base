@@ -1,6 +1,6 @@
 bt_navigatorautomatic_recharge_rclcpp_node:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     global_frame: base_link
     robot_base_frame: base_link
     distance: 1.5
@@ -16,7 +16,7 @@ local_costmap_charging:
       publish_frequency: 2.0
       global_frame: base_link
       robot_base_frame: base_link
-      use_sim_time: True
+      use_sim_time: False
       rolling_window: true
       width: 8
       height: 8
@@ -67,14 +67,14 @@ local_costmap_charging:
       always_send_full_costmap: True
   local_costmap_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   local_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
 
 controller_server:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     fake_progress_checkerL:
       plugin: "mcr_tracking_components::FakeProgressChecker"
       required_movement_radius: 0.5
@@ -143,7 +143,7 @@ controller_server:
 planner_server:
   ros__parameters:
     SplinePlannerL:
-      use_sim_time: True
+      use_sim_time: False
       plugin: mcr_global_planner/MCRSplinePlanner
       costmap: rolling_costmap_charging
       spline_name: linear
@@ -164,7 +164,7 @@ rolling_costmap_charging:
       global_frame: base_link
       robot_base_frame: base_link
       rolling_window: true
-      use_sim_time: True
+      use_sim_time: False
       width: 10
       height: 10
       robot_radius: 0.22
@@ -198,7 +198,7 @@ rolling_costmap_charging:
       always_send_full_costmap: True
   rolling_costmap_charging_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   rolling_costmap_charging_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
