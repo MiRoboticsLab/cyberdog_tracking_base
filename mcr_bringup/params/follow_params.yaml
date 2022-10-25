@@ -35,7 +35,7 @@ local_costmap_tracking:
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -53,7 +53,7 @@ local_costmap_tracking:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: scan
           max_obstacle_height: 10.0
           min_obstacle_height: -10.0
           clearing: True
@@ -154,7 +154,7 @@ rolling_window_costmap:
         tracking_pose_topic: tracking_pose        
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: scan
           max_obstacle_height: 10.0
           min_obstacle_height: -10.0
           clearing: True

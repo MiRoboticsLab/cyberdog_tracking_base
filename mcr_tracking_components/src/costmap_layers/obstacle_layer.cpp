@@ -196,6 +196,8 @@ void ObstacleLayer::onInitialize()
     node->get_parameter(name_ + "." + source + "." + "raytrace_min_range", raytrace_min_range);
     node->get_parameter(name_ + "." + source + "." + "raytrace_max_range", raytrace_max_range);
 
+    if(topic[0] != '/')
+      topic = client_node_->get_namespace() + std::string("/") + topic;
 
     RCLCPP_DEBUG(
       logger_,
