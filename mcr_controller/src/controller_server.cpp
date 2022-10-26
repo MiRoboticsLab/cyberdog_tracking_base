@@ -471,12 +471,12 @@ void ControllerServer::computeControl()
 
       updateGlobalPath();
 
-      computeAndPublishVelocity();
-
       if (isGoalReached()) {
         RCLCPP_INFO(get_logger(), "Reached the goal!");
         break;
       }
+
+      computeAndPublishVelocity();
 
       if (!loop_rate.sleep()) {
         RCLCPP_WARN(

@@ -36,7 +36,8 @@ local_costmap_tracking:
         observation_sources: scan
         scan:
           topic: scan
-          max_obstacle_height: 2.0
+          max_obstacle_height: 2000000000000.0
+          min_obstacle_height: -2000000000000.0
           clearing: True
           marking: True
           data_type: "LaserScan"
@@ -54,8 +55,8 @@ local_costmap_tracking:
         observation_sources: scan
         scan:
           topic: scan
-          max_obstacle_height: 10.0
-          min_obstacle_height: -10.0
+          max_obstacle_height: 2000000000000.0
+          min_obstacle_height: -2000000000000.0
           clearing: True
           marking: True
           data_type: "LaserScan"
