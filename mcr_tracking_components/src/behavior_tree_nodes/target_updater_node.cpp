@@ -168,6 +168,7 @@ inline BT::NodeStatus TargetUpdater::tick()
   config().blackboard->set<float>("distance", distance_);
   setOutput("distance", distance_);
   setOutput("output_goal", goal);
+  setOutput("transformed_goal", last_goal_transformed_);
 
   geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
   std::vector<geometry_msgs::msg::PoseStamped> poses_cur_target;
@@ -281,7 +282,7 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
     RCLCPP_ERROR(node_->get_logger(), "Faild transform target pose to %s", global_frame_.c_str());
     throw nav2_core::TFException("Transformed error in target updater node");
   }
-
+  global_frame_pose.pose.position.z = 0.0;
   return global_frame_pose;
 }
 
