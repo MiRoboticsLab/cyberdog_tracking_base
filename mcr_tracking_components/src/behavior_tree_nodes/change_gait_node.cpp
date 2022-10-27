@@ -38,7 +38,7 @@ ChangeGait::ChangeGait(const std::string& name,
       rclcpp::CallbackGroupType::MutuallyExclusive, false);
   callback_group_executor_.add_callback_group(callback_group_,
                                               node_->get_node_base_interface());
-  motion_client_ = node_->create_client<MotionServiceT>("velocity_adaptor_gait");
+  // motion_client_ = node_->create_client<MotionServiceT>("velocity_adaptor_gait");
   // change_gait_pub_ =
   //     node_->create_publisher<std_msgs::msg::Int8>("motion_control", 10);
 }
@@ -46,35 +46,35 @@ inline BT::NodeStatus ChangeGait::tick() {
   callback_group_executor_.spin_some();
   setStatus(BT::NodeStatus::RUNNING);
   // MotionServiceT current_gait;
-  auto request = std::make_shared<MotionServiceT::Request>();
+  // auto request = std::make_shared<MotionServiceT::Request>();
 
-  getInput("gait_motion_id", request->motion_id);
-  getInput("gait_shape_value", request->value);
-  getInput("gait_step_height", request->step_height[0]);
-  getInput("gait_step_height", request->step_height[1]);
+  // getInput("gait_motion_id", request->motion_id);
+  // getInput("gait_shape_value", request->value);
+  // getInput("gait_step_height", request->step_height[0]);
+  // getInput("gait_step_height", request->step_height[1]);
 
-  if (!motion_client_->service_is_ready()) {
-    RCLCPP_ERROR(node_->get_logger(), "ChangeGait error: motion service is not ready."); 
-    return BT::NodeStatus::FAILURE;
-  }
+  // if (!motion_client_->service_is_ready()) {
+  //   RCLCPP_ERROR(node_->get_logger(), "ChangeGait error: motion service is not ready."); 
+  //   return BT::NodeStatus::FAILURE;
+  // }
 
-  auto motion_future = motion_client_->async_send_request(request);
+  // auto motion_future = motion_client_->async_send_request(request);
 
-  auto timeout = std::chrono::milliseconds(1000);
-  if (motion_future.wait_for(timeout) == std::future_status::ready) {
-    auto response = motion_future.get();
-    if (response->result == true) {
-      RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.", request->motion_id); 
-      return BT::NodeStatus::SUCCESS;
-    } else {
-      RCLCPP_ERROR(node_->get_logger(), "ChangeGait failed: respose is not ok."); 
-      return BT::NodeStatus::FAILURE;
-    }
-  } else {
-    RCLCPP_ERROR(node_->get_logger(), "ChangeGait failed: didn't wait forrespose."); 
-    return BT::NodeStatus::FAILURE;
-  }
-
+  // auto timeout = std::chrono::milliseconds(1000);
+  // if (motion_future.wait_for(timeout) == std::future_status::ready) {
+  //   auto response = motion_future.get();
+  //   if (response->result == true) {
+  //     RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.", request->motion_id); 
+  //     return BT::NodeStatus::SUCCESS;
+  //   } else {
+  //     RCLCPP_ERROR(node_->get_logger(), "ChangeGait failed: respose is not ok."); 
+  //     return BT::NodeStatus::FAILURE;
+  //   }
+  // } else {
+  //   RCLCPP_ERROR(node_->get_logger(), "ChangeGait failed: didn't wait forrespose."); 
+  //   return BT::NodeStatus::FAILURE;
+  // }
+  // return BT::NodeStatus::SUCCESS;
 
   // std_msgs::msg::Int8 gait;
   // unsigned int next_start;
@@ -83,19 +83,20 @@ inline BT::NodeStatus ChangeGait::tick() {
   // RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.",
   //             gait.data);
 
-  // if (current_gait == 7)
-  //   sleep(5);
-  // else
-  //   sleep(1);
-
-  // gait.data = current_gait;
+  // // if (current_gait == 7)
+  // //   sleep(5);
+  // // else
+  // //   sleep(1);
+  // sleep(3);
+  // // gait.data = current_gait;
+  // gait.data = 7;
   // change_gait_pub_->publish(gait);
   // RCLCPP_INFO(node_->get_logger(), "ChangeGait ok: motion gait now is %d.",
   //             gait.data);
   // next_start = 1;
   // setOutput("next_action_start", next_start);
   // sleep(2);
-  // return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::SUCCESS;
 }
 
 }  // namespace mcr_tracking_components
