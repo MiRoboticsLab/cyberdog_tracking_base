@@ -265,7 +265,7 @@ map_saver:
 
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 1
+    expected_planner_frequency: 1.0
     use_sim_time: False
     planner_plugins: ["GridBased", "SplinePlanner", "PotentialPlanner", "SplinePlannerL"]
     planner_costmaps: ["rolling_costmap_charging" , "rolling_window_costmap", "global_costmap"]
