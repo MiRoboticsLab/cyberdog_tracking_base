@@ -24,20 +24,21 @@
 #include "protocol/srv/motion_result_cmd.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/int8.hpp"
+#include "nav2_behavior_tree/bt_service_node.hpp"
 namespace mcr_tracking_components {
 
 using MotionServiceT = protocol::srv::MotionResultCmd;
 /**
- * @brief A BT::ActionNodeBase to make decision for tracking mode
+ * @brief A BT::BtServiceNode to make decision for tracking mode
  */
-class ChangeGait : public BT::ActionNodeBase {
+class ChangeGait : public nav2_behavior_tree::BtServiceNode<MotionServiceT> {
  public:
   /**
    * @brief A mcr_tracking_components::ChangeGait constructor
-   * @param xml_tag_name Name for the XML tag for this node
+   * @param name Name for this node
    * @param conf BT node configuration
    */
-  ChangeGait(const std::string& xml_tag_name,
+  ChangeGait(const std::string& name,
              const BT::NodeConfiguration& conf);
 
   /**
@@ -45,31 +46,22 @@ class ChangeGait : public BT::ActionNodeBase {
    * @return BT::PortsList Containing basic ports along with node-specific ports
    */
   static BT::PortsList providedPorts() {
-    return {
+    return providedBasicPorts(
+      {
         BT::InputPort<int>("gait_motion_id", "the gait for next step."),
         BT::InputPort<float>("gait_shape_value", "the gait for next step."),
         BT::InputPort<float>("gait_step_height", "the gait for next step."),
         BT::OutputPort<unsigned int>("next_action_start",
                               "start signal to next action."),
-    };
+      });
   }
 
- private:
-  /**
-   * @brief The other (optional) override required by a BT action.
-   */
-  void halt() override {}
+  virtual void on_wait_for_result();
 
   /**
-   * @brief The main override required by a BT action
-   * @return BT::NodeStatus Status of tick execution
+   * @brief Function to perform some user-defined operation on tick
    */
-  rclcpp::Node::SharedPtr node_;
-  rclcpp::CallbackGroup::SharedPtr callback_group_;
-  rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
-  BT::NodeStatus tick() override;
-  rclcpp::Client<MotionServiceT>::SharedPtr motion_client_;
-  rclcpp::Publisher<std_msgs::msg::Int8>::SharedPtr change_gait_pub_;
+  virtual void on_tick();
 };
 
 }  // namespace mcr_tracking_components

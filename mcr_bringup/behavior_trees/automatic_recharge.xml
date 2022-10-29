@@ -4,7 +4,7 @@
     <BehaviorTree ID="MainTree">
         <Control ID="RecoveryNode" name="TargetTracking" number_of_retries="5">
             <SequenceStar>
-                <Action ID="ChangeGait" gait_motion_id="303" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/>
+                <Action ID="ChangeGait" service_name="velocity_adaptor_gait" gait_motion_id="303" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/>
                 <SequenceStar>
                 <Control ID="PipelineSequence" name="NavigateWithReplanning">
                     <Decorator ID="RateController" hz="5.0">
@@ -23,7 +23,6 @@
                     <Action ID="FollowPath" controller_id="TrackingTargetL" server_timeout="1000"  goal_checker_id="general_goal_checkerL" path="{path}" progress_checker_id="fake_progress_checker"/>
                 </Control>
                 </SequenceStar>
-                <Action ID="ChangeGait" gait_motion_id="101" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/>
                 <Condition ID="IsBatteryInCharge"/>
             </SequenceStar>
             <ReactiveFallback name="RecoveryActions">
