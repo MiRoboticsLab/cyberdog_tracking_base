@@ -59,6 +59,7 @@
       <input_port name="input_tracking_mode">Original tracking mode</input_port>
       <output_port name="distance">Distance between target and robot.</output_port>
       <output_port name="output_goal">Output goal set by subscription</output_port>
+      <output_port name="transformed_goal">Output goal set by transformed_goal subscription</output_port>
       <output_port name="output_goals">Output goals set by subscription</output_port>
       <output_port name="output_exception_code">Exception code for the real reason</output_port>
     </Decorator>

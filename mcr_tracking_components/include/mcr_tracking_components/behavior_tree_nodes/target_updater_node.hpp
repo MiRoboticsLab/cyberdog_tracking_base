@@ -66,6 +66,9 @@ public:
       BT::OutputPort<geometry_msgs::msg::PoseStamped>(
         "output_goal",
         "Received Goal by subscription"),
+      BT::OutputPort<geometry_msgs::msg::PoseStamped>(
+        "transformed_goal",
+        "transformed Goal by subscription"),        
       BT::OutputPort<std::vector<geometry_msgs::msg::PoseStamped>>(
         "output_goals",
         "Received Goals by subscription"),
