@@ -21,7 +21,7 @@ local_costmap_tracking:
       width: 8
       height: 8
       resolution: 0.05
-      robot_radius: 0.35
+      robot_radius: 0.28
       plugins: ["obstacle_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -84,8 +84,8 @@ controller_server:
     xy_goal_checker:
       stateful: True
       plugin: "mcr_tracking_components::XYGoalChecker"
-      xy_goal_tolerance: 0.5
-      yaw_goal_tolerance: 0.5
+      xy_goal_tolerance: 0.3
+      yaw_goal_tolerance: 0.3
     # DWB parameters
     TrackingTarget:
       plugin: "dwb_core::DWBLocalPlanner"
@@ -143,7 +143,7 @@ rolling_window_costmap:
       use_sim_time: False
       width: 10
       height: 10
-      robot_radius: 0.22
+      robot_radius: 0.31
       resolution: 0.05
       track_unknown_space: false
       plugins: ["obstacle_layer", "inflation_layer"]
