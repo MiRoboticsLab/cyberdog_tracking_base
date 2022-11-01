@@ -21,6 +21,7 @@
   <depend>mcr_nav_grid</depend>
   <depend>nav_2d_utils</depend>
   <depend>ompl</depend>
+  <depend>backward_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
