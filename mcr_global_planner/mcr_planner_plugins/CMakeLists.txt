@@ -19,6 +19,7 @@ endif()
 # find_package(Eigen3 REQUIRED)
 # Solution to find Eigen3 with Saucy.
 find_package(Eigen3 QUIET)
+find_package(backward_ros REQUIRED)
 
 if(NOT EIGEN3_FOUND)
   find_package(PkgConfig REQUIRED)

@@ -31,6 +31,7 @@ find_package(nav_2d_msgs REQUIRED)
 find_package(mcr_nav_grid REQUIRED)
 find_package(nav_2d_utils REQUIRED)
 find_package(ompl REQUIRED)
+find_package(backward_ros REQUIRED)
 
 set(library_name "mcr_global_planner")
 add_library(${library_name} SHARED
