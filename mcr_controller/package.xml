@@ -20,6 +20,8 @@
   <depend>nav_2d_msgs</depend>
   <depend>nav2_core</depend>
   <depend>pluginlib</depend>
+  <depend>cyberdog_debug</depend>
+  <depend>cyberdog_common</depend>
 
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_lint_auto</test_depend>

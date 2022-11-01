@@ -14,12 +14,13 @@
 // limitations under the License.
 
 #include <memory>
-
+#include "cyberdog_debug/backtrace.hpp"
 #include "mcr_uwb/mcr_uwb.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char ** argv)
 {
+  cyberdog::debug::register_signal();
   rclcpp::init(argc, argv);
   auto node = std::make_shared<mcr_uwb::MCRUwb>();
   rclcpp::spin(node->get_node_base_interface());

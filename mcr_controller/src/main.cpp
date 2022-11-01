@@ -13,13 +13,14 @@
 // limitations under the License.
 
 #include <memory>
-
+#include "cyberdog_debug/backtrace.hpp"
 #include "mcr_controller/controller_server.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
+  cyberdog::debug::register_signal();
   auto node = std::make_shared<mcr_controller::ControllerServer>();
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();

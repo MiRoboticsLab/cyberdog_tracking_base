@@ -16,7 +16,8 @@ find_package(nav2_msgs REQUIRED)
 find_package(nav_2d_utils REQUIRED)
 find_package(nav_2d_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
-
+find_package(cyberdog_debug REQUIRED)
+find_package(cyberdog_common REQUIRED)
 nav2_package()
 
 include_directories(
@@ -49,6 +50,8 @@ set(dependencies
   nav2_util
   nav2_core
   pluginlib
+  cyberdog_debug
+  cyberdog_common
 )
 
 ament_target_dependencies(${library_name}

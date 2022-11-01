@@ -9,7 +9,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(protocol REQUIRED)
-
+find_package(cyberdog_debug REQUIRED)
+find_package(cyberdog_common REQUIRED)
 include_directories(
   include
 )
@@ -25,6 +26,8 @@ set(dependencies
   geometry_msgs
   builtin_interfaces
   tf2_ros
+  cyberdog_debug
+  cyberdog_common  
 )
 
 add_library(${library_name} SHARED
