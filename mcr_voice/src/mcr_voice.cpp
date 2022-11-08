@@ -37,7 +37,7 @@ namespace mcr_voice
 {
 
 MCRVoice::MCRVoice()
-: nav2_util::LifecycleNode("mcr_voice", "", true)
+: rclcpp::Node("mcr_voice")
 {
   RCLCPP_INFO(get_logger(), "Creating");
 
@@ -45,25 +45,10 @@ MCRVoice::MCRVoice()
   declare_parameter("feedback_topic", "tracking_target/_action/feedback");
   declare_parameter("valid_range", 3.5);
   callback_group_ = create_callback_group(rclcpp::CallbackGroupType::Reentrant);
-  // get_parameter("planner_plugins", planner_ids_);
- 
-}
-
-MCRVoice::~MCRVoice()
-{
-}
-
-nav2_util::CallbackReturn
-MCRVoice::on_configure(const rclcpp_lifecycle::State &)
-{
-  RCLCPP_INFO(get_logger(), "Configuring");
-  auto node = shared_from_this();
   std::string feedback_topic, produced_pose;
   get_parameter("feedback_topic", feedback_topic);
   get_parameter("valid_range", valid_range_);
 
-  // Initialize pubs & subs
-  // pose_pub_ = create_publisher<geometry_msgs::msg::PoseStamped>(produced_pose, 5);
 
     audio_play_client_ = create_client<protocol::srv::AudioTextPlay>(
       "speech_text_play",
@@ -71,57 +56,15 @@ MCRVoice::on_configure(const rclcpp_lifecycle::State &)
       callback_group_);
 
   feedback_sub_ = create_subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>(feedback_topic, 10, 
-                                                        std::bind(&MCRVoice::incomingFeedback, this, std::placeholders::_1));
-
-
-
-  return nav2_util::CallbackReturn::SUCCESS;
+                                                        std::bind(&MCRVoice::incomingFeedback, this, std::placeholders::_1));  
+ 
 }
 
-nav2_util::CallbackReturn
-MCRVoice::on_activate(const rclcpp_lifecycle::State &)
+MCRVoice::~MCRVoice()
 {
-  RCLCPP_INFO(get_logger(), "Activating");
-
-  // pose_pub_->on_activate();
-  // feedback_sub_->on_activate();
-
-  // create bond connection
-  createBond();
-
-  return nav2_util::CallbackReturn::SUCCESS;
-}
-
-nav2_util::CallbackReturn
-MCRVoice::on_deactivate(const rclcpp_lifecycle::State &)
-{
-  RCLCPP_INFO(get_logger(), "Deactivating");
-
-  // pose_pub_->on_deactivate();
-  // feedback_sub_->on_deactivate();
-
-  // destroy bond connection
-  destroyBond();
-
-  return nav2_util::CallbackReturn::SUCCESS;
-}
-
-nav2_util::CallbackReturn
-MCRVoice::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
-{
-  RCLCPP_INFO(get_logger(), "Cleaning up");
-
-  // pose_pub_.reset();
   feedback_sub_.reset();
-  return nav2_util::CallbackReturn::SUCCESS;
 }
 
-nav2_util::CallbackReturn
-MCRVoice::on_shutdown(const rclcpp_lifecycle::State &)
-{
-  RCLCPP_INFO(get_logger(), "Shutting down");
-  return nav2_util::CallbackReturn::SUCCESS;
-}
 
 void MCRVoice::playAudio(const std::string& audio){
   auto request = std::make_shared<protocol::srv::AudioTextPlay::Request>();

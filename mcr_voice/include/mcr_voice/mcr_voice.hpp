@@ -36,7 +36,7 @@ namespace mcr_voice
  * @class mcr_voice::MCRVoice
  * @brief a transform for uwb raw data to posestamp
  */
-class MCRVoice : public nav2_util::LifecycleNode
+class MCRVoice : public rclcpp::Node
 {
 public:
   /**
@@ -50,41 +50,8 @@ public:
 
 protected:
   void playAudio(const std::string& audio);
-  /**
-   * @brief Configure member variables and initializes planner
-   * @param state Reference to LifeCycle node state
-   * @return SUCCESS or FAILURE
-   */
-  nav2_util::CallbackReturn on_configure(const rclcpp_lifecycle::State & state) override;
-  /**
-   * @brief Activate member variables
-   * @param state Reference to LifeCycle node state
-   * @return SUCCESS or FAILURE
-   */
-  nav2_util::CallbackReturn on_activate(const rclcpp_lifecycle::State & state) override;
-  /**
-   * @brief Deactivate member variables
-   * @param state Reference to LifeCycle node state
-   * @return SUCCESS or FAILURE
-   */
-  nav2_util::CallbackReturn on_deactivate(const rclcpp_lifecycle::State & state) override;
-  /**
-   * @brief Reset member variables
-   * @param state Reference to LifeCycle node state
-   * @return SUCCESS or FAILURE
-   */
-  nav2_util::CallbackReturn on_cleanup(const rclcpp_lifecycle::State & state) override;
-  /**
-   * @brief Called when in shutdown state
-   * @param state Reference to LifeCycle node state
-   * @return SUCCESS or FAILURE
-   */
-  nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
-
   void incomingFeedback(mcr_msgs::action::TargetTracking_FeedbackMessage::ConstSharedPtr feedback);
 private:
-  // Publishers for the path
-  // rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
   rclcpp::Subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>::SharedPtr feedback_sub_;
   rclcpp::Client<protocol::srv::AudioTextPlay>::SharedPtr audio_play_client_;  
   double valid_range_;
