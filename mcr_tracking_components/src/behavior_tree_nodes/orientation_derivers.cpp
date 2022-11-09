@@ -253,7 +253,7 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     vy_ = (msg_with_orientation.pose.position.y - historical_raw_poses_[0].pose.position.y) / dt;
   }else{
     historical_raw_poses_.push_front(msg_with_orientation);
-    return *msg
+    return *msg;
   }
 
   //push pose when robot has moved a little.
