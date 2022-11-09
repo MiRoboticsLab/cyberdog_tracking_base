@@ -593,7 +593,12 @@ void ControllerServer::computeAndPublishVelocity()
   action_server_->publish_feedback(feedback);
 
   RCLCPP_DEBUG(get_logger(), "Publishing velocity at time %.2f", now().seconds());
-  publishVelocity(cmd_vel_2d);
+  if(current_controller_ == "TrackingTarget" &&
+	(feedback->distance_to_goal < 0.3 || feedback->distance_to_goal > 6.0)){
+    publishZeroVelocity();
+  }else{
+    publishVelocity(cmd_vel_2d);
+  }
 }
 
 void ControllerServer::updateGlobalPath()
