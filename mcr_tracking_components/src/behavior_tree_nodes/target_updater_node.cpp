@@ -238,8 +238,8 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
     case mcr_msgs::action::TargetTracking::Goal::LEFT: {
         //左侧 1m
         double yaw = tf2::getYaw(pose.pose.orientation);
-        transform.transform.translation.x = 1.5 * cos(yaw + 3.14 / N);
-        transform.transform.translation.y = 1.5 * sin(yaw + 3.14 / N);
+        transform.transform.translation.x = 2.0 * cos(yaw + 3.14 / N);
+        transform.transform.translation.y = 2.0 * sin(yaw + 3.14 / N);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         break;
@@ -247,8 +247,8 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
     case mcr_msgs::action::TargetTracking::Goal::RIGHT: {
         //右侧 1m
         double yaw = tf2::getYaw(pose.pose.orientation);
-        transform.transform.translation.x = 1.5 * cos(yaw - 3.14 / N);
-        transform.transform.translation.y = 1.5 * sin(yaw - 3.14 / N);
+        transform.transform.translation.x = 2.0 * cos(yaw - 3.14 / N);
+        transform.transform.translation.y = 2.0 * sin(yaw - 3.14 / N);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         break;
