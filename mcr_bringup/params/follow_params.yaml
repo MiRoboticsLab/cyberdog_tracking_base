@@ -83,8 +83,8 @@ controller_server:
       movement_time_allowance: 10.0
     xy_goal_checker:
       stateful: True
-      plugin: "nav2_controller::SimpleGoalChecker"
-      # plugin: "mcr_tracking_components::XYGoalChecker"
+      # plugin: "nav2_controller::SimpleGoalChecker"
+      plugin: "mcr_tracking_components::XYGoalChecker"
       xy_goal_tolerance: 0.3
       yaw_goal_tolerance: 0.2
     # DWB parameters
