@@ -251,6 +251,9 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     double dt = (t1 - t0).seconds();
     vx_ = (msg_with_orientation.pose.position.x - historical_raw_poses_[0].pose.position.x) / dt;
     vy_ = (msg_with_orientation.pose.position.y - historical_raw_poses_[0].pose.position.y) / dt;
+  }else{
+    historical_raw_poses_.push_front(msg_with_orientation);
+    return *msg
   }
 
   //push pose when robot has moved a little.
@@ -258,7 +261,7 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
     historical_raw_poses_.push_front(msg_with_orientation);
   }
   // deal with pose's orientation
-  while (historical_raw_poses_.size() > 4) {
+  while (historical_raw_poses_.size() > 5) {
     historical_raw_poses_.pop_back();
   }
   double theta = 0.0;
