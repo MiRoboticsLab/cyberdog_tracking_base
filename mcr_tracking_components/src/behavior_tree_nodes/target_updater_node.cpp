@@ -305,11 +305,11 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
       global_frame_.c_str());
     return false;
   }
-  // if (poseDistanceSq(last_goal_received_.pose, pose_based_on_global_frame.pose) <
-  //   dist_sq_throttle_)
-  // {
-  //   return false;
-  // }
+  if (poseDistanceSq(last_goal_received_.pose, pose_based_on_global_frame.pose) <
+    dist_sq_throttle_)
+  {
+    return false;
+  }
   last_goal_received_ = pose_based_on_global_frame;
   return true;
 }

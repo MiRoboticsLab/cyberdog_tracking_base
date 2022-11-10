@@ -476,6 +476,7 @@ void ControllerServer::computeControl()
         break;
       }
 
+      current_goal_pose_ = action_server_->get_current_goal()->goal;
       computeAndPublishVelocity();
 
       if (!loop_rate.sleep()) {
@@ -593,8 +594,9 @@ void ControllerServer::computeAndPublishVelocity()
   action_server_->publish_feedback(feedback);
 
   RCLCPP_DEBUG(get_logger(), "Publishing velocity at time %.2f", now().seconds());
+  double distance_with_target = nav2_util::geometry_utils::euclidean_distance(pose, current_goal_pose_);
   if(current_controller_ == "TrackingTarget" &&
-	(feedback->distance_to_goal < 0.3 || feedback->distance_to_goal > 6.0)){
+  	(distance_with_target < 0.8 || distance_with_target > 6.0)){
     publishZeroVelocity();
   }else{
     publishVelocity(cmd_vel_2d);
