@@ -269,6 +269,7 @@ private:
     * @param msg Shared pointer to nav2_msgs::msg::SpeedLimit
     */
   void speedLimitCallback(const nav2_msgs::msg::SpeedLimit::SharedPtr msg);
+  geometry_msgs::msg::PoseStamped current_goal_pose_;
 };
 
 }  // namespace mcr_controller

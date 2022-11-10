@@ -19,7 +19,7 @@
                     </Sequence>
                 </Decorator>
                 <KeepRunningUntilFailure>
-                    <Action ID="FollowPath" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" server_timeout="1000" />
+                    <Action ID="FollowPath" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" goal="{updated_goal}" server_timeout="1000" />
                 </KeepRunningUntilFailure>
             </Control>
             <ReactiveFallback name="RecoveryActions">
