@@ -102,6 +102,7 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
     const geometry_msgs::msg::PoseStamped& start,
     const geometry_msgs::msg::PoseStamped& goal) {
   nav_msgs::msg::Path path;
+  path.header.frame_id = goal.header.frame_id;
   path.header.stamp = node_->now();
   // path.poses.push_back(goal);
 
@@ -127,6 +128,7 @@ nav_msgs::msg::Path MCRSplinePlanner::createPlan(
       geometry_msgs::msg::PoseStamped pose;
       pose.pose.position.x = s.x + j * delta_x;
       pose.pose.position.y = s.y + j * delta_y;
+      pose.header.frame_id = goal.header.frame_id;
       path.poses.push_back(pose);
     }
   }
