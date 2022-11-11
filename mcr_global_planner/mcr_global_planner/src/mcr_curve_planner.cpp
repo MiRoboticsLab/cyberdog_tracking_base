@@ -89,7 +89,7 @@ nav_msgs::msg::Path MCRCurvePlanner::createPlan(
   const geometry_msgs::msg::PoseStamped & goal)
 {
   nav_msgs::msg::Path path;
-  path.header.frame_id = "map";
+  path.header.frame_id = goal.header.frame_id;
   ob::ScopedState<ob::ReedsSheppStateSpace> from(space_), to(space_), s(space_);
   std::vector<double> reals;
 
