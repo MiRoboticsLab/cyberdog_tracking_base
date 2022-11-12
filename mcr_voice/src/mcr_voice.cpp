@@ -50,10 +50,10 @@ MCRVoice::MCRVoice()
   get_parameter("valid_range", valid_range_);
 
 
-    audio_play_client_ = create_client<protocol::srv::AudioTextPlay>(
-      "speech_text_play",
-      rmw_qos_profile_services_default,
-      callback_group_);
+  audio_play_client_ = create_client<protocol::srv::AudioTextPlay>(
+    "speech_text_play",
+    rmw_qos_profile_services_default,
+    callback_group_);
 
   feedback_sub_ = create_subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>(feedback_topic, 10, 
                                                         std::bind(&MCRVoice::incomingFeedback, this, std::placeholders::_1));  
