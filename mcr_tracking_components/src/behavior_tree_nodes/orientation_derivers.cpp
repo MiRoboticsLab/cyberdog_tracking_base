@@ -257,7 +257,8 @@ KalmanOrientationDeriver::deriveOrientation(const geometry_msgs::msg::PoseStampe
   }
 
   //push pose when robot has moved a little.
-  if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3) {
+  if (sqrt(poseDistanceSq(historical_raw_poses_.front().pose, msg_with_orientation.pose)) > 0.3 && 
+    sqrt(vx_ * vx_ + vy_ * vy_) > 0.3) {
     historical_raw_poses_.push_front(msg_with_orientation);
   }
   // deal with pose's orientation
