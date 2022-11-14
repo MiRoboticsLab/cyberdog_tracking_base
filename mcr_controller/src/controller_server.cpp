@@ -426,6 +426,7 @@ void ControllerServer::computeControl()
       current_controller_ = current_controller;
     } else {
       action_server_->terminate_current();
+      RCLCPP_WARN(get_logger(), "Can not find controller %s, will abort the mission.", c_name);
       return;
     }
     costmap_ros_ = costmaps_[pcmaps_[current_controller_]];
@@ -436,6 +437,7 @@ void ControllerServer::computeControl()
       current_goal_checker_ = current_goal_checker;
     } else {
       action_server_->terminate_current();
+      RCLCPP_WARN(get_logger(), "Can not find goal checker %s, will abort the mission.", gc_name);
       return;
     }
 
@@ -445,6 +447,7 @@ void ControllerServer::computeControl()
       current_progress_checker_ = current_progress_checker;
     } else {
       action_server_->terminate_current();
+      RCLCPP_WARN(get_logger(), "Can not find progress checker %s, will abort the mission.", pc_name);
       return;
     }
 
