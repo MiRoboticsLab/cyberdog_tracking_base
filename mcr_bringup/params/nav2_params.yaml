@@ -6,7 +6,7 @@ bt_navigator:
     odom_topic: vodom
     maxwait: 15.0
     target_topic: tracking_pose
-    bt_loop_duration: 100
+    bt_loop_duration: 10
     default_server_timeout: 20
     enable_groot_monitoring: False
     groot_zmq_publisher_port: 1789
@@ -267,7 +267,7 @@ map_saver:
 
 planner_server:
   ros__parameters:
-    expected_planner_frequency: 1.0
+    expected_planner_frequency: 5.0
     use_sim_time: False
     planner_plugins: ["GridBased", "SplinePlanner", "PotentialPlanner", "SplinePlannerL"]
     planner_costmaps: ["rolling_costmap_charging" , "rolling_window_costmap", "global_costmap"]
