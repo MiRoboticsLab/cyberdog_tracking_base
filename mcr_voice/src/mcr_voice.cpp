@@ -55,7 +55,7 @@ MCRVoice::MCRVoice()
     rmw_qos_profile_services_default,
     callback_group_);
 
-  feedback_sub_ = create_subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>(feedback_topic, 10, 
+  feedback_sub_ = create_subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>(feedback_topic, 1, 
                                                         std::bind(&MCRVoice::incomingFeedback, this, std::placeholders::_1));  
  
 }
