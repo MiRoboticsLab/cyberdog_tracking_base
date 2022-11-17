@@ -49,7 +49,7 @@ local_costmap_tracking:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
         use_tracking_mode: True 
-        tracking_pose_invisible_radius: 0.8
+        tracking_pose_invisible_radius: 0.5
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
@@ -147,7 +147,7 @@ controller_server:
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
-      KeepTargetInsight.scale: 6.0
+      KeepTargetInsight.scale: 26.0
       KeepTargetInsight.target_topic: tracking_pose
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
@@ -174,7 +174,7 @@ rolling_window_costmap:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
         use_tracking_mode: True
-        tracking_pose_invisible_radius: 0.8
+        tracking_pose_invisible_radius: 0.4
         tracking_pose_topic: tracking_pose        
         observation_sources: scan
         scan:

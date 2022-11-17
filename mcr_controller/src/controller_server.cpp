@@ -599,7 +599,7 @@ void ControllerServer::computeAndPublishVelocity()
   RCLCPP_DEBUG(get_logger(), "Publishing velocity at time %.2f", now().seconds());
   double distance_with_target = nav2_util::geometry_utils::euclidean_distance(pose, current_goal_pose_);
   if(current_controller_ == "TrackingTarget" &&
-  	(distance_with_target < 0.8 || distance_with_target > 6.0)){
+  	(distance_with_target < 1.0 || distance_with_target > 6.0)){
     publishZeroVelocity();
   }else{
     publishVelocity(cmd_vel_2d);
