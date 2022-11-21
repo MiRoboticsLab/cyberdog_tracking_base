@@ -295,14 +295,9 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
     return false;
   }
   geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
-  try {
-    pose_based_on_global_frame = tf_buffer_->transform(
-      *msg, global_frame_, tf2::durationFromSec(0.2));
-  } catch (...) {
-    RCLCPP_WARN(
-      node_->get_logger(), "failed to transform pose from %s to %s.",
-      msg->header.frame_id.c_str(),
-      global_frame_.c_str());
+  if(!nav2_util::transformPoseInTargetFrame(
+    *msg, pose_based_on_global_frame, *tf_buffer_, global_frame_, 1.2)){
+    RCLCPP_WARN(node_->get_logger(), "Failed to transform pose in target updater.");
     return false;
   }
   if (poseDistanceSq(last_goal_received_.pose, pose_based_on_global_frame.pose) <
