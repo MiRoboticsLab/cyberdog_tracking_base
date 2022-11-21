@@ -3,7 +3,7 @@ bt_navigator:
     use_sim_time: False
     global_frame: map
     robot_base_frame: base_link
-    odom_topic: vodom
+    odom_topic: odom_out
     maxwait: 15.0
     target_topic: tracking_pose
     bt_loop_duration: 10
@@ -65,6 +65,7 @@ bt_navigator_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: False
+    odom_topic: odom_out
     controller_frequency: 10.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
