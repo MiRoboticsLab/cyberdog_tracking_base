@@ -629,6 +629,8 @@ nav_msgs::msg::Path PlannerServer::getPlan(
 
 void PlannerServer::publishPlan(const nav_msgs::msg::Path &path) {
   auto msg = std::make_unique<nav_msgs::msg::Path>(path);
+  RCLCPP_INFO(get_logger(), "path size: %d", (unsigned int)msg->poses.size());
+
   if (plan_publisher_->is_activated() &&
       plan_publisher_->get_subscription_count() > 0) {
     plan_publisher_->publish(std::move(msg));
