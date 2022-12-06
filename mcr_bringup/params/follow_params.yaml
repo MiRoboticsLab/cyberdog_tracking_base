@@ -2,7 +2,7 @@ bt_navigatortracking_target_rclcpp_node:
   ros__parameters:
     use_sim_time: False
     # TargetUpdaterNode
-    global_frame: vodom  
+    global_frame: odom  
     goal_updater_topic: tracking_pose
     overtime: 1.50
     max_pose_inuse: 0
@@ -14,7 +14,7 @@ local_costmap_tracking:
     ros__parameters:
       update_frequency: 1.0
       publish_frequency: 1.0
-      global_frame: vodom
+      global_frame: odom
       robot_base_frame: base_link
       transform_tolerance: 1.2
       use_sim_time: False
@@ -95,7 +95,7 @@ local_costmap_tracking:
 controller_server:
   ros__parameters:
     use_sim_time: False
-    odom_topic: odom_out
+    # odom_topic: odom
     fake_progress_checker:
       plugin: "mcr_tracking_components::FakeProgressChecker"
       required_movement_radius: 0.5
@@ -113,15 +113,15 @@ controller_server:
       debug_trajectory_details: True
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
       min_vel_x: 0.0
-      min_vel_y: -0.3
-      max_vel_x: 1.2
-      max_vel_y: 0.3
-      max_vel_theta: 1.5
-      min_vel_theta: -1.5
+      min_vel_y: -3.0
+      max_vel_x: 10.0
+      max_vel_y: 10.0
+      max_vel_theta: 3.0
+      min_vel_theta: -3.0
       min_speed_xy: 0.0
-      max_speed_xy: 1.2
-      max_speed_theta: 1.5
-      min_speed_theta: -1.5
+      max_speed_xy: 14.0
+      max_speed_theta: 3.0
+      min_speed_theta: -3.5
       acc_lim_x: 1.0
       acc_lim_y: 1.0
       acc_lim_theta: 2.0
@@ -158,7 +158,7 @@ rolling_window_costmap:
     ros__parameters:
       update_frequency: 0.0
       publish_frequency: 1.0
-      global_frame: vodom
+      global_frame: odom
       robot_base_frame: base_link
       rolling_window: true
       transform_tolerance: 1.2
@@ -208,30 +208,40 @@ rolling_window_costmap:
 planner_server:
   ros__parameters:
     SplinePlanner:
-      use_sim_time: False
-      plugin: mcr_global_planner/MCRSplinePlanner
+      plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: rolling_window_costmap
-      spline_name: bezier
-      pose_topic: "tracking_pose_in_map"
-      # pose_topic: "target_traces"
-      bezier:
-        plugin: mcr_planner_plugins::LinearInterpolation
-        # plugin: mcr_planner_plugins::BezierSpliner
-        # plugin: mcr_planner_plugins::PolynomialFitting
-        # plugin: mcr_planner_plugins::BSpliner
-        # plugin: mcr_planner_plugins::PolynomialInterpolation
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+      # use_sim_time: False
+      # plugin: mcr_global_planner/MCRSplinePlanner
+      # costmap: rolling_window_costmap
+      # spline_name: bezier
+      # pose_topic: "tracking_pose_in_map"
+      # # pose_topic: "target_traces"
+      # bezier:
+      #   plugin: mcr_planner_plugins::LinearInterpolation
+      #   # plugin: mcr_planner_plugins::BezierSpliner
+      #   # plugin: mcr_planner_plugins::PolynomialFitting
+      #   # plugin: mcr_planner_plugins::BSpliner
+      #   # plugin: mcr_planner_plugins::PolynomialInterpolation
     PotentialPlanner:
-      use_sim_time: False
-      plugin: mcr_global_planner/MCRGlobalPlanner
+      # use_sim_time: False
+      # plugin: mcr_global_planner/MCRGlobalPlanner
+      # costmap: rolling_window_costmap
+      # potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
+      # traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath  
+      # publish_potential: false
+      # print_statistics: false
+      # neutral_cost: 50
+      # scale: 3.0
+      # path_caching: true
+      # improvement_threshold: -1.0
+      # use_kernel: true
+      # unknown_interpretation: lethal
+      plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: rolling_window_costmap
-      potential_calculator: mcr_planner_plugins::AStar  #Dijkstra 
-      traceback: mcr_planner_plugins::GradientPath #GridPath    #VonNeumannPath  
-      publish_potential: false
-      print_statistics: false
-      neutral_cost: 50
-      scale: 3.0
-      path_caching: true
-      improvement_threshold: -1.0
-      use_kernel: true
-      unknown_interpretation: lethal
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
 

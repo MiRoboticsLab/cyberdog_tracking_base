@@ -144,17 +144,22 @@ controller_server:
 planner_server:
   ros__parameters:
     SplinePlannerL:
-      use_sim_time: False
-      plugin: mcr_global_planner/MCRSplinePlanner
+      plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: rolling_costmap_charging
-      spline_name: linear
-      pose_topic: "tracking_pose_in_map"
-      # pose_topic: "target_traces"
-      linear:
-        plugin: mcr_planner_plugins::LinearInterpolation
-        # plugin: mcr_planner_plugins::PolynomialFitting
-        # plugin: mcr_planner_plugins::BSpliner
-        # plugin: mcr_planner_plugins::PolynomialInterpolation
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
+      # use_sim_time: False
+      # plugin: mcr_global_planner/MCRSplinePlanner
+      # costmap: rolling_costmap_charging
+      # spline_name: linear
+      # pose_topic: "tracking_pose_in_map"
+      # # pose_topic: "target_traces"
+      # linear:
+      #   plugin: mcr_planner_plugins::LinearInterpolation
+      #   # plugin: mcr_planner_plugins::PolynomialFitting
+      #   # plugin: mcr_planner_plugins::BSpliner
+      #   # plugin: mcr_planner_plugins::PolynomialInterpolation
 
 
 rolling_costmap_charging:
