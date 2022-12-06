@@ -537,7 +537,7 @@ ObstacleLayer::updateCosts(
   if (!enabled_) {
     return;
   }
-
+  master_grid.resetMap(0, 0, size_x_, size_y_);
   // if not current due to reset, set current now after clearing
   if (!current_ && was_reset_) {
     was_reset_ = false;
