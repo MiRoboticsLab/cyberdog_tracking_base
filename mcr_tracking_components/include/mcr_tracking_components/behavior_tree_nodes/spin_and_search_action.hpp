@@ -19,7 +19,7 @@
 
 #include "nav2_behavior_tree/bt_action_node.hpp"
 #include "nav2_msgs/action/spin.hpp"
-
+#include "protocol/srv/motion_result_cmd.hpp"
 namespace mcr_tracking_components
 {
 
@@ -29,6 +29,7 @@ namespace mcr_tracking_components
 class SpinAndSearchAction : public nav2_behavior_tree::BtActionNode<nav2_msgs::action::Spin>
 {
 public:
+using MotionResultSrv = protocol::srv::MotionResultCmd;
   /**
    * @brief A constructor for mcr_tracking_components::SpinAndSearchAction
    * @param xml_tag_name Name for the XML tag for this node
@@ -44,6 +45,22 @@ public:
    * @brief Function to perform some user-defined operation on tick
    */
   void on_tick() override;
+  /**
+   * @brief Function to perform some user-defined operation upon successful
+   * completion of the action. Could put a value on the blackboard.
+   * @return BT::NodeStatus Returns SUCCESS by default, user may override return another value
+   */
+  BT::NodeStatus on_success() override;
+  /**
+   * @brief Function to perform some user-defined operation whe the action is aborted.
+   * @return BT::NodeStatus Returns FAILURE by default, user may override return another value
+   */
+  BT::NodeStatus on_aborted() override;
+  /**
+   * @brief Function to perform some user-defined operation when the action is cancelled.
+   * @return BT::NodeStatus Returns SUCCESS by default, user may override return another value
+   */
+  BT::NodeStatus on_cancelled() override;
 
   /**
    * @brief Creates list of BT ports
@@ -56,6 +73,11 @@ public:
         BT::InputPort<double>("search_dist", 1.57, "Spin distance")
       });
   }
+protected:
+  bool changeGait(float step_height);  
+private:
+  rclcpp::Node::SharedPtr node_;
+  rclcpp::Client<MotionResultSrv>::SharedPtr client_;  
 };
 
 }  // namespace mcr_tracking_components

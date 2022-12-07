@@ -151,11 +151,11 @@ nav2_recoveries::Status SpinAndSearch::onCycleUpdate()
   pose2d.y = current_pose.pose.position.y;
   pose2d.theta = tf2::getYaw(current_pose.pose.orientation);
 
-  if (!isCollisionFree(relative_yaw_, cmd_vel.get(), pose2d)) {
-    stopRobot();
-    RCLCPP_WARN(logger_, "Collision Ahead - Exiting Spin");
-    return nav2_recoveries::Status::FAILED;
-  }
+  // if (!isCollisionFree(relative_yaw_, cmd_vel.get(), pose2d)) {
+  //   stopRobot();
+  //   RCLCPP_WARN(logger_, "Collision Ahead - Exiting Spin");
+  //   return nav2_recoveries::Status::FAILED;
+  // }
 
   vel_pub_->publish(std::move(cmd_vel));
 
