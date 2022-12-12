@@ -33,7 +33,7 @@ local_costmap_tracking:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.35
+        inflation_radius: 0.4
       range_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
@@ -49,7 +49,7 @@ local_costmap_tracking:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
         use_tracking_mode: True 
-        tracking_pose_invisible_radius: 0.5
+        tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
@@ -112,16 +112,15 @@ controller_server:
       costmap: local_costmap_tracking
       debug_trajectory_details: True
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
-      min_vel_x: 0.0
-      min_vel_y: -0.3
+      min_vel_x: -0.3
+      min_vel_y: -0.6
       max_vel_x: 1.2
-      max_vel_y: 0.3
+      max_vel_y: 0.6
       max_vel_theta: 1.5
       min_vel_theta: -1.5
-      min_speed_xy: 0.0
+      min_speed_xy: 0.1
       max_speed_xy: 1.2
-      max_speed_theta: 1.5
-      min_speed_theta: -1.5
+      min_speed_theta: 0.2
       acc_lim_x: 1.0
       acc_lim_y: 1.0
       acc_lim_theta: 2.0
@@ -175,7 +174,7 @@ rolling_window_costmap:
         plugin: "mcr_tracking_components::ObstacleLayer"
         enabled: True
         use_tracking_mode: True
-        tracking_pose_invisible_radius: 0.4
+        tracking_pose_invisible_radius: 0.8
         tracking_pose_topic: tracking_pose        
         observation_sources: scan
         scan:
@@ -195,7 +194,7 @@ rolling_window_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.43
+        inflation_radius: 0.4
       always_send_full_costmap: True
   rolling_window_costmap_client:
     ros__parameters:

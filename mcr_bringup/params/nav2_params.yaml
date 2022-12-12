@@ -6,7 +6,7 @@ bt_navigator:
     odom_topic: odom_out
     maxwait: 15.0
     target_topic: tracking_pose
-    bt_loop_duration: 50
+    bt_loop_duration: 10
     default_server_timeout: 20
     enable_groot_monitoring: False
     groot_zmq_publisher_port: 1789
@@ -270,8 +270,14 @@ planner_server:
   ros__parameters:
     expected_planner_frequency: 5.0
     use_sim_time: False
-    planner_plugins: ["GridBased", "SplinePlanner", "PotentialPlanner", "SplinePlannerL"]
+    planner_plugins: ["GridBased", "SplinePlanner", "NavFn", "PotentialPlanner", "SplinePlannerL"]
     planner_costmaps: ["rolling_costmap_charging" , "rolling_window_costmap", "global_costmap"]
+    NavFn:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      costmap: rolling_window_costmap
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
       costmap: global_costmap
