@@ -400,6 +400,7 @@ ObstacleLayer::updateBounds(
   double robot_x, double robot_y, double robot_yaw, double * min_x,
   double * min_y, double * max_x, double * max_y)
 {
+  resetMaps();
   if (rolling_window_) {
     updateOrigin(robot_x - getSizeInMetersX() / 2, robot_y - getSizeInMetersY() / 2);
   }
@@ -537,7 +538,6 @@ ObstacleLayer::updateCosts(
   if (!enabled_) {
     return;
   }
-  master_grid.resetMap(0, 0, size_x_, size_y_);
   // if not current due to reset, set current now after clearing
   if (!current_ && was_reset_) {
     was_reset_ = false;
