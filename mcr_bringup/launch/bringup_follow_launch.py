@@ -33,6 +33,7 @@ def generate_launch_description():
     follow_param_file = 'follow_params.yaml'
     auto_charing_file = 'auto_charging.yaml'
     bt_file = 'target_tracking.xml'
+    bt_nav_file = 'navigate_to_pose_w_replanning.xml'
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -41,6 +42,7 @@ def generate_launch_description():
     follow_params_file = LaunchConfiguration('follow_params_file')
     auto_charings_file = LaunchConfiguration('auto_charing_file')
     default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
+    default_nav_to_pose_bt_xml = LaunchConfiguration('default_nav_to_pose_bt_xml')
     map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
 
     lifecycle_nodes = ['controller_server',
@@ -60,6 +62,7 @@ def generate_launch_description():
     param_substitutions = {
         'use_sim_time': use_sim_time,
         'default_target_tracking_bt_xml': default_target_tracking_bt_xml,
+        'default_nav_to_pose_bt_xml': default_nav_to_pose_bt_xml,
         'autostart': autostart,
         'map_subscribe_transient_local': map_subscribe_transient_local}
 
@@ -114,6 +117,11 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'default_target_tracking_bt_xml',
             default_value=os.path.join(bt_dir, bt_file),
+            description='Full path to the behavior tree xml file to use'),
+
+        DeclareLaunchArgument(
+            'default_nav_to_pose_bt_xml',
+            default_value=os.path.join(bt_dir, bt_nav_file),
             description='Full path to the behavior tree xml file to use'),
 
         DeclareLaunchArgument(
