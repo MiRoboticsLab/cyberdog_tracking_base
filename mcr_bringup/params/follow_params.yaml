@@ -22,7 +22,7 @@ local_costmap_tracking:
       width: 8
       height: 8
       resolution: 0.05
-      footprint: "[[0.35, 0.2], [-0.28, 0.15], [-0.28, -0.15], [0.35, -0.2]]"
+      footprint: "[[0.3, 0.15], [-0.2, 0.1], [-0.2, -0.1], [0.3, -0.15]]"
       plugins: ["obstacle_layer", "inflation_layer"]
       elevation_layer:
         plugin: "cyberdog_gridmap_costmap_plugin/GridMapCostLayer"
@@ -33,7 +33,7 @@ local_costmap_tracking:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.4
+        inflation_radius: 0.1
       range_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
@@ -116,20 +116,20 @@ controller_server:
       min_vel_y: -0.6
       max_vel_x: 1.2
       max_vel_y: 0.6
-      max_vel_theta: 1.5
-      min_vel_theta: -1.5
-      min_speed_xy: 0.1
+      max_vel_theta: 2.5
+      min_vel_theta: -2.5
+      min_speed_xy: 0.0
       max_speed_xy: 1.2
       min_speed_theta: 0.2
-      acc_lim_x: 1.0
-      acc_lim_y: 1.0
+      acc_lim_x: 0.6
+      acc_lim_y: 0.3
       acc_lim_theta: 2.0
       decel_lim_x: -1.0
-      decel_lim_y: -1.0
+      decel_lim_y: -0.3
       decel_lim_theta: -2.0
       vx_samples: 8
-      vy_samples: 4
-      vtheta_samples: 6
+      vy_samples: 6
+      vtheta_samples: 10
       sim_time: 0.9
       linear_granularity: 0.05
       angular_granularity: 0.025
@@ -147,7 +147,7 @@ controller_server:
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
-      KeepTargetInsight.scale: 26.0
+      KeepTargetInsight.scale: 40.0
       KeepTargetInsight.target_topic: tracking_pose
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
@@ -164,7 +164,7 @@ rolling_window_costmap:
       use_sim_time: False
       width: 16
       height: 16
-      footprint: "[[0.35, 0.2], [-0.28, 0.15], [-0.28, -0.15], [0.35, -0.2]]"
+      footprint: "[[0.3, 0.15], [-0.2, 0.1], [-0.2, -0.1], [0.3, -0.15]]"
       footprint_padding: 0.05
 
       resolution: 0.05
@@ -194,7 +194,7 @@ rolling_window_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.4
+        inflation_radius: 0.1
       always_send_full_costmap: True
   rolling_window_costmap_client:
     ros__parameters:
@@ -233,4 +233,3 @@ planner_server:
       improvement_threshold: -1.0
       use_kernel: true
       unknown_interpretation: lethal
-
