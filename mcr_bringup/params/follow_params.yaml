@@ -114,12 +114,12 @@ controller_server:
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
       min_vel_x: -0.3
       min_vel_y: -0.6
-      max_vel_x: 1.2
+      max_vel_x: 1.0
       max_vel_y: 0.6
       max_vel_theta: 2.5
       min_vel_theta: -2.5
       min_speed_xy: 0.0
-      max_speed_xy: 1.2
+      max_speed_xy: 1.0
       min_speed_theta: 0.2
       acc_lim_x: 0.6
       acc_lim_y: 0.3
