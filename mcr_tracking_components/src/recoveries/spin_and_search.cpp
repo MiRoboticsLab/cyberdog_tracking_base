@@ -181,10 +181,6 @@ bool SpinAndSearch::isCollisionFree(
     if (abs(relative_yaw) - abs(sim_position_change) <= 0.) {
       break;
     }
-
-    if (!collision_checker_->isCollisionFree(pose2d)) {
-      return false;
-    }
   }
   return true;
 }
