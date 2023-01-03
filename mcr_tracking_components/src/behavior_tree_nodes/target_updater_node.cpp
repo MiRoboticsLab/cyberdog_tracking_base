@@ -139,7 +139,7 @@ inline BT::NodeStatus TargetUpdater::tick()
   if(dist > 0.2){
     keep_distance_ = dist;
   }else{
-    keep_distance_ = 1.2;
+    keep_distance_ = 1.6;
   }
     
 
