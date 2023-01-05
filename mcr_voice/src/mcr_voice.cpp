@@ -85,14 +85,19 @@ void MCRVoice::playAudio(const std::string& audio){
 void
 MCRVoice::incomingFeedback(mcr_msgs::action::TargetTracking_FeedbackMessage::ConstSharedPtr feedbackmsg)
 {
+  static unsigned int k = 1;
   if(feedbackmsg->feedback.exception_code == nav2_core::DETECTOREXCEPTION){
     RCLCPP_INFO(get_logger(), "The target is out of sight. Voice prompts are needed.");  
-    playAudio("主人你在哪里，我好像迷路了。");
+    k += 1;
+    if(k % 5 == 0)
+      playAudio("主人, 我找不到你了，不要丢下我。");
   }
   
   if(feedbackmsg->feedback.current_distance > valid_range_){
     RCLCPP_INFO(get_logger(), "It is too far away from the target and needs voice prompt.");  
-    playAudio("主人，等等我，跟不上你了。");
+    k += 1;
+    if(k % 5 == 0)
+      playAudio("主人，等等我，跟不上你了。");
   }
  
    if(feedbackmsg->feedback.exception_code == nav2_core::PLANNEREXECPTION || 
