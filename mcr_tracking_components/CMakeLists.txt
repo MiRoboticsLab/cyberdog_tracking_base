@@ -106,7 +106,8 @@ ament_target_dependencies(unreachable_goal_checker ${dependencies})
 # prevent pluginlib from using boost
 target_compile_definitions(unreachable_goal_checker PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
-add_library(keep_target_insight_critic SHARED src/dwb_critics/keep_target_insight.cpp)
+add_library(keep_target_insight_critic SHARED src/dwb_critics/keep_target_insight.cpp 
+                                              src/dwb_critics/keep_person_insight.cpp)
 ament_target_dependencies(keep_target_insight_critic ${dependencies})
 # prevent pluginlib from using boost
 target_compile_definitions(keep_target_insight_critic PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
