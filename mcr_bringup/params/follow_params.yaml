@@ -131,8 +131,8 @@ controller_server:
       vy_samples: 6
       vtheta_samples: 10
       sim_time: 0.9
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      linear_granularity: 0.1
+      angular_granularity: 0.05
       transform_tolerance: 1.2
       xy_goal_tolerance: 0.25
       trans_stopped_velocity: 0.25
