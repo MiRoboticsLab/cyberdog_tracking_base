@@ -87,7 +87,7 @@ nav_msgs::msg::Path BezierSpliner::spline(
 
 int factorial(int number)
 {
-  register int i, f = 1;
+  int i, f = 1;
   for (i = 1; i <= number; i++) {
     f *= i;
   }

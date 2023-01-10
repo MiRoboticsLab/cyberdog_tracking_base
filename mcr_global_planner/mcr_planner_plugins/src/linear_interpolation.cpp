@@ -43,7 +43,7 @@ void LinearInterpolation::initialize(
 nav_msgs::msg::Path LinearInterpolation::spline(
     const std::vector<geometry_msgs::msg::PoseStamped>& poses) {
   nav_msgs::msg::Path path;
-  RCLCPP_INFO(node_->get_logger(), "pose size: %d", poses.size());
+  RCLCPP_INFO(node_->get_logger(), "pose size: %ld", poses.size());
   path.header.stamp = node_->now();
   if (poses.size() < 2) {
     return path;
@@ -64,7 +64,6 @@ nav_msgs::msg::Path LinearInterpolation::spline(
 std::vector<geometry_msgs::msg::PoseStamped>&&
 LinearInterpolation::interpolation(
     const std::vector<geometry_msgs::msg::PoseStamped>& control_points) {
-  double max_speed = max_speed_;
   static std::vector<geometry_msgs::msg::PoseStamped> path;
   path.clear();
   if (control_points.size() < 2) {

@@ -102,8 +102,8 @@ controller_server:
       movement_time_allowance: 10.0
     xy_goal_checker:
       stateful: True
-      # plugin: "nav2_controller::SimpleGoalChecker"
-      plugin: "mcr_tracking_components::XYGoalChecker"
+      plugin: "nav2_controller::SimpleGoalChecker"
+      # plugin: "mcr_tracking_components::XYGoalChecker"
       xy_goal_tolerance: 0.3
       yaw_goal_tolerance: 0.2
     # DWB parameters
@@ -131,8 +131,8 @@ controller_server:
       vy_samples: 6
       vtheta_samples: 10
       sim_time: 0.9
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      linear_granularity: 0.1
+      angular_granularity: 0.05
       transform_tolerance: 1.2
       xy_goal_tolerance: 0.25
       trans_stopped_velocity: 0.25
@@ -146,9 +146,9 @@ controller_server:
       GoalAlign.forward_point_distance: 0.1
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
-      KeepTargetInsight.class: mcr_tracking_components::KeepTargetInsightCritic
-      KeepTargetInsight.scale: 40.0
-      KeepTargetInsight.target_topic: tracking_pose
+      KeepTargetInsight.class: mcr_tracking_components::KeepPersonInsightCritic
+      KeepTargetInsight.scale: 80.0
+      KeepTargetInsight.target_topic: person
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
 

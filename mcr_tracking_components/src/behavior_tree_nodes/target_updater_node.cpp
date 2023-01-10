@@ -259,8 +259,8 @@ TargetUpdater::translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose)
         // 后方1m
         // double yaw = tf2::getYaw(pose.pose.orientation);
         double yaw = atan2(pose.pose.position.y, pose.pose.position.x);
-        transform.transform.translation.x = -1.0 * keep_distance_ * cos(yaw);
-        transform.transform.translation.y = -1.0 * keep_distance_ * sin(yaw);
+        transform.transform.translation.x = 0.0; //-1.0 * keep_distance_ * cos(yaw);
+        transform.transform.translation.y = 0.0; //-1.0 * keep_distance_ * sin(yaw);
         transform.transform.translation.z = 0.0;
         transform.transform.rotation.w = 1.0;
         tpose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
