@@ -53,7 +53,7 @@ local_costmap_tracking:
         tracking_pose_topic: tracking_pose
         observation_sources: scan
         scan:
-          topic: scan
+          topic: scan1
           max_obstacle_height: 20.0
           min_obstacle_height: -20.0
           clearing: True
@@ -72,7 +72,7 @@ local_costmap_tracking:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: scan
+          topic: scan1
           max_obstacle_height: 20.0
           min_obstacle_height: -20.0
           clearing: True
@@ -131,6 +131,7 @@ controller_server:
       vy_samples: 6
       vtheta_samples: 10
       sim_time: 0.9
+      sim_period: 0.1
       linear_granularity: 0.1
       angular_granularity: 0.05
       transform_tolerance: 1.2
@@ -178,7 +179,7 @@ rolling_window_costmap:
         tracking_pose_topic: tracking_pose        
         observation_sources: scan
         scan:
-          topic: scan
+          topic: scan1
           max_obstacle_height: 20.0
           min_obstacle_height: -20.0
           clearing: True
