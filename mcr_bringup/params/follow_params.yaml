@@ -113,9 +113,9 @@ controller_server:
       debug_trajectory_details: True
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
       min_vel_x: -0.3
-      min_vel_y: -0.6
+      min_vel_y: 0.0
       max_vel_x: 1.0
-      max_vel_y: 0.6
+      max_vel_y: 0.0
       max_vel_theta: 2.5
       min_vel_theta: -2.5
       min_speed_xy: 0.0
@@ -128,10 +128,10 @@ controller_server:
       decel_lim_y: -0.3
       decel_lim_theta: -2.0
       vx_samples: 8
-      vy_samples: 6
+      vy_samples: 0
       vtheta_samples: 10
       sim_time: 0.9
-      sim_period: 0.1
+      sim_period: 0.2
       linear_granularity: 0.1
       angular_granularity: 0.05
       transform_tolerance: 1.2
