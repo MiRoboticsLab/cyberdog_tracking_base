@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef mcr_bt_navigator__NAVIGATORS__TARGET_TRACKING_HPP_
-#define mcr_bt_navigator__NAVIGATORS__TARGET_TRACKING_HPP_
+#ifndef bt_navigators__NAVIGATORS__TARGET_TRACKING_HPP_
+#define bt_navigators__NAVIGATORS__TARGET_TRACKING_HPP_
 
 #include <string>
 #include <vector>
@@ -21,14 +21,14 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
-#include "mcr_bt_navigator/navigator.hpp"
+#include "bt_navigators/navigator.hpp"
 #include "mcr_msgs/action/target_tracking.hpp"
 #include "nav2_util/geometry_utils.hpp"
 #include "nav2_util/robot_utils.hpp"
 #include "nav_msgs/msg/path.hpp"
 #include "nav2_util/odometry_utils.hpp"
 
-namespace mcr_bt_navigator
+namespace bt_navigators
 {
 
 /**
@@ -36,7 +36,7 @@ namespace mcr_bt_navigator
  * @brief A navigator for tracking target
  */
 class TargetTrackingNavigator
-  : public mcr_bt_navigator::Navigator<mcr_msgs::action::TargetTracking>
+  : public bt_navigators::Navigator<mcr_msgs::action::TargetTracking>
 {
 public:
   using ActionT = mcr_msgs::action::TargetTracking;
@@ -129,6 +129,6 @@ protected:
   bool onGoalUpdate(FollowPoses::SharedPtr msg);
 };
 
-}  // namespace mcr_bt_navigator
+}  // namespace bt_navigators
 
-#endif  // mcr_bt_navigator__NAVIGATORS__TARGET_TRACKING_HPP_
+#endif  // bt_navigators__NAVIGATORS__TARGET_TRACKING_HPP_

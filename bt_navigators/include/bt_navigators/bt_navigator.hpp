@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef mcr_bt_navigator__BT_NAVIGATOR_HPP_
-#define mcr_bt_navigator__BT_NAVIGATOR_HPP_
+#ifndef bt_navigators__BT_NAVIGATOR_HPP_
+#define bt_navigators__BT_NAVIGATOR_HPP_
 
 #include <memory>
 #include <string>
@@ -24,13 +24,13 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/create_timer_ros.h"
-#include "mcr_bt_navigator/navigators/target_tracking.hpp"
+#include "bt_navigators/navigators/target_tracking.hpp"
 
-namespace mcr_bt_navigator
+namespace bt_navigators
 {
 
 /**
- * @class mcr_bt_navigator::BtNavigator
+ * @class bt_navigators::BtNavigator
  * @brief An action server that uses behavior tree for navigating a robot to its
  * goal position.
  */
@@ -38,11 +38,11 @@ class BtNavigator : public nav2_util::LifecycleNode
 {
 public:
   /**
-   * @brief A constructor for mcr_bt_navigator::BtNavigator class
+   * @brief A constructor for bt_navigators::BtNavigator class
    */
   BtNavigator();
   /**
-   * @brief A destructor for mcr_bt_navigator::BtNavigator class
+   * @brief A destructor for bt_navigators::BtNavigator class
    */
   ~BtNavigator();
 
@@ -82,8 +82,8 @@ protected:
   nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
 
   // To handle all the BT related execution
-  std::unique_ptr<mcr_bt_navigator::Navigator<mcr_msgs::action::TargetTracking>> target_tracking_navigator_;
-  mcr_bt_navigator::NavigatorMuxer plugin_muxer_;
+  std::unique_ptr<bt_navigators::Navigator<mcr_msgs::action::TargetTracking>> target_tracking_navigator_;
+  bt_navigators::NavigatorMuxer plugin_muxer_;
 
   // Odometry smoother object
   std::unique_ptr<nav2_util::OdomSmoother> odom_smoother_;
@@ -99,6 +99,6 @@ protected:
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 };
 
-}  // namespace mcr_bt_navigator
+}  // namespace bt_navigators
 
-#endif  // mcr_bt_navigator__BT_NAVIGATOR_HPP_
+#endif  // bt_navigators__BT_NAVIGATOR_HPP_

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mcr_bt_navigator)
+project(bt_navigators)
 add_compile_options(-g -O0)
 find_package(ament_cmake REQUIRED)
 find_package(nav2_common REQUIRED)
@@ -26,13 +26,11 @@ include_directories(
   include
 )
 
-set(executable_name mcr_bt_navigator)
-
-add_executable(${executable_name}
+add_executable(bt_navigator_tracking
   src/main.cpp
 )
 
-set(library_name ${executable_name}_core)
+set(library_name bt_navigators_core)
 
 set(dependencies
   rclcpp
@@ -60,11 +58,11 @@ add_library(${library_name} SHARED
   src/navigators/target_tracking.cpp
 )
 
-ament_target_dependencies(${executable_name}
+ament_target_dependencies(bt_navigator_tracking
   ${dependencies}
 )
 
-target_link_libraries(${executable_name} ${library_name})
+target_link_libraries(bt_navigator_tracking ${library_name})
 
 ament_target_dependencies(${library_name}
   ${dependencies}
@@ -76,7 +74,7 @@ install(TARGETS ${library_name}
   RUNTIME DESTINATION bin
 )
 
-install(TARGETS ${executable_name}
+install(TARGETS bt_navigator_tracking 
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 

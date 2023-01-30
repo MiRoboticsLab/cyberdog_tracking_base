@@ -42,7 +42,7 @@ def generate_launch_description():
     lifecycle_nodes = ['controller_server',
                        'planner_server',
                        'recoveries_server',
-                       'mcr_bt_navigator']
+                       'bt_navigator_tracking']
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -121,9 +121,9 @@ def generate_launch_description():
             remappings=remappings),
 
         Node(
-            package='mcr_bt_navigator',
-            executable='mcr_bt_navigator',
-            name='mcr_bt_navigator',
+            package='bt_navigators',
+            executable='bt_navigator_tracking',
+            name='bt_navigator_tracking',
             output='screen',
             parameters=[{configured_params_f}],
             remappings=remappings),

@@ -64,7 +64,7 @@ nav_msgs::msg::Path BSpliner::spline(
 {
   nav_msgs::msg::Path path;
   path.header.stamp = node_->now();
-  int k = k_;
+  unsigned int k = k_;
 
   if (poses.size() < 2) {return path;}
 
@@ -81,7 +81,7 @@ nav_msgs::msg::Path BSpliner::spline(
   if (flag_ == 1) {
     double x = 1.0 / (knots_vector_.size() - 1);
     knots_vector_[0] = 0.0;
-    for (int i = 1; i < knots_vector_.size(); ++i) {
+    for (size_t i = 1; i < size_t(knots_vector_.size()); ++i) {
       knots_vector_[i] = knots_vector_[i - 1] + x;
     }
     for (double u = (k - 1.0) / (n + k + 1); u <= (n + 2.0) / (n + k + 1); u += 0.01) {
@@ -98,10 +98,10 @@ nav_msgs::msg::Path BSpliner::spline(
     }
   } else {
     double x = 1.0 / (knots_vector_.size() - k - k + 1);
-    for (int i = 0; i < knots_vector_.size(); ++i) {
+    for (size_t i = 0; i < size_t(knots_vector_.size()); ++i) {
       if (i < k) {
         knots_vector_[i] = 0.0;
-      } else if (k <= i && i < knots_vector_.size() - k) {
+      } else if (k <= i && i < size_t(knots_vector_.size()) - k) {
         knots_vector_[i] = knots_vector_[i - 1] + x;
       } else {
         knots_vector_[i] = 1.0;

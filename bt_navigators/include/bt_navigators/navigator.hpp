@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef mcr_bt_navigator__NAVIGATOR_HPP_
-#define mcr_bt_navigator__NAVIGATOR_HPP_
+#ifndef bt_navigators__NAVIGATOR_HPP_
+#define bt_navigators__NAVIGATOR_HPP_
 
 #include <memory>
 #include <mutex>
@@ -29,7 +29,7 @@
 
 using FollowPoses = protocol::msg::FollowPoints;
 
-namespace mcr_bt_navigator
+namespace bt_navigators
 {
 
 /**
@@ -118,7 +118,7 @@ template<class ActionT>
 class Navigator
 {
 public:
-  using Ptr = std::shared_ptr<mcr_bt_navigator::Navigator<ActionT>>;
+  using Ptr = std::shared_ptr<bt_navigators::Navigator<ActionT>>;
 
   /**
    * @brief A Navigator constructor
@@ -143,7 +143,7 @@ public:
     rclcpp_lifecycle::LifecycleNode::WeakPtr parent_node,
     const std::vector<std::string> & plugin_lib_names,
     const FeedbackUtils & feedback_utils,
-    mcr_bt_navigator::NavigatorMuxer * plugin_muxer)
+    bt_navigators::NavigatorMuxer * plugin_muxer)
   {
     auto node = parent_node.lock();
     logger_ = node->get_logger();
@@ -320,6 +320,6 @@ protected:
   NavigatorMuxer * plugin_muxer_;
 };
 
-}  // namespace mcr_bt_navigator
+}  // namespace bt_navigators
 
-#endif  // mcr_bt_navigator__NAVIGATOR_HPP_
+#endif  // bt_navigators__NAVIGATOR_HPP_

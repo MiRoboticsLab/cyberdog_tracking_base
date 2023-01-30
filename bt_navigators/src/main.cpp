@@ -14,14 +14,14 @@
 
 #include <memory>
 #include "cyberdog_debug/backtrace.hpp"
-#include "mcr_bt_navigator/bt_navigator.hpp"
+#include "bt_navigators/bt_navigator.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 int main(int argc, char ** argv)
 {
   cyberdog::debug::register_signal();
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<mcr_bt_navigator::BtNavigator>();
+  auto node = std::make_shared<bt_navigators::BtNavigator>();
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();
 
