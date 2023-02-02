@@ -6,7 +6,7 @@ bt_navigator:
     odom_topic: odom_out
     maxwait: 15.0
     target_topic: tracking_pose
-    bt_loop_duration: 10
+    bt_loop_duration: 100
     default_server_timeout: 20
     enable_groot_monitoring: False
     groot_zmq_publisher_port: 1789
