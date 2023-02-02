@@ -101,6 +101,11 @@ ament_target_dependencies(xy_goal_checker ${dependencies})
 # prevent pluginlib from using boost
 target_compile_definitions(xy_goal_checker PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
+add_library(x_goal_checker SHARED src/controller_plugins/x_goal_checker.cpp)
+ament_target_dependencies(x_goal_checker ${dependencies})
+# prevent pluginlib from using boost
+target_compile_definitions(x_goal_checker PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
+
 add_library(unreachable_goal_checker SHARED src/controller_plugins/unreachable_goal_checker.cpp)
 ament_target_dependencies(unreachable_goal_checker ${dependencies})
 # prevent pluginlib from using boost
@@ -126,6 +131,7 @@ install(TARGETS
   ${plugin_libs} 
   fake_progress_checker 
   xy_goal_checker 
+  x_goal_checker
   unreachable_goal_checker 
   keep_target_insight_critic 
   nav2_spin_and_search_recovery
@@ -160,6 +166,7 @@ ament_export_libraries(
   ${plugin_libs} 
   fake_progress_checker
   xy_goal_checker 
+  x_goal_checker
   unreachable_goal_checker 
   keep_target_insight_critic 
   nav2_spin_and_search_recovery
