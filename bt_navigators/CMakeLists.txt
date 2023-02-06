@@ -30,6 +30,10 @@ add_executable(bt_navigator_tracking
   src/bt_navigator_tracking.cpp
 )
 
+add_executable(bt_navigator_ab
+  src/bt_navigator_ab.cpp
+)
+
 set(library_name bt_navigators_core)
 
 set(dependencies
@@ -55,6 +59,7 @@ set(dependencies
 
 add_library(${library_name} SHARED
   src/navigators/target_tracking.cpp
+  src/navigators/navigate_pose.cpp
 )
 
 ament_target_dependencies(bt_navigator_tracking
@@ -62,6 +67,12 @@ ament_target_dependencies(bt_navigator_tracking
 )
 
 target_link_libraries(bt_navigator_tracking ${library_name})
+
+ament_target_dependencies(bt_navigator_ab
+  ${dependencies}
+)
+
+target_link_libraries(bt_navigator_ab ${library_name})
 
 ament_target_dependencies(${library_name}
   ${dependencies}

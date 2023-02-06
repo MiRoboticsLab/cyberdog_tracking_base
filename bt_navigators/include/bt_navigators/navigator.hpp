@@ -272,6 +272,7 @@ protected:
    */
   virtual bool goalReceived(typename ActionT::Goal::ConstSharedPtr goal) = 0;
   virtual bool onGoalUpdate(FollowPoses::SharedPtr msg) = 0;
+
   /**
    * @brief A callback that defines execution that happens on one iteration
    * through the BT Can be used to publish action feedback
