@@ -34,17 +34,17 @@ namespace bt_navigators
  * @brief An action server that uses behavior tree for navigating a robot to its
  * goal position.
  */
-class BtNavigator : public nav2_util::LifecycleNode
+class BtNavigatorTracking : public nav2_util::LifecycleNode
 {
 public:
   /**
    * @brief A constructor for bt_navigators::BtNavigator class
    */
-  BtNavigator();
+  BtNavigatorTracking();
   /**
    * @brief A destructor for bt_navigators::BtNavigator class
    */
-  ~BtNavigator();
+  ~BtNavigatorTracking();
 
 protected:
   /**

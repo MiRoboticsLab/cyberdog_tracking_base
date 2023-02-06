@@ -28,8 +28,8 @@
 namespace bt_navigators
 {
 
-BtNavigator::BtNavigator()
-: nav2_util::LifecycleNode("bt_navigator", "", false)
+BtNavigatorTracking::BtNavigatorTracking()
+: nav2_util::LifecycleNode("bt_navigator_tracking", "", false)
 {
   RCLCPP_INFO(get_logger(), "Creating");
 
@@ -74,12 +74,12 @@ BtNavigator::BtNavigator()
   declare_parameter("odom_topic", std::string("odom"));
 }
 
-BtNavigator::~BtNavigator()
+BtNavigatorTracking::~BtNavigatorTracking()
 {
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
+BtNavigatorTracking::on_configure(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
 
@@ -119,7 +119,7 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
+BtNavigatorTracking::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
 
@@ -135,7 +135,7 @@ BtNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
+BtNavigatorTracking::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
@@ -151,7 +151,7 @@ BtNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
+BtNavigatorTracking::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Cleaning up");
 
@@ -171,7 +171,7 @@ BtNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
 }
 
 nav2_util::CallbackReturn
-BtNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
+BtNavigatorTracking::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Shutting down");
   return nav2_util::CallbackReturn::SUCCESS;
@@ -189,7 +189,7 @@ int main(int argc, char ** argv)
 {
   cyberdog::debug::register_signal();
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<bt_navigators::BtNavigator>();
+  auto node = std::make_shared<bt_navigators::BtNavigatorTracking>();
   rclcpp::spin(node->get_node_base_interface());
   rclcpp::shutdown();
 
