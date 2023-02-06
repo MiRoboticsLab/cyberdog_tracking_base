@@ -27,7 +27,7 @@ include_directories(
 )
 
 add_executable(bt_navigator_tracking
-  src/main.cpp
+  src/bt_navigator_tracking.cpp
 )
 
 set(library_name bt_navigators_core)
@@ -54,7 +54,6 @@ set(dependencies
 )
 
 add_library(${library_name} SHARED
-  src/bt_navigator.cpp
   src/navigators/target_tracking.cpp
 )
 

@@ -1,4 +1,68 @@
-bt_navigatortracking_target_rclcpp_node:  
+bt_navigator_tracking:
+  ros__parameters:
+    use_sim_time: False
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: odom_out
+    maxwait: 15.0
+    target_topic: tracking_pose
+    bt_loop_duration: 100
+    default_server_timeout: 20
+    enable_groot_monitoring: False
+    groot_zmq_publisher_port: 1789
+    groot_zmq_server_port: 1887
+    default_target_tracking_bt_xml: target_tracking.xml
+    # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
+    # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
+    # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
+    # They can be set here or via a RewrittenYaml remap from a parent launch file to Nav2.
+    plugin_lib_names:
+      - nav2_compute_path_to_pose_action_bt_node
+      - nav2_compute_path_spline_poses_action_bt_node
+      - nav2_compute_path_through_poses_action_bt_node
+      - nav2_follow_path_action_bt_node
+      - nav2_back_up_action_bt_node
+      - nav2_spin_action_bt_node
+      - nav2_spin_and_search_action_bt_node
+      - nav2_wait_action_bt_node
+      - nav2_clear_costmap_service_bt_node
+      - nav2_is_stuck_condition_bt_node
+      - nav2_goal_reached_condition_bt_node
+      - nav2_goal_updated_condition_bt_node
+      - nav2_initial_pose_received_condition_bt_node
+      - nav2_reinitialize_global_localization_service_bt_node
+      - nav2_rate_controller_bt_node
+      - nav2_distance_controller_bt_node
+      - nav2_speed_controller_bt_node
+      - nav2_truncate_path_action_bt_node
+      - nav2_goal_updater_node_bt_node
+      - nav2_tracking_mode_decider_node_bt_node
+      - nav2_target_updater_node_bt_node
+      - nav2_recovery_node_bt_node
+      - nav2_pipeline_sequence_bt_node
+      - nav2_round_robin_node_bt_node
+      - nav2_transform_available_condition_bt_node
+      - nav2_time_expired_condition_bt_node
+      - nav2_distance_traveled_condition_bt_node
+      - nav2_single_trigger_bt_node
+      - nav2_exception_verify_bt_node
+      - nav2_is_battery_low_condition_bt_node
+      - nav2_navigate_through_poses_action_bt_node
+      - nav2_navigate_to_pose_action_bt_node
+      - nav2_remove_passed_goals_action_bt_node
+      - nav2_planner_selector_bt_node
+      - nav2_controller_selector_bt_node
+      - nav2_goal_checker_selector_bt_node
+      - nav2_charger_updater_node_bt_node
+      - nav2_change_gait_node_bt_node
+      - nav2_seat_adjust_client_node_bt_node
+      - nav2_is_battery_in_charge_condition_bt_node
+
+bt_navigator_tracking_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+bt_navigator_trackingtracking_target_rclcpp_node:  
   ros__parameters:
     use_sim_time: False
     # TargetUpdaterNode
@@ -12,7 +76,7 @@ bt_navigatortracking_target_rclcpp_node:
 local_costmap_tracking:
   local_costmap_tracking:
     ros__parameters:
-      update_frequency: 1.0
+      update_frequency: 0.0
       publish_frequency: 1.0
       global_frame: vodom
       robot_base_frame: base_link
@@ -22,7 +86,7 @@ local_costmap_tracking:
       width: 8
       height: 8
       resolution: 0.05
-      footprint: "[[0.3, 0.15], [-0.2, 0.1], [-0.2, -0.1], [0.3, -0.15]]"
+      footprint: "[[0.35, 0.2], [-0.28, 0.15], [-0.28, -0.15], [0.35, -0.2]]"
       plugins: ["obstacle_layer", "inflation_layer"]
       elevation_layer:
         plugin: "cyberdog_gridmap_costmap_plugin/GridMapCostLayer"
@@ -33,7 +97,7 @@ local_costmap_tracking:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.3
+        inflation_radius: 0.35
       range_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
@@ -85,17 +149,26 @@ local_costmap_tracking:
       static_layer:
         map_subscribe_transient_local: True
       always_send_full_costmap: True
-  local_costmap_client:
+  local_costmap_tracking_client:
     ros__parameters:
       use_sim_time: False
-  local_costmap_rclcpp_node:
+  local_costmap_tracking_rclcpp_node:
     ros__parameters:
       use_sim_time: False
 
-controller_server:
+controller_server_tracking:
   ros__parameters:
     use_sim_time: False
     odom_topic: odom_out
+    controller_frequency: 10.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["fake_progress_checker"]
+    goal_checker_plugins: ["xy_goal_checker"] # "precise_goal_checker"
+    controller_plugins: ["TrackingTarget"]
+    controller_costmaps: ["local_costmap_tracking"]
     fake_progress_checker:
       plugin: "mcr_tracking_components::FakeProgressChecker"
       required_movement_radius: 0.5
@@ -165,7 +238,7 @@ rolling_window_costmap:
       use_sim_time: False
       width: 16
       height: 16
-      footprint: "[[0.3, 0.15], [-0.2, 0.1], [-0.2, -0.1], [0.3, -0.15]]"
+      footprint: "[[0.35, 0.2], [-0.28, 0.15], [-0.28, -0.15], [0.35, -0.2]]"
       footprint_padding: 0.05
 
       resolution: 0.05
@@ -195,7 +268,7 @@ rolling_window_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.3
+        inflation_radius: 0.43
       always_send_full_costmap: True
   rolling_window_costmap_client:
     ros__parameters:
@@ -205,8 +278,12 @@ rolling_window_costmap:
       use_sim_time: False
 
 
-planner_server:
+planner_server_tracking:
   ros__parameters:
+    expected_planner_frequency: 5.0
+    use_sim_time: False
+    planner_plugins: ["SplinePlanner", "PotentialPlanner"]
+    planner_costmaps: ["rolling_window_costmap"]
     SplinePlanner:
       use_sim_time: False
       plugin: mcr_global_planner/MCRSplinePlanner
@@ -234,3 +311,30 @@ planner_server:
       improvement_threshold: -1.0
       use_kernel: true
       unknown_interpretation: lethal
+
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+recoveries_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    recovery_plugins: ["spin", "spin_and_search", "backup", "wait"]
+    spin:
+      plugin: "nav2_recoveries/Spin"
+    spin_and_search:
+      plugin: "mcr_tracking_components/SpinAndSearch"
+    backup:
+      plugin: "nav2_recoveries/BackUp"
+    wait:
+      plugin: "nav2_recoveries/Wait"
+    global_frame: vodom
+    robot_base_frame: base_link
+    transform_timeout: 0.1
+    use_sim_time: False
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2

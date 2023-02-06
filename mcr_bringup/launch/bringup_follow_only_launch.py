@@ -29,7 +29,7 @@ def generate_launch_description():
     param_dir = os.path.join(package_dir, 'params')
     bt_dir = os.path.join(package_dir, 'behavior_trees')
 
-    follow_param_file = 'follow_only_params.yaml'
+    follow_param_file = 'follow_params.yaml'
     bt_file = 'target_tracking.xml'
 
     namespace = LaunchConfiguration('namespace')
@@ -39,8 +39,8 @@ def generate_launch_description():
     default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
     map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
 
-    lifecycle_nodes = ['controller_server',
-                       'planner_server',
+    lifecycle_nodes = ['controller_server_tracking',
+                       'planner_server_tracking',
                        'recoveries_server',
                        'bt_navigator_tracking']
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
@@ -98,6 +98,7 @@ def generate_launch_description():
         Node(
             package='mcr_controller',
             executable='controller_server',
+            name='controller_server_tracking',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
             parameters=[{configured_params_f}],
@@ -106,7 +107,7 @@ def generate_launch_description():
         Node(
             package='mcr_planner',
             executable='mcr_planner_server',
-            name='planner_server',
+            name='planner_server_tracking',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
             parameters=[{configured_params_f}],

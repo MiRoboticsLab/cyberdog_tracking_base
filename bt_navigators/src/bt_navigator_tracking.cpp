@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "bt_navigators/bt_navigator.hpp"
+#include "bt_navigators/bt_navigator_tracking.hpp"
 
 #include <memory>
 #include <string>
@@ -178,3 +178,20 @@ BtNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
 }
 
 }  // namespace bt_navigators
+
+
+
+#include <memory>
+#include "cyberdog_debug/backtrace.hpp"
+#include "rclcpp/rclcpp.hpp"
+
+int main(int argc, char ** argv)
+{
+  cyberdog::debug::register_signal();
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<bt_navigators::BtNavigator>();
+  rclcpp::spin(node->get_node_base_interface());
+  rclcpp::shutdown();
+
+  return 0;
+}
