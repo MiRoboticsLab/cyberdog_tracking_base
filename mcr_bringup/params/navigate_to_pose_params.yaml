@@ -1,14 +1,15 @@
 bt_navigator_ab:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     global_frame: map
     robot_base_frame: base_link
     odom_topic: odom_out
+    maxwait: 15.0
     bt_loop_duration: 10
     default_server_timeout: 20
-    enable_groot_monitoring: True
-    groot_zmq_publisher_port: 1666
-    groot_zmq_server_port: 1667
+    enable_groot_monitoring: False
+    groot_zmq_publisher_port: 1789
+    groot_zmq_server_port: 1887
     # 'default_nav_through_poses_bt_xml' and 'default_nav_to_pose_bt_xml' are use defaults:
     # nav2_bt_navigator/navigate_to_pose_w_replanning_and_recovery.xml
     # nav2_bt_navigator/navigate_through_poses_w_replanning_and_recovery.xml
@@ -48,12 +49,12 @@ bt_navigator_ab:
 
 bt_navigator_rclcpp_node:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
 
 controller_server_ab:
   ros__parameters:
-    use_sim_time: True
-    controller_frequency: 100.0
+    use_sim_time: False
+    controller_frequency: 10.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
@@ -61,6 +62,7 @@ controller_server_ab:
     progress_checker_plugin: "progress_checker"
     goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
     controller_plugins: ["FollowPath"]
+    controller_costmaps: ["local_costmap"]
 
     # Progress checker parameters
     progress_checker:
@@ -77,7 +79,7 @@ controller_server_ab:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      yaw_goal_tolerance: 6.28
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
@@ -123,7 +125,7 @@ controller_server_ab:
       
 controller_server_rclcpp_node:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
 
 local_costmap:
   local_costmap:
@@ -168,10 +170,10 @@ local_costmap:
       always_send_full_costmap: True
   local_costmap_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   local_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
 
 global_costmap:
   global_costmap:
@@ -180,7 +182,7 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      use_sim_time: True
+      use_sim_time: False
       robot_radius: 0.22
       resolution: 0.05
       track_unknown_space: true
@@ -209,19 +211,19 @@ global_costmap:
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
   global_costmap_rclcpp_node:
     ros__parameters:
-      use_sim_time: True
+      use_sim_time: False
 
 map_server:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     yaml_filename: "map.yaml"
 
 map_saver:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
     save_map_timeout: 5.0
     free_thresh_default: 0.25
     occupied_thresh_default: 0.65
@@ -230,17 +232,25 @@ map_saver:
 planner_server_ab:
   ros__parameters:
     expected_planner_frequency: 20.0
-    use_sim_time: True
-    planner_plugins: ["GridBased"]
+    use_sim_time: False
+    planner_plugins: ["GridBased", "NavFn"]
+    planner_costmaps: ["rolling_window_costmap", "global_costmap"]
+    NavFn:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      costmap: rolling_window_costmap
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
+      costmap: global_costmap
       tolerance: 0.5
       use_astar: false
       allow_unknown: true
 
 planner_server_rclcpp_node:
   ros__parameters:
-    use_sim_time: True
+    use_sim_time: False
 
 recoveries_server:
   ros__parameters:
@@ -257,7 +267,7 @@ recoveries_server:
     global_frame: vodom
     robot_base_frame: base_link
     transform_timeout: 0.1
-    use_sim_time: true
+    use_sim_time: False
     simulate_ahead_time: 2.0
     max_rotational_vel: 1.0
     min_rotational_vel: 0.4
@@ -265,14 +275,4 @@ recoveries_server:
 
 robot_state_publisher:
   ros__parameters:
-    use_sim_time: True
-
-waypoint_follower:
-  ros__parameters:
-    loop_rate: 20
-    stop_on_failure: false
-    waypoint_task_executor_plugin: "wait_at_waypoint"   
-    wait_at_waypoint:
-      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
-      enabled: True
-      waypoint_pause_duration: 200
+    use_sim_time: False
