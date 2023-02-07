@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef bt_navigators__BT_NAVIGATOR_HPP_
-#define bt_navigators__BT_NAVIGATOR_HPP_
+#ifndef BT_NAVIGATORS__BT_NAVIGATOR_AB_HPP_
+#define BT_NAVIGATORS__BT_NAVIGATOR_AB_HPP_
 
 #include <memory>
 #include <string>
@@ -24,27 +24,28 @@
 #include "tf2_ros/buffer.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/create_timer_ros.h"
-#include "bt_navigators/navigators/target_tracking.hpp"
+#include "bt_navigators/navigators/navigate_pose.hpp"
+
 
 namespace bt_navigators
 {
 
 /**
- * @class bt_navigators::BtNavigator
+ * @class nav2_bt_navigator::BtNavigator
  * @brief An action server that uses behavior tree for navigating a robot to its
  * goal position.
  */
-class BtNavigatorTracking : public nav2_util::LifecycleNode
+class BtPoseNavigator : public nav2_util::LifecycleNode
 {
 public:
   /**
-   * @brief A constructor for bt_navigators::BtNavigator class
+   * @brief A constructor for nav2_bt_navigator::BtNavigator class
    */
-  BtNavigatorTracking();
+  BtPoseNavigator();
   /**
-   * @brief A destructor for bt_navigators::BtNavigator class
+   * @brief A destructor for nav2_bt_navigator::BtNavigator class
    */
-  ~BtNavigatorTracking();
+  ~BtPoseNavigator();
 
 protected:
   /**
@@ -82,7 +83,7 @@ protected:
   nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
 
   // To handle all the BT related execution
-  std::unique_ptr<bt_navigators::Navigator<mcr_msgs::action::TargetTracking>> target_tracking_navigator_;
+  std::unique_ptr<bt_navigators::Navigator<nav2_msgs::action::NavigateToPose>> pose_navigator_;
   bt_navigators::NavigatorMuxer plugin_muxer_;
 
   // Odometry smoother object
@@ -101,4 +102,4 @@ protected:
 
 }  // namespace bt_navigators
 
-#endif  // bt_navigators__BT_NAVIGATOR_HPP_
+#endif  // BT_NAVIGATORS__BT_NAVIGATOR_AB_HPP_
