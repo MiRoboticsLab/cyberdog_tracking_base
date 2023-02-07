@@ -205,7 +205,7 @@ NavABNavigator::onGoalPoseReceived(const geometry_msgs::msg::PoseStamped::Shared
   ActionT::Goal goal;
   goal.pose = *pose;
   self_client_->async_send_goal(goal);
-}8
+}
 
 bool NavABNavigator::onGoalUpdate(FollowPoses::SharedPtr msg)
 {

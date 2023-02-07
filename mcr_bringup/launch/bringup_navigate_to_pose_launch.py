@@ -27,10 +27,15 @@ def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('mcr_bringup')
 
-    namespace = LaunchConfiguration('namespace')
+    namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
     params_file = LaunchConfiguration('params_file')
+
+    map_file = LaunchConfiguration(
+        'map_file',
+        default=os.path.join('/home/mi/mapping/', 'map.yaml')
+    )
 
     lifecycle_nodes = ['controller_server',
                        'planner_server',
@@ -79,18 +84,30 @@ def generate_launch_description():
             description='Full path to the ROS2 parameters file to use'),
 
         Node(
-            package='nav2_controller',
-            executable='controller_server',
+            package='bt_navigators',
+            executable='bt_navigator_pose',
+            name='bt_navigator_ab',
             output='screen',
             parameters=[configured_params],
+            namespace=namespace,
+            remappings=remappings),
+
+        Node(
+            package='nav2_controller',
+            executable='controller_server',
+            name='controller_server_ab',
+            output='screen',
+            parameters=[configured_params],
+            namespace=namespace,
             remappings=remappings),
 
         Node(
             package='nav2_planner',
             executable='planner_server',
-            name='planner_server',
+            name='planner_server_ab',
             output='screen',
             parameters=[configured_params],
+            namespace=namespace,
             remappings=remappings),
 
         Node(
@@ -99,14 +116,17 @@ def generate_launch_description():
             name='recoveries_server',
             output='screen',
             parameters=[configured_params],
-            remappings=remappings),
+            namespace=namespace,
+            remappings=remappings
+        ),
 
         Node(
-            package='bt_navigators',
-            executable='bt_navigator_ab',
-            name='bt_navigator_ab',
+            package='nav2_map_server',
+            executable='map_server',
+            name='map_server',
+            namespace=namespace,
             output='screen',
-            parameters=[configured_params],
+            parameters=[{'yaml_filename': map_file}],
             remappings=remappings),
 
         Node(
@@ -116,6 +136,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{'use_sim_time': use_sim_time},
                         {'autostart': autostart},
-                        {'node_names': lifecycle_nodes}]),
-
+                        {'node_names': lifecycle_nodes}],
+            namespace=namespace,
+        ),
     ])

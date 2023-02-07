@@ -30,7 +30,7 @@ add_executable(bt_navigator_tracking
   src/bt_navigator_tracking.cpp
 )
 
-add_executable(bt_navigator_ab
+add_executable(bt_navigator_pose
   src/bt_navigator_ab.cpp
 )
 
@@ -68,11 +68,11 @@ ament_target_dependencies(bt_navigator_tracking
 
 target_link_libraries(bt_navigator_tracking ${library_name})
 
-ament_target_dependencies(bt_navigator_ab
+ament_target_dependencies(bt_navigator_pose
   ${dependencies}
 )
 
-target_link_libraries(bt_navigator_ab ${library_name})
+target_link_libraries(bt_navigator_pose ${library_name})
 
 ament_target_dependencies(${library_name}
   ${dependencies}
@@ -85,6 +85,10 @@ install(TARGETS ${library_name}
 )
 
 install(TARGETS bt_navigator_tracking 
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS bt_navigator_pose
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
