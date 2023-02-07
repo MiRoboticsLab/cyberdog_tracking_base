@@ -4,7 +4,7 @@
     <BehaviorTree ID="MainTree">
         <Control ID="RecoveryNode" name="AutoDock" number_of_retries="-1">
             <SequenceStar>
-                <!-- <Action ID="ChangeGait" service_name="velocity_adaptor_gait" gait_motion_id="303" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/> -->
+                <Action ID="ChangeGait" service_name="velocity_adaptor_gait" gait_motion_id="303" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/>
                 <SequenceStar>
                     <Control ID="PipelineSequence" name="NavigateWithReplanning">
                         <Decorator ID="RateController" hz="5.0">
