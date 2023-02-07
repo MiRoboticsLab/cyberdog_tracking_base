@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root main_tree_to_execute="MainTree">
+    <!-- ////////// -->
+    <BehaviorTree ID="MainTree">
+        <Control ID="RecoveryNode" name="AutoDock" number_of_retries="-1">
+            <SequenceStar>
+                <!-- <Action ID="ChangeGait" service_name="velocity_adaptor_gait" gait_motion_id="303" gait_shape_value="2" gait_step_height="0.01" next_action_start="{next_start}"/> -->
+                <SequenceStar>
+                    <Control ID="PipelineSequence" name="NavigateWithReplanning">
+                        <Decorator ID="RateController" hz="5.0">
+                            <Decorator ID="ChargerUpdater"  phase="0"  output_exception_code="{exception}" output_goals="{updated_goals}">
+                                <Action ID="ComputePathSplinePoses" path="{path}" server_timeout="1000" planner_id="SplinePlannerL" poses="{updated_goals}"/>
+                            </Decorator>
+                        </Decorator>
+                        <Action ID="FollowPath" controller_id="TrackingTargetL" server_timeout="1000"  goal_checker_id="general_goal_checker" path="{path}" progress_checker_id="fake_progress_checker"/>
+                    </Control>
+                    <Control ID="PipelineSequence" name="NavigateWithReplanning">
+                        <Decorator ID="RateController" hz="5.0">
+                            <Decorator ID="ChargerUpdater" phase="1" output_exception_code="{exception}" output_goals="{updated_goals}">
+                                <Action ID="ComputePathSplinePoses" path="{path}"  server_timeout="1000" planner_id="SplinePlannerL" poses="{updated_goals}"/>
+                            </Decorator>
+                        </Decorator>
+                        <Action ID="FollowPath" controller_id="TrackingTargetL" server_timeout="1000"  goal_checker_id="general_goal_checkerL" path="{path}" progress_checker_id="fake_progress_checker"/>
+                    </Control>
+                </SequenceStar>
+                <Condition ID="IsBatteryInCharge"/>
+            </SequenceStar>
+            <ReactiveFallback name="RecoveryActions">
+                <ExceptionVerify exception_code="{exception}" expected_code="1000">
+                    <Action ID="BackUp" backup_dist="0.15" server_timeout="4000" backup_speed="0.05"/>
+                </ExceptionVerify>
+                <ExceptionVerify exception_code="{exception}" expected_code="3001">
+                    <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="rolling_costmap_charging/clear_entirely_rolling_costmap_charging"/>
+                </ExceptionVerify>
+                <ForceSuccess>
+                    <ExceptionVerify exception_code="{exception}" expected_code="4001">
+                        <Action ID="ClearEntireCostmap" name="ClearEntireLocalCostmap" service_name="local_costmap_charging/clear_entirely_local_costmap_charging"/>
+                    </ExceptionVerify>
+                </ForceSuccess>
+            </ReactiveFallback>
+        </Control>
+    </BehaviorTree>
+</root>
+

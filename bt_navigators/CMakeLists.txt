@@ -30,6 +30,10 @@ add_executable(bt_navigator_tracking
   src/bt_navigator_tracking.cpp
 )
 
+add_executable(bt_navigator_docking
+  src/bt_navigator_docking.cpp
+)
+
 set(library_name bt_navigators_core)
 
 set(dependencies
@@ -55,6 +59,7 @@ set(dependencies
 
 add_library(${library_name} SHARED
   src/navigators/target_tracking.cpp
+  src/navigators/auto_docking.cpp
 )
 
 ament_target_dependencies(bt_navigator_tracking
@@ -62,6 +67,12 @@ ament_target_dependencies(bt_navigator_tracking
 )
 
 target_link_libraries(bt_navigator_tracking ${library_name})
+
+ament_target_dependencies(bt_navigator_docking
+  ${dependencies}
+)
+
+target_link_libraries(bt_navigator_docking ${library_name})
 
 ament_target_dependencies(${library_name}
   ${dependencies}
@@ -74,6 +85,10 @@ install(TARGETS ${library_name}
 )
 
 install(TARGETS bt_navigator_tracking 
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS bt_navigator_docking
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
