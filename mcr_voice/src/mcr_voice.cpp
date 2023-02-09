@@ -91,6 +91,7 @@ MCRVoice::incomingFeedback(mcr_msgs::action::TargetTracking_FeedbackMessage::Con
     k += 1;
     if(k % 5 == 0)
       playAudio("主人, 我找不到你了，不要丢下我。");
+    return;
   }
   
   if(feedbackmsg->feedback.current_distance > valid_range_){
@@ -98,6 +99,7 @@ MCRVoice::incomingFeedback(mcr_msgs::action::TargetTracking_FeedbackMessage::Con
     k += 1;
     if(k % 5 == 0)
       playAudio("主人，等等我，跟不上你了。");
+    return;
   }
  
    if(feedbackmsg->feedback.exception_code == nav2_core::PLANNEREXECPTION || 
