@@ -25,42 +25,38 @@ from nav2_common.launch import RewrittenYaml
 
 def generate_launch_description():
     # Get the launch directory
-    package_dir = get_package_share_directory('mcr_bringup')
-    param_dir = os.path.join(package_dir, 'params')
-    bt_dir = os.path.join(package_dir, 'behavior_trees')
+    bringup_dir = get_package_share_directory('mcr_bringup')
 
-    follow_param_file = 'follow_params.yaml'
-    bt_file = 'target_tracking.xml'
-
-    namespace = LaunchConfiguration('namespace')
+    namespace = LaunchConfiguration('namespace', default='')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
-    follow_params_file = LaunchConfiguration('follow_params_file')
-    default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
-    map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
+    params_file = LaunchConfiguration('params_file')
 
-    lifecycle_nodes = ['controller_server_tracking',
-                       'planner_server_tracking',
+    map_file = LaunchConfiguration(
+        'map_file',
+        default=os.path.join('/home/mi/mapping/', 'map.yaml')
+    )
+
+    lifecycle_nodes = ['controller_server',
+                       'planner_server',
                        'recoveries_server',
-                       'bt_navigator_tracking']
+                       'bt_navigator_ab']
+
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
     # https://github.com/ros/robot_state_publisher/pull/30
     # TODO(orduno) Substitute with `PushNodeRemapping`
     #              https://github.com/ros2/launch_ros/issues/56
-    remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+    remappings = []
 
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'default_target_tracking_bt_xml': default_target_tracking_bt_xml,
-        'autostart': autostart,
-        'map_subscribe_transient_local': map_subscribe_transient_local}
+        'autostart': autostart}
 
-    configured_params_f = RewrittenYaml(
-            source_file=follow_params_file,
+    configured_params = RewrittenYaml(
+            source_file=params_file,
             root_key=namespace,
             param_rewrites=param_substitutions,
             convert_types=True)
@@ -78,39 +74,39 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         DeclareLaunchArgument(
-            'autostart', default_value='true',
+            'autostart', default_value='false',
             description='Automatically startup the nav2 stack'),
 
         DeclareLaunchArgument(
-            'follow_params_file',
-            default_value=os.path.join(param_dir, follow_param_file),
+            'params_file',
+            default_value=os.path.join(bringup_dir, 'params', 'navigate_to_pose_params.yaml'),
             description='Full path to the ROS2 parameters file to use'),
 
-        DeclareLaunchArgument(
-            'default_target_tracking_bt_xml',
-            default_value=os.path.join(bt_dir, bt_file),
-            description='Full path to the behavior tree xml file to use'),
-
-        DeclareLaunchArgument(
-            'map_subscribe_transient_local', default_value='true',
-            description='Whether to set the map subscriber QoS to transient local'),
-
         Node(
-            package='mcr_controller',
-            executable='controller_server',
-            name='controller_server_tracking',
+            package='bt_navigators',
+            executable='bt_navigator_pose',
+            name='bt_navigator_ab',
             output='screen',
-            # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params_f}],
+            parameters=[configured_params],
+            namespace=namespace,
             remappings=remappings),
 
         Node(
-            package='mcr_planner',
-            executable='mcr_planner_server',
-            name='planner_server_tracking',
+            package='nav2_controller',
+            executable='controller_server',
+            name='controller_server_ab',
             output='screen',
-            # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params_f}],
+            parameters=[configured_params],
+            namespace=namespace,
+            remappings=remappings),
+
+        Node(
+            package='nav2_planner',
+            executable='planner_server',
+            name='planner_server_ab',
+            output='screen',
+            parameters=[configured_params],
+            namespace=namespace,
             remappings=remappings),
 
         Node(
@@ -118,17 +114,19 @@ def generate_launch_description():
             executable='recoveries_server',
             name='recoveries_server',
             output='screen',
-            parameters=[{configured_params_f}],
-            remappings=remappings),
+            parameters=[configured_params],
+            namespace=namespace,
+            remappings=remappings
+        ),
 
         Node(
-            package='bt_navigators',
-            executable='bt_navigator_tracking',
-            name='bt_navigator_tracking',
+            package='nav2_map_server',
+            executable='map_server',
+            name='map_server',
+            namespace=namespace,
             output='screen',
-            parameters=[{configured_params_f}],
+            parameters=[{'yaml_filename': map_file}],
             remappings=remappings),
-
 
         Node(
             package='nav2_lifecycle_manager',
@@ -137,5 +135,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{'use_sim_time': use_sim_time},
                         {'autostart': autostart},
-                        {'node_names': lifecycle_nodes}]),
+                        {'node_names': lifecycle_nodes}],
+            namespace=namespace,
+        ),
     ])

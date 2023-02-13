@@ -29,20 +29,20 @@ def generate_launch_description():
     param_dir = os.path.join(package_dir, 'params')
     bt_dir = os.path.join(package_dir, 'behavior_trees')
 
-    follow_param_file = 'follow_params.yaml'
-    bt_file = 'target_tracking.xml'
+    auto_docking_yaml = 'auto_docking.yaml'
+    bt_file = 'auto_docking.xml'
 
     namespace = LaunchConfiguration('namespace')
     use_sim_time = LaunchConfiguration('use_sim_time')
     autostart = LaunchConfiguration('autostart')
-    follow_params_file = LaunchConfiguration('follow_params_file')
-    default_target_tracking_bt_xml = LaunchConfiguration('default_target_tracking_bt_xml')
+    auto_docking_file = LaunchConfiguration('auto_docking_yaml')
+    default_auto_docking_bt_xml = LaunchConfiguration('default_auto_docking_bt_xml')
     map_subscribe_transient_local = LaunchConfiguration('map_subscribe_transient_local')
 
-    lifecycle_nodes = ['controller_server_tracking',
-                       'planner_server_tracking',
+    lifecycle_nodes = ['controller_server_docking',
+                       'planner_server_docking',
                        'recoveries_server',
-                       'bt_navigator_tracking']
+                       'bt_navigator_docking']
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
     # https://github.com/ros/geometry2/issues/32
@@ -55,12 +55,12 @@ def generate_launch_description():
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
-        'default_target_tracking_bt_xml': default_target_tracking_bt_xml,
+        'default_auto_docking_bt_xml': default_auto_docking_bt_xml,
         'autostart': autostart,
         'map_subscribe_transient_local': map_subscribe_transient_local}
 
-    configured_params_f = RewrittenYaml(
-            source_file=follow_params_file,
+    configured_params_a = RewrittenYaml(
+            source_file=auto_docking_file,
             root_key=namespace,
             param_rewrites=param_substitutions,
             convert_types=True)
@@ -82,12 +82,12 @@ def generate_launch_description():
             description='Automatically startup the nav2 stack'),
 
         DeclareLaunchArgument(
-            'follow_params_file',
-            default_value=os.path.join(param_dir, follow_param_file),
+            'auto_docking_yaml',
+            default_value=os.path.join(param_dir, auto_docking_yaml),
             description='Full path to the ROS2 parameters file to use'),
 
         DeclareLaunchArgument(
-            'default_target_tracking_bt_xml',
+            'default_auto_docking_bt_xml',
             default_value=os.path.join(bt_dir, bt_file),
             description='Full path to the behavior tree xml file to use'),
 
@@ -98,19 +98,19 @@ def generate_launch_description():
         Node(
             package='mcr_controller',
             executable='controller_server',
-            name='controller_server_tracking',
+            name='controller_server_docking',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params_f}],
+            parameters=[{configured_params_a}],
             remappings=remappings),
 
         Node(
             package='mcr_planner',
             executable='mcr_planner_server',
-            name='planner_server_tracking',
+            name='planner_server_docking',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params_f}],
+            parameters=[{configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -118,22 +118,22 @@ def generate_launch_description():
             executable='recoveries_server',
             name='recoveries_server',
             output='screen',
-            parameters=[{configured_params_f}],
+            parameters=[{configured_params_a}],
             remappings=remappings),
 
         Node(
             package='bt_navigators',
-            executable='bt_navigator_tracking',
-            name='bt_navigator_tracking',
+            executable='bt_navigator_docking',
+            name='bt_navigator_docking',
             output='screen',
-            parameters=[{configured_params_f}],
+            parameters=[{configured_params_a}],
             remappings=remappings),
 
 
         Node(
             package='nav2_lifecycle_manager',
             executable='lifecycle_manager',
-            name='lifecycle_manager_navigation',
+            name='lifecycle_manager_docking',
             output='screen',
             parameters=[{'use_sim_time': use_sim_time},
                         {'autostart': autostart},

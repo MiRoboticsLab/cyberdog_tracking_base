@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mcr_bt_navigator)
+project(bt_navigators)
 add_compile_options(-g -O0)
 find_package(ament_cmake REQUIRED)
 find_package(nav2_common REQUIRED)
@@ -26,13 +26,7 @@ include_directories(
   include
 )
 
-set(executable_name mcr_bt_navigator)
-
-add_executable(${executable_name}
-  src/main.cpp
-)
-
-set(library_name ${executable_name}_core)
+set(library_name bt_navigators_core)
 
 set(dependencies
   rclcpp
@@ -56,15 +50,26 @@ set(dependencies
 )
 
 add_library(${library_name} SHARED
-  src/bt_navigator.cpp
   src/navigators/target_tracking.cpp
+  src/navigators/auto_docking.cpp
+  src/navigators/navigate_pose.cpp
 )
 
-ament_target_dependencies(${executable_name}
-  ${dependencies}
-)
 
-target_link_libraries(${executable_name} ${library_name})
+# bt_navigator_tracking
+add_executable(bt_navigator_tracking src/bt_navigator_tracking.cpp)
+target_link_libraries(bt_navigator_tracking ${library_name})
+ament_target_dependencies(bt_navigator_tracking ${dependencies})
+
+# bt_navigator_docking
+add_executable(bt_navigator_docking src/bt_navigator_docking.cpp)
+target_link_libraries(bt_navigator_docking ${library_name})
+ament_target_dependencies(bt_navigator_docking ${dependencies})
+
+# bt_navigator_pose
+add_executable(bt_navigator_pose src/bt_navigator_ab.cpp)
+target_link_libraries(bt_navigator_pose ${library_name})
+ament_target_dependencies(bt_navigator_pose ${dependencies})
 
 ament_target_dependencies(${library_name}
   ${dependencies}
@@ -76,7 +81,15 @@ install(TARGETS ${library_name}
   RUNTIME DESTINATION bin
 )
 
-install(TARGETS ${executable_name}
+install(TARGETS bt_navigator_tracking 
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS bt_navigator_pose
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS bt_navigator_docking
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 

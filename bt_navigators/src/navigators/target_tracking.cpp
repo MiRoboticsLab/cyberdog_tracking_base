@@ -19,9 +19,9 @@
 #include <limits>
 #include "nav2_core/exceptions.hpp"
 #include <nav2_util/geometry_utils.hpp>
-#include "mcr_bt_navigator/navigators/target_tracking.hpp"
+#include "bt_navigators/navigators/target_tracking.hpp"
 
-namespace mcr_bt_navigator
+namespace bt_navigators
 {
 
 bool
@@ -69,7 +69,7 @@ TargetTrackingNavigator::getDefaultBTFilepath(
   std::string default_bt_xml_filename;
   auto node = parent_node.lock();
   std::string pkg_share_dir =
-    ament_index_cpp::get_package_share_directory("mcr_bt_navigator");
+    ament_index_cpp::get_package_share_directory("bt_navigators");
   node->declare_parameter<std::string>(
     "default_target_tracking_bt_xml",
     pkg_share_dir +
@@ -217,4 +217,4 @@ TargetTrackingNavigator::onGoalPoseReceived(
   latest_goal_.header.stamp = clock_->now();
 }
 
-}  // namespace mcr_bt_navigator
+}  // namespace bt_navigators

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mcr_bt_navigator/bt_navigator.hpp"
+#include "bt_navigators/bt_navigator_ab.hpp"
 
 #include <memory>
 #include <string>
@@ -25,11 +25,11 @@
 #include "nav2_util/robot_utils.hpp"
 #include "nav2_behavior_tree/bt_conversions.hpp"
 
-namespace mcr_bt_navigator
+namespace bt_navigators
 {
 
-BtNavigator::BtNavigator()
-: nav2_util::LifecycleNode("bt_navigator", "", false)
+BtPoseNavigator::BtPoseNavigator()
+: nav2_util::LifecycleNode("bt_navigator_ab", "", false)
 {
   RCLCPP_INFO(get_logger(), "Creating");
 
@@ -74,12 +74,11 @@ BtNavigator::BtNavigator()
   declare_parameter("odom_topic", std::string("odom"));
 }
 
-BtNavigator::~BtNavigator()
+BtPoseNavigator::~BtPoseNavigator()
 {
 }
 
-nav2_util::CallbackReturn
-BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
+nav2_util::CallbackReturn BtPoseNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Configuring");
 
@@ -97,34 +96,30 @@ BtNavigator::on_configure(const rclcpp_lifecycle::State & /*state*/)
 
   // Libraries to pull plugins (BT Nodes) from
   auto plugin_lib_names = get_parameter("plugin_lib_names").as_string_array();
-
-  target_tracking_navigator_ = std::make_unique<mcr_bt_navigator::TargetTrackingNavigator>();
-
-  mcr_bt_navigator::FeedbackUtils feedback_utils;
+  pose_navigator_ = std::make_unique<bt_navigators::NavABNavigator>();
+  
+  bt_navigators::FeedbackUtils feedback_utils;
   feedback_utils.tf = tf_;
   feedback_utils.global_frame = global_frame_;
   feedback_utils.robot_frame = robot_frame_;
   feedback_utils.transform_tolerance = transform_tolerance_;
 
-
-  if (!target_tracking_navigator_->on_configure(
-      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_))
-  {
+  if (!pose_navigator_->on_configure(
+      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_)) {
     return nav2_util::CallbackReturn::FAILURE;
   }
+
   // Odometry smoother object for getting current speed
   odom_smoother_ = std::make_unique<nav2_util::OdomSmoother>(shared_from_this(), 0.3, odom_topic_);
 
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
-nav2_util::CallbackReturn
-BtNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
+nav2_util::CallbackReturn BtPoseNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
 
-  if (!target_tracking_navigator_->on_activate())
-  {
+  if (!pose_navigator_->on_activate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -134,12 +129,11 @@ BtNavigator::on_activate(const rclcpp_lifecycle::State & /*state*/)
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
-nav2_util::CallbackReturn
-BtNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
+nav2_util::CallbackReturn BtPoseNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
-  if (!target_tracking_navigator_->on_deactivate())
+  if (!pose_navigator_->on_deactivate())
   {
     return nav2_util::CallbackReturn::FAILURE;
   }
@@ -150,8 +144,7 @@ BtNavigator::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
-nav2_util::CallbackReturn
-BtNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
+nav2_util::CallbackReturn BtPoseNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Cleaning up");
 
@@ -159,22 +152,34 @@ BtNavigator::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
   tf_listener_.reset();
   tf_.reset();
 
-  if (!target_tracking_navigator_->on_cleanup())
-  {
+  if (!pose_navigator_->on_cleanup()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
-  target_tracking_navigator_.reset();
-
+  pose_navigator_.reset();
   RCLCPP_INFO(get_logger(), "Completed Cleaning up");
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
-nav2_util::CallbackReturn
-BtNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
+nav2_util::CallbackReturn BtPoseNavigator::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Shutting down");
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
-}  // namespace mcr_bt_navigator
+}  // namespace bt_navigators
+
+#include <memory>
+#include "cyberdog_debug/backtrace.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "bt_navigators/bt_navigator_ab.hpp"
+
+int main(int argc, char ** argv)
+{
+  cyberdog::debug::register_signal();
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<bt_navigators::BtPoseNavigator>();
+  rclcpp::spin(node->get_node_base_interface());
+  rclcpp::shutdown();
+  return 0;
+}
