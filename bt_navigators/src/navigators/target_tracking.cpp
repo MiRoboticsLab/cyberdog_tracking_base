@@ -187,7 +187,8 @@ TargetTrackingNavigator::onPreempt(ActionT::Goal::ConstSharedPtr goal)
 
 std::string dir_analysis(unsigned char dir)
 {
-  std::vector<std::string> dirs{"", "Behind", "Left", "Right"};
+  std::vector<std::string> dirs{"", "Behind", "Left", "Right", "Unknown"};
+  if(dir > 4)dir=4;
   return dirs[dir];
 }
 
