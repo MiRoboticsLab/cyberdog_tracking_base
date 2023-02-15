@@ -187,7 +187,8 @@ TargetTrackingNavigator::onPreempt(ActionT::Goal::ConstSharedPtr goal)
 
 std::string dir_analysis(unsigned char dir)
 {
-  std::vector<std::string> dirs{"", "Behind", "Left", "Right"};
+  std::vector<std::string> dirs{"", "Behind", "Left", "Right", "Unknown"};
+  if(dir > 4)dir=4;
   return dirs[dir];
 }
 
@@ -203,7 +204,11 @@ TargetTrackingNavigator::initializeGoalPose(ActionT::Goal::ConstSharedPtr goal)
   blackboard->set<int>("number_recoveries", 0);  // NOLINT
 
   // Update the goal pose on the blackboard
-  blackboard->set<unsigned char>(goal_blackboard_relative_pos_, goal->relative_pos);
+  if(goal->relative_pos > 3){
+    blackboard->set<unsigned char>(goal_blackboard_relative_pos_, 1);
+  }else{
+    blackboard->set<unsigned char>(goal_blackboard_relative_pos_, goal->relative_pos);
+  }
   blackboard->set<unsigned char>(goal_blackboard_keep_dist_, goal->keep_distance);
 }
 

@@ -51,7 +51,8 @@ TrackingModeDecider::TrackingModeDecider(
 }
 std::string dir_analysis(unsigned char dir)
 {
-  std::vector<std::string> dirs{"", "Behind", "Left", "Right"};
+  std::vector<std::string> dirs{"", "Behind", "Left", "Right", "Unkonwn"};
+  if(dir > 3)dir = 4;
   return dirs[dir];
 }
 
@@ -62,17 +63,13 @@ inline BT::NodeStatus TrackingModeDecider::tick()
   unsigned char current_mode;
 
   getInput("input_tracking_mode", current_mode);
-  // if (current_mode == mcr_msgs::action::TargetTracking::Goal::AUTO) {
-  //   current_mode = mcr_msgs::action::TargetTracking::Goal::BEHIND;
-  // }
-  setOutput("output_tracking_mode", current_mode);
-  if (last_mode_ != current_mode) {
-    last_mode_ = current_mode;
-    RCLCPP_INFO(
-      node_->get_logger(), "Next, use the %s tracking mode", dir_analysis(
-        current_mode).c_str());
+  if(current_mode > 3){
+    current_mode = 1;
   }
-
+  RCLCPP_INFO(node_->get_logger(), 
+    "Next, use the %s tracking mode", dir_analysis(
+    current_mode).c_str());
+  setOutput("output_tracking_mode", current_mode);
   return BT::NodeStatus::SUCCESS;
 }
 
