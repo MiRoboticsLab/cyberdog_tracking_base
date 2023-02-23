@@ -6,7 +6,7 @@ bt_navigator_tracking:
     odom_topic: odom_out
     maxwait: 15.0
     target_topic: tracking_pose
-    bt_loop_duration: 100
+    bt_loop_duration: 200
     default_server_timeout: 20
     enable_groot_monitoring: False
     groot_zmq_publisher_port: 1789
@@ -85,7 +85,7 @@ local_costmap_tracking:
       rolling_window: true
       width: 8
       height: 8
-      resolution: 0.05
+      resolution: 0.1
       robot_radius: 0.22
       plugins: ["obstacle_layer", "inflation_layer"]
       elevation_layer:
@@ -186,11 +186,11 @@ controller_server_tracking:
       debug_trajectory_details: True
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
       min_vel_x: -0.2
-      min_vel_y: -0.2
-      max_vel_x: 0.6
-      max_vel_y: 0.2
-      max_vel_theta: 2.5
-      min_vel_theta: -2.5
+      min_vel_y: -0.3
+      max_vel_x: 1.0
+      max_vel_y: 0.3
+      max_vel_theta: 1.5
+      min_vel_theta: -1.5
       min_speed_xy: 0.0
       max_speed_xy: 0.6
       min_speed_theta: 0.2
@@ -201,7 +201,7 @@ controller_server_tracking:
       decel_lim_y: -0.3
       decel_lim_theta: -2.0
       vx_samples: 8
-      vy_samples: 4
+      vy_samples: 5
       vtheta_samples: 10
       sim_time: 0.9
       sim_period: 0.2
@@ -221,7 +221,7 @@ controller_server_tracking:
       PathDist.scale: 32.0
       GoalDist.scale: 24.0
       KeepTargetInsight.class: mcr_tracking_components::KeepPersonInsightCritic
-      KeepTargetInsight.scale: 10.0
+      KeepTargetInsight.scale: 6.0
       KeepTargetInsight.target_topic: person
       # RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -0.4
