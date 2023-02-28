@@ -189,17 +189,17 @@ controller_server_tracking:
       min_vel_y: -0.3
       max_vel_x: 1.0
       max_vel_y: 0.3
-      max_vel_theta: 1.5
-      min_vel_theta: -1.5
+      max_vel_theta: 1.0
+      min_vel_theta: -1.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.6
-      min_speed_theta: 0.2
+      max_speed_xy: 1.0
+      min_speed_theta: 0.0
       acc_lim_x: 0.6
       acc_lim_y: 0.3
-      acc_lim_theta: 2.0
+      acc_lim_theta: 1.0
       decel_lim_x: -1.0
       decel_lim_y: -0.3
-      decel_lim_theta: -2.0
+      decel_lim_theta: -1.0
       vx_samples: 8
       vy_samples: 5
       vtheta_samples: 10
