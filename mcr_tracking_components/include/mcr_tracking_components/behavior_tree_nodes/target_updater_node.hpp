@@ -123,6 +123,7 @@ private:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::deque<geometry_msgs::msg::PoseStamped> historical_poses_;
+  geometry_msgs::msg::PoseStamped goal_;
   int max_pose_inuse_;
   double dist_sq_throttle_, overtime_;
   float distance_, keep_distance_;

@@ -130,7 +130,6 @@ inline BT::NodeStatus TargetUpdater::tick()
 {
   callback_group_executor_.spin_some();
   std::lock_guard<std::mutex> guard(mutex_);
-  geometry_msgs::msg::PoseStamped goal;
   setOutput("output_exception_code", nav2_core::NOEXCEPTION);
   double dist = 0.0;
   unsigned int exception_code = 0;
@@ -158,16 +157,12 @@ inline BT::NodeStatus TargetUpdater::tick()
     config().blackboard->set<int>("exception_code", nav2_core::NOEXCEPTION);
   }
 
-  if (rclcpp::Time(last_goal_received_.header.stamp) > rclcpp::Time(goal.header.stamp)) {
-    goal = last_goal_received_;
-  }
-
   if (node_->count_subscribers(spline_poses_pub_->get_topic_name()) > 0) {
     publishPoses(historical_poses_);
   }
   config().blackboard->set<float>("distance", distance_);
   setOutput("distance", distance_);
-  setOutput("output_goal", goal);
+  setOutput("output_goal", last_goal_received_);
   setOutput("transformed_goal", last_goal_transformed_);
 
   geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
@@ -314,7 +309,6 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
 {
 
   std::lock_guard<std::mutex> guard(mutex_);
-  latest_timestamp_ = node_->now();
   distance_ = hypot(msg->pose.position.x, msg->pose.position.y);
   if (!isValid(msg)) {
     return;
@@ -331,6 +325,7 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     transformed_pose_pub_->publish(last_goal_transformed_);
   }
 
+  latest_timestamp_ = node_->now();
   // historyPoseUpdate(last_goal_transformed_);
 }
 
