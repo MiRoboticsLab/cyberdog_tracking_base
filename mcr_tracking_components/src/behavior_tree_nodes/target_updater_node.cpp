@@ -51,7 +51,6 @@ TargetUpdater::TargetUpdater(
   const BT::NodeConfiguration & conf)
 : BT::DecoratorNode(name, conf),
   deriver_loader_("mcr_tracking_components", "mcr_tracking_components::OrientationDeriver")
-
 {
   node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
 
