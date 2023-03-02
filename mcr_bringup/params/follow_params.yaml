@@ -86,7 +86,7 @@ local_costmap_tracking:
       width: 8
       height: 8
       resolution: 0.1
-      robot_radius: 0.22
+      robot_radius: 0.2
       plugins: ["obstacle_layer", "inflation_layer"]
       elevation_layer:
         plugin: "cyberdog_gridmap_costmap_plugin/GridMapCostLayer"
@@ -97,7 +97,7 @@ local_costmap_tracking:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.22
+        inflation_radius: 0.2
       range_layer:
         plugin: "nav2_costmap_2d::RangeSensorLayer"
         enabled: True
@@ -185,14 +185,14 @@ controller_server_tracking:
       costmap: local_costmap_tracking
       debug_trajectory_details: True
       trajectory_generator_name: dwb_plugins::LimitedAccelGenerator  #dwb_plugins::StandardTrajectoryGenerator #
-      min_vel_x: -0.2
+      min_vel_x: 0.0
       min_vel_y: -0.3
-      max_vel_x: 1.0
+      max_vel_x: 0.8
       max_vel_y: 0.3
       max_vel_theta: 1.0
       min_vel_theta: -1.0
       min_speed_xy: 0.0
-      max_speed_xy: 1.0
+      max_speed_xy: 0.8
       min_speed_theta: 0.0
       acc_lim_x: 0.6
       acc_lim_y: 0.3
@@ -213,7 +213,7 @@ controller_server_tracking:
       short_circuit_trajectory_evaluation: True
       stateful: True
       critics: [ "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist", "KeepTargetInsight"]
-      BaseObstacle.scale: 10.0
+      BaseObstacle.scale: 1.0
       PathAlign.scale: 32.0
       PathAlign.forward_point_distance: 0.1
       GoalAlign.scale: 24.0
@@ -229,8 +229,8 @@ controller_server_tracking:
 rolling_window_costmap:
   rolling_window_costmap:
     ros__parameters:
-      update_frequency: 2.0
-      publish_frequency: 1.0
+      update_frequency: 0.0
+      publish_frequency: 0.0
       global_frame: vodom
       robot_base_frame: base_link
       rolling_window: true
@@ -238,7 +238,7 @@ rolling_window_costmap:
       use_sim_time: False
       width: 10
       height: 10
-      robot_radius: 0.3
+      robot_radius: 0.2
 
       resolution: 0.1
       track_unknown_space: false
@@ -267,7 +267,7 @@ rolling_window_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.35
+        inflation_radius: 0.25
       always_send_full_costmap: True
   rolling_window_costmap_client:
     ros__parameters:
@@ -281,7 +281,7 @@ planner_server_tracking:
   ros__parameters:
     expected_planner_frequency: 5.0
     use_sim_time: False
-    planner_plugins: ["SplinePlanner", "PotentialPlanner"]
+    planner_plugins: ["PotentialPlanner"]
     planner_costmaps: ["rolling_window_costmap"]
     SplinePlanner:
       use_sim_time: False
