@@ -54,6 +54,7 @@ bt_navigator_rclcpp_node:
 controller_server_ab:
   ros__parameters:
     use_sim_time: False
+    odom_topic: odom_out
     controller_frequency: 10.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
@@ -136,7 +137,7 @@ local_costmap:
       global_frame: vodom
       robot_base_frame: base_link
       use_sim_time: False
-      rolling_window: true
+      rolling_window: True
       transform_tolerance: 1.2
       width: 4
       height: 4
@@ -149,7 +150,7 @@ local_costmap:
         cost_scaling_factor: 3.0
         inflation_radius: 0.43
       obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
+        plugin: "lidar_obstacle_layer/ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
@@ -162,6 +163,8 @@ local_costmap:
           raytrace_max_range: 6.0
           raytrace_min_range: 0.0
           obstacle_max_range: 5.5
+      static_layer:
+        map_subscribe_transient_local: True
       always_send_full_costmap: True
   local_costmap_client:
     ros__parameters:
@@ -180,10 +183,10 @@ global_costmap:
       use_sim_time: False
       transform_tolerance: 1.2
       resolution: 0.05
-      track_unknown_space: true
+      track_unknown_space: True
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
+        plugin: "lidar_obstacle_layer/ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
