@@ -157,6 +157,8 @@ nav2_recoveries::Status SpinAndSearch::onCycleUpdate()
     return nav2_recoveries::Status::FAILED;
   }
 
+  RCLCPP_INFO(logger_, "[spin_and_search] cmd_vel [vx = %lf, vy = %lf, w = %lf]",
+      cmd_vel->linear.x, cmd_vel->linear.y, cmd_vel->angular.z );
   vel_pub_->publish(std::move(cmd_vel));
 
   return nav2_recoveries::Status::RUNNING;
