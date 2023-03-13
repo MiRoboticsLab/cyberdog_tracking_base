@@ -117,7 +117,8 @@ ament_target_dependencies(keep_target_insight_critic ${dependencies})
 # prevent pluginlib from using boost
 target_compile_definitions(keep_target_insight_critic PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
-add_library(nav2_spin_and_search_recovery SHARED src/recoveries/spin_and_search.cpp)
+add_library(nav2_spin_and_search_recovery SHARED src/recoveries/spin_and_search.cpp
+            src/recoveries/spin_and_search_person.cpp)
 ament_target_dependencies(nav2_spin_and_search_recovery  ${dependencies})
 # prevent pluginlib from using boost
 target_compile_definitions(nav2_spin_and_search_recovery PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")

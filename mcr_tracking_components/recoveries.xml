@@ -3,6 +3,9 @@
 	  <class name="mcr_tracking_components/SpinAndSearch" type="mcr_tracking_components::SpinAndSearch" base_class_type="nav2_core::Recovery">
 	    <description></description>
 	  </class>
+	  <class name="mcr_tracking_components/SpinAndSearchPerson" type="mcr_tracking_components::SpinAndSearchPerson" base_class_type="nav2_core::Recovery">
+	    <description></description>
+	  </class>
 	</library>
 
 </class_libraries>
