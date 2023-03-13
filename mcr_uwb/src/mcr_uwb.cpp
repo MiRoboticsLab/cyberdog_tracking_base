@@ -36,13 +36,15 @@ namespace mcr_uwb
 {
 
 MCRUwb::MCRUwb()
-: nav2_util::LifecycleNode("mcr_uwb", "", true)
+: nav2_util::LifecycleNode("mcr_uwb", "", true),
+pose_history_duration_(rclcpp::Duration::from_seconds(0.5))
 {
   RCLCPP_INFO(get_logger(), "Creating");
 
   // Declare this node's parameters
   declare_parameter("uwb_data", "uwb_raw");
   declare_parameter("produced_pose", "tracking_pose");
+  declare_parameter("buffer_seconds", 1.0);
 
   // get_parameter("planner_plugins", planner_ids_);
  
@@ -60,6 +62,10 @@ MCRUwb::on_configure(const rclcpp_lifecycle::State &)
   std::string uwb_data_topic, produced_pose;
   get_parameter("uwb_data", uwb_data_topic);
   get_parameter("produced_pose", produced_pose);
+  double buffer_seconds;
+  get_parameter("buffer_seconds", buffer_seconds);
+  pose_history_duration_ = rclcpp::Duration::from_seconds(buffer_seconds);
+  
 
   // Initialize pubs & subs
   pose_pub_ = create_publisher<geometry_msgs::msg::PoseStamped>(produced_pose, 5);
@@ -76,6 +82,10 @@ nav2_util::CallbackReturn
 MCRUwb::on_activate(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(get_logger(), "Activating");
+
+  pose_cumulate_.pose.position.x = 0.0;
+  pose_cumulate_.pose.position.y = 0.0;
+  pose_cumulate_.pose.position.z = 0.0;
 
   pose_pub_->on_activate();
   // uwb_sub_->on_activate();
@@ -117,14 +127,44 @@ MCRUwb::on_shutdown(const rclcpp_lifecycle::State &)
   return nav2_util::CallbackReturn::SUCCESS;
 }
 
+geometry_msgs::msg::PoseStamped MCRUwb::dynamic_window_ave_filter(const geometry_msgs::msg::PoseStamped& pose) {
+  geometry_msgs::msg::PoseStamped pose_stamp;
+  auto current_time = now();
+  pose_stamp.header.stamp = current_time;
+  if (!pose_history_.empty()) {
+    auto front_time = rclcpp::Time(pose_history_.front().header.stamp);
+    while (current_time - front_time > pose_history_duration_) {
+      const auto & front_pose = pose_history_.front();
+      pose_cumulate_.pose.position.x -= front_pose.pose.position.x;
+      pose_cumulate_.pose.position.y -= front_pose.pose.position.y;
+      pose_cumulate_.pose.position.z -= front_pose.pose.position.z;
+      pose_history_.pop_front();
+      if (pose_history_.empty()) {
+        break;
+      }
+      front_time = rclcpp::Time(pose_history_.front().header.stamp);
+    }
+  }
+  pose_stamp.pose.position.x = pose.pose.position.x;
+  pose_stamp.pose.position.y = pose.pose.position.y;
+  pose_history_.push_back(pose_stamp);
 
+  const auto back_pose = pose_history_.back();
+  pose_cumulate_.pose.position.x += back_pose.pose.position.x;
+  pose_cumulate_.pose.position.y += back_pose.pose.position.y;
+  
+  pose_stamp.pose.position.x = pose_cumulate_.pose.position.x / pose_history_.size();
+  pose_stamp.pose.position.y = pose_cumulate_.pose.position.y / pose_history_.size();
+  pose_stamp.pose.orientation.w = 1.0;
+  return pose_stamp;
+}
 
 void
 MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
 {
   if(!pose_pub_->is_activated()){
     return;
-  }  
+  }
   geometry_msgs::msg::PoseStamped pose;
   pose.header = uwb->header;
 
@@ -133,9 +173,7 @@ MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
   pose.pose.position.x = uwb->dist * cos(-uwb->angle);
   pose.pose.position.y = uwb->dist * sin(-uwb->angle);
 
-  pose.pose.orientation.w = 1.0;
-
-  pose_pub_->publish(pose);
+  pose_pub_->publish(std::move(dynamic_window_ave_filter(pose)));
 }
 
 }  // namespace mcr_planner

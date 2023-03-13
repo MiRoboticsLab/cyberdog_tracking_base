@@ -19,6 +19,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <deque>
 #include <unordered_map>
 
 #include "geometry_msgs/msg/pose_stamped.hpp"
@@ -80,9 +81,14 @@ protected:
 
   void incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb);
 private:
+  geometry_msgs::msg::PoseStamped dynamic_window_ave_filter(const geometry_msgs::msg::PoseStamped& pose);
+private:
   // Publishers for the path
   rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
   rclcpp::Subscription<protocol::msg::UwbRaw>::SharedPtr uwb_sub_;
+  geometry_msgs::msg::PoseStamped pose_cumulate_;
+  rclcpp::Duration pose_history_duration_;
+  std::deque<geometry_msgs::msg::PoseStamped> pose_history_;
 };
 
 }  // namespace mcr_planner
