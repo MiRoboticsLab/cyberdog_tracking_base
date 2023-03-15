@@ -21,13 +21,13 @@
             </Control>
             <ReactiveFallback name="RecoveryActions">
                 <ExceptionVerify exception_code="{exception}" expected_code="1000">
-                    <Action ID="SpinAndSearch" search_dist="1.57" server_timeout="4000"/>
+                    <Action ID="SpinAndSearch" search_dist="0.2" server_timeout="4000"/>
                 </ExceptionVerify>
-                <ExceptionVerify exception_code="{exception}" expected_code="3001">
+                <ExceptionVerify exception_code="{exception}" expected_code="3000">
                     <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="rolling_window_costmap/clear_entirely_rolling_window_costmap"/>
                 </ExceptionVerify>
                 <ForceSuccess>
-                    <ExceptionVerify exception_code="{exception}" expected_code="4001">
+                    <ExceptionVerify exception_code="{exception}" expected_code="4000">
                         <Action ID="ClearEntireCostmap" name="ClearEntireLocalCostmap" service_name="local_costmap_tracking/clear_entirely_local_costmap_tracking"/>
                     </ExceptionVerify>                
                 </ForceSuccess>
