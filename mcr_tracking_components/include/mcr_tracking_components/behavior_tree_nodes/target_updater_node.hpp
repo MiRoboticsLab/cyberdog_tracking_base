@@ -101,12 +101,6 @@ private:
 
   geometry_msgs::msg::PoseStamped translatePoseByMode(const geometry_msgs::msg::PoseStamped & pose);
 
-  void historyPoseUpdate(const geometry_msgs::msg::PoseStamped & pose);
-
-  void truncatOverduePosesAndAppendCurPose();
-  void truncatHinderPosesAndAppendCurPose();
-  void checkAndDerivateAngle();
-  void publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses);
   bool isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr goal_sub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr transformed_pose_pub_;
