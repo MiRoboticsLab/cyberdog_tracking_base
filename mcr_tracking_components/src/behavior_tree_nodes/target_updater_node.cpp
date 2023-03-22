@@ -285,6 +285,8 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
   
   std::lock_guard<std::mutex> guard(mutex_);
   distance_ = hypot(m->pose.position.x, m->pose.position.y);
+
+  latest_timestamp_ = node_->now();
   if (!isValid(m)) {
     return;
   }
@@ -307,7 +309,6 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     transformed_pose_pub_->publish(last_goal_transformed_);
   }
 
-  latest_timestamp_ = node_->now();
   // historyPoseUpdate(last_goal_transformed_);
 }
 

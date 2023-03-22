@@ -565,9 +565,13 @@ void ControllerServer::computeAndPublishVelocity()
       if ((now() - last_valid_cmd_time_).seconds() > failure_tolerance_ &&
         failure_tolerance_ != -1.0)
       {
+        action_server_->terminate_current();
+        costmap_ros_ -> resetLayers();
         throw nav2_core::PlannerException("Controller patience exceeded");
       }
     } else {
+      action_server_->terminate_current();
+      costmap_ros_ -> resetLayers();
       throw nav2_core::PlannerException(e.what());
     }
   }
