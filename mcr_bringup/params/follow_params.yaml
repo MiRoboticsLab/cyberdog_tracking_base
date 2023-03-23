@@ -281,8 +281,20 @@ planner_server_tracking:
   ros__parameters:
     expected_planner_frequency: 5.0
     use_sim_time: False
-    planner_plugins: ["PotentialPlanner"]
+    planner_plugins: ["NavFn"]
     planner_costmaps: ["rolling_window_costmap"]
+    NavFn:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      costmap: rolling_window_costmap
+      tolerance: 0.5
+      use_astar: false
+      allow_unknown: true    
+    curve_planner:
+      costmap: rolling_window_costmap
+      use_sim_time: False
+      plugin: mcr_global_planner/MCRCurvePlanner
+      curve_type: dubs
+      turning_radius: 1.5    
     SplinePlanner:
       use_sim_time: False
       plugin: mcr_global_planner/MCRSplinePlanner

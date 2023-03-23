@@ -156,34 +156,10 @@ inline BT::NodeStatus TargetUpdater::tick()
     config().blackboard->set<int>("exception_code", nav2_core::NOEXCEPTION);
   }
 
-  if (node_->count_subscribers(spline_poses_pub_->get_topic_name()) > 0) {
-    publishPoses(historical_poses_);
-  }
   config().blackboard->set<float>("distance", distance_);
   setOutput("distance", distance_);
-  setOutput("output_goal", last_goal_received_);
+  setOutput("output_goal", last_goal_transformed_);
   setOutput("transformed_goal", last_goal_transformed_);
-
-  geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
-  std::vector<geometry_msgs::msg::PoseStamped> poses_cur_target;
-  poses_cur_target.clear();
-  if (!nav2_util::getCurrentPose(pose_based_on_global_frame, *tf_buffer_, global_frame_)) {
-    RCLCPP_WARN(
-      node_->get_logger(),
-      "truncat overdue poses failed to obtain current pose based on map coordinate system.");
-    return BT::NodeStatus::FAILURE;
-  }
-  poses_cur_target.push_back(pose_based_on_global_frame);
-  poses_cur_target.push_back(last_goal_transformed_);
-  if(nav2_util::geometry_utils::euclidean_distance(pose_based_on_global_frame, last_goal_transformed_) > 30.0){
-      RCLCPP_WARN(
-        node_->get_logger(),
-        "The target is too far away to continue tracking.");
-    setOutput("output_exception_code", nav2_core::DETECTOREXCEPTION);
-    config().blackboard->set<int>("exception_code", nav2_core::DETECTOREXCEPTION);        
-    return BT::NodeStatus::FAILURE;
-  }
-  setOutput("output_goals", poses_cur_target);
 
   BT::NodeStatus status = child_node_->executeTick();
 
@@ -304,16 +280,25 @@ bool TargetUpdater::isValid(const geometry_msgs::msg::PoseStamped::SharedPtr msg
 }
 
 void
-TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
+TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::SharedPtr m)
 {
-
+  
   std::lock_guard<std::mutex> guard(mutex_);
-  distance_ = hypot(msg->pose.position.x, msg->pose.position.y);
-  if (!isValid(msg)) {
+  distance_ = hypot(m->pose.position.x, m->pose.position.y);
+
+  latest_timestamp_ = node_->now();
+  if (!isValid(m)) {
     return;
   }
 
-  geometry_msgs::msg::PoseStamped msg_with_orientation = orientation_deriver_->deriveOrientation(msg);
+  geometry_msgs::msg::PoseStamped msg_with_orientation = orientation_deriver_->deriveOrientation(m);
+
+  if (distance_ > 4.0) {
+    double scale = 4.0 / distance_;
+    msg_with_orientation.pose.position.x *= scale;
+    msg_with_orientation.pose.position.y *= scale;
+  }
+
 
   last_goal_transformed_ = translatePoseByMode(msg_with_orientation);
 
@@ -324,188 +309,7 @@ TargetUpdater::callback_updated_goal(const geometry_msgs::msg::PoseStamped::Shar
     transformed_pose_pub_->publish(last_goal_transformed_);
   }
 
-  latest_timestamp_ = node_->now();
   // historyPoseUpdate(last_goal_transformed_);
-}
-
-
-void TargetUpdater::historyPoseUpdate(const geometry_msgs::msg::PoseStamped & pose)
-{
-  geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
-
-  geometry_msgs::msg::PoseStamped pose_origin = pose;
-  // pose_origin.header.stamp = node_->now();
-
-  try {
-    pose_based_on_global_frame = tf_buffer_->transform(
-      pose_origin, global_frame_, tf2::durationFromSec(
-        0.2));
-  } catch (...) {
-    RCLCPP_WARN(
-      node_->get_logger(), "failed to transform pose from %s to %s.",
-      pose_origin.header.frame_id.c_str(),
-      global_frame_.c_str());
-    return;
-  }
-
-  //deque front pose is the robot's latest pose.
-  if (historical_poses_.empty()) {
-    historical_poses_.push_front(std::move(pose_based_on_global_frame));
-  } else {
-    while (historical_poses_.size() > static_cast<size_t>(max_pose_inuse_)) {
-      historical_poses_.pop_back();
-    }
-    //push pose when robot has moved a little.
-    const geometry_msgs::msg::PoseStamped & latest_odom_pose = historical_poses_.front();
-    if (poseDistanceSq(
-        latest_odom_pose.pose,
-        pose_based_on_global_frame.pose) > dist_sq_throttle_)
-    {
-      historical_poses_.push_front(pose_based_on_global_frame);
-    }
-  }
-
-  //truncat redundant poses when the totle length is overflow.
-  truncatHinderPosesAndAppendCurPose();
-  checkAndDerivateAngle();
-  publishPoses(historical_poses_);
-}
-
-
-void TargetUpdater::publishPoses(const std::deque<geometry_msgs::msg::PoseStamped> & poses)
-{
-  if (poses.empty()) {
-    return;
-  }
-
-  visualization_msgs::msg::Marker marker;
-  marker.header.frame_id = global_frame_;
-  marker.header.stamp = node_->now();
-  marker.ns = "spline_poses";
-  marker.id = 0;
-  marker.type = visualization_msgs::msg::Marker::POINTS;
-  marker.action = visualization_msgs::msg::Marker::ADD;
-  marker.lifetime = rclcpp::Duration(2, 0);
-  marker.pose.orientation.w = 1.0;
-
-  for (std::size_t i = 0; i < poses.size(); ++i) {
-    geometry_msgs::msg::Point point;
-    point.x = poses[i].pose.position.x;
-    point.y = poses[i].pose.position.y;
-    point.z = 0;
-    marker.points.push_back(point);
-  }
-
-  marker.scale.x = 0.1;
-  marker.scale.y = 0.1;
-  marker.color.a = 1.0;
-  marker.color.r = 0.0;
-  marker.color.g = 0.0;
-  marker.color.b = 1.0;
-
-  spline_poses_pub_->publish(marker);
-}
-
-
-void TargetUpdater::truncatOverduePosesAndAppendCurPose()
-{
-  size_t len = historical_poses_.size();
-  size_t guidance_index;
-  geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
-
-  if (!nav2_util::getCurrentPose(pose_based_on_global_frame, *tf_buffer_, global_frame_)) {
-    RCLCPP_WARN(
-      node_->get_logger(),
-      "truncat overdue poses failed to obtain current pose based on map coordinate system.");
-    return;
-  }
-
-  geometry_msgs::msg::PoseStamped guidance_pose;
-  if (len < 4) {
-    guidance_index = 0;
-    guidance_pose = historical_poses_.front();
-  } else {
-    guidance_index = len / 2;
-    guidance_pose = historical_poses_.at(guidance_index);
-  }
-
-  while (historical_poses_.size() > guidance_index) {
-    double p1_x = historical_poses_.back().pose.position.x -
-      pose_based_on_global_frame.pose.position.x;
-    double p1_y = historical_poses_.back().pose.position.y -
-      pose_based_on_global_frame.pose.position.y;
-    double p2_x = guidance_pose.pose.position.x - pose_based_on_global_frame.pose.position.x;
-    double p2_y = guidance_pose.pose.position.y - pose_based_on_global_frame.pose.position.y;
-    if (p1_x * p2_x + p1_y * p2_y <= 0) {
-      historical_poses_.pop_back();
-    } else {
-      break;
-    }
-  }
-  if (poseDistanceSq(
-      historical_poses_.back().pose,
-      pose_based_on_global_frame.pose) < dist_sq_throttle_)
-  {
-    historical_poses_.pop_back();
-  }
-  historical_poses_.push_back(pose_based_on_global_frame);
-
-}
-
-void TargetUpdater::checkAndDerivateAngle()
-{
-  if (historical_poses_.size() < 2) {return;}
-  for (size_t i = 0; i < historical_poses_.size() - 1; i++) {
-    geometry_msgs::msg::PoseStamped & latest_pose = historical_poses_[i];
-    if (tf2::getYaw(latest_pose.pose.orientation) != 0.0) {
-      continue;
-    }
-    geometry_msgs::msg::PoseStamped & prev_pose = historical_poses_.at(i + 1);
-
-    double detx = latest_pose.pose.position.x - prev_pose.pose.position.x;
-    double dety = latest_pose.pose.position.y - prev_pose.pose.position.y;
-    double yaw = atan2(dety, detx);
-
-    latest_pose.pose.orientation = nav2_util::geometry_utils::orientationAroundZAxis(yaw);
-  }
-
-}
-
-void TargetUpdater::truncatHinderPosesAndAppendCurPose()
-{
-  geometry_msgs::msg::PoseStamped pose_based_on_global_frame;
-
-  if (!nav2_util::getCurrentPose(pose_based_on_global_frame, *tf_buffer_, global_frame_)) {
-    RCLCPP_WARN(
-      node_->get_logger(),
-      "truncat overdue poses failed to obtain current pose based on map coordinate system.");
-    return;
-  }
-
-  double yaw = tf2::getYaw(pose_based_on_global_frame.pose.orientation);
-  double p1_x, p1_y, p2_x, p2_y;
-  p2_x = cos(yaw);
-  p2_y = sin(yaw);
-  while (historical_poses_.size() > 1) {
-
-    p1_x = historical_poses_.back().pose.position.x -
-      pose_based_on_global_frame.pose.position.x;
-    p1_y = historical_poses_.back().pose.position.y -
-      pose_based_on_global_frame.pose.position.y;
-    if (p1_x * p2_x + p1_y * p2_y <= 0) {
-      historical_poses_.pop_back();
-    } else {
-      break;
-    }
-  }
-  if (historical_poses_.size() > 1 && poseDistanceSq(
-      historical_poses_.back().pose,
-      pose_based_on_global_frame.pose) < dist_sq_throttle_)
-  {
-    historical_poses_.pop_back();
-  }
-  historical_poses_.push_back(pose_based_on_global_frame);
-
 }
 
 }  // namespace mcr_tracking_components
