@@ -65,9 +65,11 @@ std::string AutoDockingNavigator::getDefaultBTFilepath(
   auto node = parent_node.lock();
   std::string pkg_share_dir =
     ament_index_cpp::get_package_share_directory("mcr_bringup");
-  node->declare_parameter<std::string>(
-    "default_auto_docking_bt_xml",
-    pkg_share_dir + "/behavior_trees/auto_docking.xml");
+  if (!node->has_parameter("default_auto_docking_bt_xml")) {
+    node->declare_parameter<std::string>(
+      "default_auto_docking_bt_xml",
+      pkg_share_dir + "/behavior_trees/auto_docking.xml");
+  }
   node->get_parameter(
     "default_auto_docking_bt_xml",
     default_bt_xml_filename);
