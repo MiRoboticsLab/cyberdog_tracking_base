@@ -243,7 +243,7 @@ ControllerServer::on_configure(const rclcpp_lifecycle::State & state)
 
   // Create the action server that we implement with our followPath method
   action_server_ = std::make_unique<ActionServer>(
-    rclcpp_node_, "follow_path",
+    rclcpp_node_, "follow_p",
     std::bind(&ControllerServer::computeControl, this));
 
   // Set subscribtion to the speed limiting topic

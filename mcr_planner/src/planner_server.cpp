@@ -159,7 +159,7 @@ nav2_util::CallbackReturn PlannerServer::on_configure(
 
   // Create the action servers for path planning to a pose and through poses
   action_server_pose_ = std::make_unique<ActionServerToPose>(
-      rclcpp_node_, "compute_path_to_pose",
+      rclcpp_node_, "compute_path_to_p",
       std::bind(&PlannerServer::computePlan, this));
 
   action_server_poses_ = std::make_unique<ActionServerThroughPoses>(
