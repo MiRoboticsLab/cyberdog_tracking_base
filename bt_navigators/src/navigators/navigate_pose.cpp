@@ -54,10 +54,12 @@ std::string NavABNavigator::getDefaultBTFilepath(
   auto node = parent_node.lock();
   std::string pkg_share_dir =
     ament_index_cpp::get_package_share_directory("nav2_bt_navigator");
-  node->declare_parameter<std::string>(
-    "default_nav_to_pose_bt_xml",
-    pkg_share_dir +
-    "/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml");
+  if (!node->has_parameter("default_nav_to_pose_bt_xml")) {
+    node->declare_parameter<std::string>(
+      "default_nav_to_pose_bt_xml",
+      pkg_share_dir +
+      "/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml");
+  }
   node->get_parameter("default_nav_to_pose_bt_xml", default_bt_xml_filename);
 
   return default_bt_xml_filename;
