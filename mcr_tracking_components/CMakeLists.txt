@@ -54,8 +54,17 @@ set(dependencies
   std_srvs
   nav2_util
 )
-add_library(nav2_compute_path_spline_poses_action_bt_node SHARED src/behavior_tree_nodes/compute_path_spline_poses_action.cpp)
+add_library(nav2_compute_path_spline_poses_action_bt_node SHARED 
+            src/behavior_tree_nodes/compute_path_spline_poses_action.cpp)
 list(APPEND plugin_libs nav2_compute_path_spline_poses_action_bt_node)
+
+add_library(nav2_compute_path_to_p_action_bt_node SHARED 
+            src/behavior_tree_nodes/compute_path_to_pose_action.cpp)
+list(APPEND plugin_libs nav2_compute_path_to_p_action_bt_node)
+
+add_library(nav2_follow_p_action_bt_node SHARED 
+            src/behavior_tree_nodes/follow_path_action.cpp)
+list(APPEND plugin_libs nav2_follow_p_action_bt_node)
 
 add_library(nav2_spin_and_search_action_bt_node SHARED src/behavior_tree_nodes/spin_and_search_action.cpp)
 list(APPEND plugin_libs nav2_spin_and_search_action_bt_node)

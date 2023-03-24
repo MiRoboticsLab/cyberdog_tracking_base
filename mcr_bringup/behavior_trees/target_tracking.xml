@@ -9,14 +9,14 @@
                         <Action ID="TrackingModeDecider" input_tracking_mode="{relative_pos}" output_tracking_mode="{mode_decided}"/>
                         <Decorator ID="TargetUpdater" input_goal="{goal}" input_tracking_mode="{mode_decided}" transformed_goal="{transformed_goal}" output_goal="{updated_goal}" output_goals="{updated_goals}" output_exception_code="{exception}" >
                             <Sequence>
-                                <Action ID="ComputePathToPose" goal="{updated_goal}" path="{path_full}" server_timeout="4000" planner_id="NavFn" start=""/>
+                                <Action ID="ComputePathToP" goal="{updated_goal}" path="{path_full}" server_timeout="4000" planner_id="NavFn" start=""/>
                                 <TruncatePath distance="1.3" input_path="{path_full}" output_path="{path}"/>
                             </Sequence>                                
                         </Decorator>
                     </Sequence>
                 </Decorator>
                 <KeepRunningUntilFailure>
-                    <Action ID="FollowPath" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" goal="{updated_goal}" server_timeout="1000" output_exception_code="{exception}" />
+                    <Action ID="FollowP" goal_checker_id="xy_goal_checker" controller_id="TrackingTarget" progress_checker_id="fake_progress_checker" path="{path}" goal="{updated_goal}" server_timeout="1000" output_exception_code="{exception}" />
                 </KeepRunningUntilFailure>
             </Control>
             <ReactiveFallback name="RecoveryActions">
