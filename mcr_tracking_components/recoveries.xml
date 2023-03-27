@@ -1,8 +1,0 @@
-<class_libraries>
-	<library path="nav2_spin_and_search_recovery">
-	  <class name="mcr_tracking_components/SpinAndSearch" type="mcr_tracking_components::SpinAndSearch" base_class_type="nav2_core::Recovery">
-	    <description></description>
-	  </class>
-	</library>
-
-</class_libraries>
