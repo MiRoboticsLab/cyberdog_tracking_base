@@ -59,6 +59,8 @@ public:
    */
   bool cleanup() override;
 
+  bool activate() override {return true;}
+  bool deactivate() override {return true;}
   /**
    * @brief A subscription and callback to handle the topic-based goal published
    * from rviz
