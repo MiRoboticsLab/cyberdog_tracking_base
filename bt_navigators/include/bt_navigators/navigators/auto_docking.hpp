@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef NAV2_BT_NAVIGATOR__NAVIGATORS__AUTOMATIC_RECHARGE_HPP_
-#define NAV2_BT_NAVIGATOR__NAVIGATORS__AUTOMATIC_RECHARGE_HPP_
+#ifndef BT_NAVIGATORS__NAVIGATORS__AUTO_DOCKING_HPP_
+#define BT_NAVIGATORS__NAVIGATORS__AUTO_DOCKING_HPP_
 
 #include <memory>
 #include <string>
@@ -131,4 +131,4 @@ protected:
 
 }  // namespace bt_navigators
 
-#endif  // NAV2_BT_NAVIGATOR__NAVIGATORS__AUTOMATIC_RECHARGE_HPP_
+#endif  // BT_NAVIGATORS__NAVIGATORS__AUTO_DOCKING_HPP_

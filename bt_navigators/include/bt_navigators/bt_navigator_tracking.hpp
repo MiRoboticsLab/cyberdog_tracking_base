@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef bt_navigators__BT_NAVIGATOR_HPP_
-#define bt_navigators__BT_NAVIGATOR_HPP_
+#ifndef BT_NAVIGATORS__BT_NAVIGATOR_TRACKING_HPP_
+#define BT_NAVIGATORS__BT_NAVIGATOR_TRACKING_HPP_
 
 #include <memory>
 #include <string>
@@ -82,7 +82,8 @@ protected:
   nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
 
   // To handle all the BT related execution
-  std::unique_ptr<bt_navigators::Navigator<mcr_msgs::action::TargetTracking>> target_tracking_navigator_;
+  std::unique_ptr<bt_navigators::Navigator<mcr_msgs::action::TargetTracking>>
+  target_tracking_navigator_;
   bt_navigators::NavigatorMuxer plugin_muxer_;
 
   // Odometry smoother object
@@ -101,4 +102,4 @@ protected:
 
 }  // namespace bt_navigators
 
-#endif  // bt_navigators__BT_NAVIGATOR_HPP_
+#endif  // BT_NAVIGATORS__BT_NAVIGATOR_TRACKING_HPP_

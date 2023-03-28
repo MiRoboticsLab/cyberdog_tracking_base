@@ -46,7 +46,6 @@ set(dependencies
   protocol
   cyberdog_debug
   cyberdog_common
-    
 )
 
 add_library(${library_name} SHARED
@@ -81,7 +80,7 @@ install(TARGETS ${library_name}
   RUNTIME DESTINATION bin
 )
 
-install(TARGETS bt_navigator_tracking 
+install(TARGETS bt_navigator_tracking
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
