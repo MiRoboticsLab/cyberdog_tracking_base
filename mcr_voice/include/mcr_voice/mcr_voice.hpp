@@ -48,9 +48,16 @@ public:
   ~MCRVoice();
 
 protected:
-  void playAudio(const std::string & audio);
+  /**
+   * @brief call audio play server 
+   * @param audio content to play
+   */
+  void playAudio(const std::string& audio);
+  /**
+   * @brief subscribe action server's feedback for audio tracking status
+   * @param feedback for tracking status
+   */
   void incomingFeedback(mcr_msgs::action::TargetTracking_FeedbackMessage::ConstSharedPtr feedback);
-
 private:
   rclcpp::Subscription<mcr_msgs::action::TargetTracking_FeedbackMessage>::SharedPtr feedback_sub_;
   rclcpp::Client<protocol::srv::AudioTextPlay>::SharedPtr audio_play_client_;

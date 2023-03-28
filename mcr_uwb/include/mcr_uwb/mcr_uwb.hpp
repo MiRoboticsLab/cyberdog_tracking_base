@@ -77,7 +77,10 @@ protected:
    * @return SUCCESS or FAILURE
    */
   nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
-
+  /**
+   * @brief callback for uwb msgs
+   * @param uwb sharedptr for uwb raw data
+   */
   void incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb);
 
 private:
