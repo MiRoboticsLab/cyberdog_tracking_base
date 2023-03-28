@@ -27,7 +27,7 @@ set(dependencies
   builtin_interfaces
   tf2_ros
   cyberdog_debug
-  cyberdog_common  
+  cyberdog_common
 )
 
 add_library(${library_name} SHARED
