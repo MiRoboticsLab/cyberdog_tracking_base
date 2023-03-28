@@ -230,7 +230,7 @@ map_saver:
 
 planner_server_ab:
   ros__parameters:
-    expected_planner_frequency: 20.0
+    expected_planner_frequency: 1.0
     use_sim_time: False
     planner_plugins: ["GridBased"]
     GridBased:
@@ -238,7 +238,7 @@ planner_server_ab:
       costmap: global_costmap
       tolerance: 0.5
       use_astar: false
-      allow_unknown: true
+      allow_unknown: false
 
 planner_server_rclcpp_node:
   ros__parameters:
