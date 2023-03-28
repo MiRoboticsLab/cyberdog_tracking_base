@@ -1,4 +1,4 @@
-# Copyright (c) 2018 Intel Corporation
+# Copyright (c) 2023 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import os
-
-from ament_index_python.packages import get_package_share_directory
-
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
-from launch.substitutions import LaunchConfiguration
+from launch.actions import SetEnvironmentVariable
 from launch_ros.actions import Node
-from nav2_common.launch import RewrittenYaml
-from launch_ros.actions import ComposableNodeContainer
-from launch_ros.descriptions import ComposableNode
+
 
 def generate_launch_description():
     lifecycle_nodes = ['mcr_voice']
@@ -45,4 +37,3 @@ def generate_launch_description():
                         {'autostart': True},
                         {'node_names': lifecycle_nodes}])
     ])
-
