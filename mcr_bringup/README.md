@@ -1,136 +1,40 @@
-# nav2_bringup
-
-The `nav2_bringup` package is an example bringup system for Nav2 applications.
-
-### Pre-requisites:
-* [Install ROS 2](https://index.ros.org/doc/ros2/Installation/Dashing/)
-* Install Nav2
-
-    ```sudo apt install ros-<ros2_distro>-navigation2```
-
-* Install Nav2 Bringup
-
-    ```sudo apt install ros-<ros2_distro>-nav2-bringup```
-
-* Install your robot specific package (ex:[Turtlebot 3](http://emanual.robotis.com/docs/en/platform/turtlebot3/ros2/))
-
-## Launch Nav2 in *Simulation* with Gazebo
-### Pre-requisites:
-
-* [Install Gazebo](http://gazebosim.org/tutorials?tut=install_ubuntu&cat=install)
-* gazebo_ros_pkgs for ROS2 installed on the system
-
-    ```sudo apt-get install ros-<ros2-distro>-gazebo*```
-* A Gazebo world for simulating the robot ([Gazebo tutorials](http://gazebosim.org/tutorials?tut=quick_start))
-* A map of that world saved to a map.pgm and map.yaml ([ROS Navigation Tutorials](https://github.com/ros-planning/navigation2/tree/main/doc/use_cases))
-
-### Terminal 1: Launch Gazebo
-
-Example: See [turtlebot3_gazebo models](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/ros2/turtlebot3_gazebo/models) for details
-
-```bash
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<full/path/to/my_robot/models>
-gazebo --verbose -s libgazebo_ros_init.so <full/path/to/my_gazebo.world>
-```
-
-### Terminal 2: Launch your robot specific transforms
-
-Example: See [turtlebot3_gazebo](https://github.com/ROBOTIS-GIT/turtlebot3_simulations/tree/ros2/turtlebot3_gazebo) for details
-
-```bash
-source /opt/ros/dashing/setup.bash
-export TURTLEBOT3_MODEL=waffle
-ros2 launch turtlebot3_bringup turtlebot3_state_publisher.launch.py use_sim_time:=True
-```
-
-### Terminal 3: Launch Nav2
-
-```bash
-source /opt/ros/dashing/setup.bash
-ros2 launch nav2_bringup bringup_launch.py use_sim_time:=True autostart:=True \
-map:=<full/path/to/map.yaml>
-```
-
-### Terminal 4: Run RViz with Nav2 config file
-
-```bash
-source /opt/ros/dashing/setup.bash
-ros2 run rviz2 rviz2 -d $(ros2 pkg prefix nav2_bringup)/share/nav2_bringup/launch/nav2_default_view.rviz
-```
-
-In RViz:
-* You should see the map
-* Localize the robot using “2D Pose Estimate” button.
-* Make sure all transforms from odom are present. (odom->base_link->base_scan)
-* Send the robot a goal using "Nav2 Goal” button.
-Note: this uses a ROS2 Action to send the goal, and a pop-up window will appear on your screen with a 'cancel' button if you wish to cancel
-
-To view the robot model in RViz:
-* Add "RobotModel", set "Description Source" with "File", set "Description File" with the name of the urdf file for your robot (example: turtlebot3_burger.urdf)"
-
-### Advanced: single-terminal launch
-
-A convenience file is provided to launch Gazebo, RVIZ and Nav2 using a single command:
-
-```bash
-ros2 launch nav2_bringup tb3_simulation_launch.py <settings>
-```
-
-Where `<settings>` can used to replace any of the default options, for example:
+# mcr_bringup
 
 ```
-world:=<full/path/to/gazebo.world>
-map:=<full/path/to/map.yaml>
-rviz_config_file:=<full/path/to/rviz_config.rviz>
-simulator:=<gzserver or gazebo>
-bt_xml_file:=<full/path/to/bt_tree.xml>
+.
+├── behavior_trees
+│   ├── auto_docking.xml
+│   ├── automatic_recharge_old.xml
+│   ├── automatic_recharge.xml
+│   ├── navigate_to_pose_w_replanning_and_recovery.xml
+│   └── target_tracking.xml
+├── CMakeLists.txt
+├── launch
+│   ├── bringup_dock_launch.py
+│   ├── bringup_follow_launch.py
+│   ├── bringup_follow_only_launch.py
+│   └── bringup_navigate_to_pose_launch.py
+├── package.xml
+├── params
+│   ├── auto_charging.yaml
+│   ├── auto_docking.yaml
+│   ├── follow_params.yaml
+│   ├── follow_params.yaml.bak
+│   ├── nav2_params.yaml
+│   ├── navigate_to_pose_params.yaml
+│   └── recoveries_params.yaml
+└── README.md
 ```
 
+## behavior_trees
 
-Before running the command make sure you are sourcing the `ROS2` workspace, setting the path to the Gazebo model and defining the TB3 robot model to use.
+- auto_docking.xml 为自主回充的行为树
+- navigate_to_pose_w_replanning_and_recovery.xml 位导航的行为树，继承自nav2_bt_navigator
+- target_tracking.xml 位跟随功能的行为树
+  
+## params
 
-```bash
-source <full/path/to/ros2/setup.bash>
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<full/path/to/my_robot/models>
-export TURTLEBOT3_MODEL=waffle
-```
-
-Also, a file for launching **two** robots with **independent** navigation stacks is provided:
-
-```bash
-ros2 launch nav2_bringup multi_tb3_simulation_launch.py <settings>
-```
-
-
-## Launch Nav2 on a *Robot*
-
-### Pre-requisites:
-* Run SLAM with Navigation 2 or tele-op to drive the robot and generate a map of an area for testing first. The directions below assume this has already been done or there is already a map of the area.
-
-* Learn more about how to use Navigation 2 with SLAM to create maps;
-
-    - [Navigation 2 with SLAM](https://github.com/ros-planning/navigation2/blob/main/doc/use_cases/navigation_with_slam.md)
-
-* _Please note that currently, nav2_bringup works if you provide a map file. However, providing a map is not required to use Nav2. Nav2 can be configured to use the costmaps to navigate in an area without using a map file_
-
-* Publish all the transforms from your robot from base_link to base_scan
-
-
-### Terminal 1 : Launch Nav2 using your map.yaml
-
-```bash
-source /opt/ros/dashing/setup.bash
-ros2 launch nav2_bringup bringup_launch.py map:=<full/path/to/map.yaml> map_type:=occupancy
-```
-
-### Terminal 2 : Launch RVIZ
-
-```bash
-source /opt/ros/dashing/setup.bash
-ros2 run rviz2 rviz2 -d $(ros2 pkg prefix nav2_bringup)/share/nav2_bringup/launch/nav2_default_view.rviz
-```
-
-In RVIZ:
-* Make sure all transforms from odom are present. (odom->base_link->base_scan)
-* Localize the robot using “2D Pose Estimate” button.
-* Send the robot a goal pose using “2D Nav Goal” button.
+- auto_docking.yaml 为自主回充配置
+- follow_params.yaml 为跟随的配置
+- navigate_to_pose_params.yaml 为导航配置
+- recoveries_params.yaml 为恢复行为相关配置，为以上三个功能通用
