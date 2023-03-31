@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Samsung Research America
+// Copyright (c) 2023 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MCR_PLANNER__PLANNER_SERVER_HPP_
-#define MCR_PLANNER__PLANNER_SERVER_HPP_
+#ifndef MCR_UWB__MCR_UWB_HPP_
+#define MCR_UWB__MCR_UWB_HPP_
 
 #include <chrono>
 #include <string>
@@ -77,14 +77,18 @@ protected:
    * @return SUCCESS or FAILURE
    */
   nav2_util::CallbackReturn on_shutdown(const rclcpp_lifecycle::State & state) override;
-
+  /**
+   * @brief callback for uwb msgs
+   * @param uwb sharedptr for uwb raw data
+   */
   void incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb);
+
 private:
   // Publishers for the path
   rclcpp_lifecycle::LifecyclePublisher<geometry_msgs::msg::PoseStamped>::SharedPtr pose_pub_;
   rclcpp::Subscription<protocol::msg::UwbRaw>::SharedPtr uwb_sub_;
 };
 
-}  // namespace mcr_planner
+}  // namespace mcr_uwb
 
-#endif  // MCR_PLANNER__PLANNER_SERVER_HPP_
+#endif  // MCR_UWB__MCR_UWB_HPP_

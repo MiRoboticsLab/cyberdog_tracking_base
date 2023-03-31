@@ -1,5 +1,4 @@
-// Copyright (c) 2018 Intel Corporation
-// Copyright (c) 2019 Samsung Research America
+// Copyright (c) 2023 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <memory>
 #include "cyberdog_debug/backtrace.hpp"
 #include "mcr_uwb/mcr_uwb.hpp"

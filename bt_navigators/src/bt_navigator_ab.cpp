@@ -97,7 +97,7 @@ nav2_util::CallbackReturn BtPoseNavigator::on_configure(const rclcpp_lifecycle::
   // Libraries to pull plugins (BT Nodes) from
   auto plugin_lib_names = get_parameter("plugin_lib_names").as_string_array();
   pose_navigator_ = std::make_unique<bt_navigators::NavABNavigator>();
-  
+
   bt_navigators::FeedbackUtils feedback_utils;
   feedback_utils.tf = tf_;
   feedback_utils.global_frame = global_frame_;
@@ -105,7 +105,8 @@ nav2_util::CallbackReturn BtPoseNavigator::on_configure(const rclcpp_lifecycle::
   feedback_utils.transform_tolerance = transform_tolerance_;
 
   if (!pose_navigator_->on_configure(
-      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_)) {
+      shared_from_this(), plugin_lib_names, feedback_utils, &plugin_muxer_))
+  {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -133,8 +134,7 @@ nav2_util::CallbackReturn BtPoseNavigator::on_deactivate(const rclcpp_lifecycle:
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
-  if (!pose_navigator_->on_deactivate())
-  {
+  if (!pose_navigator_->on_deactivate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -169,10 +169,8 @@ nav2_util::CallbackReturn BtPoseNavigator::on_shutdown(const rclcpp_lifecycle::S
 
 }  // namespace bt_navigators
 
-#include <memory>
 #include "cyberdog_debug/backtrace.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "bt_navigators/bt_navigator_ab.hpp"
 
 int main(int argc, char ** argv)
 {

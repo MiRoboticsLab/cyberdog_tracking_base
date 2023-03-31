@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "bt_navigators/navigators/target_tracking.hpp"
 #include <vector>
 #include <string>
 #include <set>
 #include <memory>
 #include <limits>
 #include "nav2_core/exceptions.hpp"
-#include <nav2_util/geometry_utils.hpp>
-#include "bt_navigators/navigators/target_tracking.hpp"
 
 namespace bt_navigators
 {
@@ -44,7 +43,7 @@ TargetTrackingNavigator::configure(
     node->declare_parameter("target_topic", std::string("tracking_pose"));
   }
   target_topic_ = node->get_parameter("target_topic").as_string();
-  
+
   if (!node->has_parameter("maxwait")) {
     node->declare_parameter("maxwait", 0.0);
   }
@@ -94,16 +93,18 @@ TargetTrackingNavigator::goalReceived(ActionT::Goal::ConstSharedPtr goal)
 {
   start_time_ = clock_->now();
   rclcpp::WallRate r(500ms);
-  if(maxwait_ > 1.0){
-    while(rclcpp::ok()){
+  if (maxwait_ > 1.0) {
+    while (rclcpp::ok()) {
       RCLCPP_INFO(logger_, "Waiting for the destiny...");
-      if(clock_->now().seconds() - latest_goal_.header.stamp.sec < 2.0){
+      if (clock_->now().seconds() - latest_goal_.header.stamp.sec < 2.0) {
         RCLCPP_INFO(logger_, "The tracking target has appeared in the last 2s and can be tracked.");
         break;
       }
       r.sleep();
-      if(clock_->now().seconds() - start_time_.seconds() > maxwait_){
-        RCLCPP_ERROR(logger_, "No target input in last %lf secs, unable to execute follow task.", maxwait_);
+      if (clock_->now().seconds() - start_time_.seconds() > maxwait_) {
+        RCLCPP_ERROR(
+          logger_, "No target input in last %lf secs, unable to execute follow task.",
+          maxwait_);
         return false;
       }
     }
@@ -190,7 +191,7 @@ TargetTrackingNavigator::onPreempt(ActionT::Goal::ConstSharedPtr goal)
 std::string dir_analysis(unsigned char dir)
 {
   std::vector<std::string> dirs{"", "Behind", "Left", "Right", "Unknown"};
-  if(dir > 4)dir=4;
+  if (dir > 4) {dir = 4;}
   return dirs[dir];
 }
 
@@ -206,9 +207,9 @@ TargetTrackingNavigator::initializeGoalPose(ActionT::Goal::ConstSharedPtr goal)
   blackboard->set<int>("number_recoveries", 0);  // NOLINT
 
   // Update the goal pose on the blackboard
-  if(goal->relative_pos > 3){
+  if (goal->relative_pos > 3) {
     blackboard->set<unsigned char>(goal_blackboard_relative_pos_, 1);
-  }else{
+  } else {
     blackboard->set<unsigned char>(goal_blackboard_relative_pos_, goal->relative_pos);
   }
   blackboard->set<unsigned char>(goal_blackboard_keep_dist_, goal->keep_distance);
@@ -218,8 +219,9 @@ void
 TargetTrackingNavigator::onGoalPoseReceived(
   const geometry_msgs::msg::PoseStamped::SharedPtr pose)
 {
-  if(pose->header.frame_id == "")
+  if (pose->header.frame_id == "") {
     return;
+  }
   latest_goal_ = *pose;
   latest_goal_.header.stamp = clock_->now();
 }

@@ -1,5 +1,35 @@
-# nav2_msgs
+# mcr_msgs
 
-The `nav2_msgs` package is a set of messages, services, and actions for the `Nav2` system. `Nav2` still makes use of `nav_msgs` from ROS (1) Navigation.
+跟随相关的消息格式定义如下：
 
-See the ROS 1 to ROS 2 [Migration Guide](https://index.ros.org/doc/ros2/Migration-Guide/#messages-and-services) for details about use of the new message and service types.
+```
+# 自主选择跟随位置
+uint8 AUTO = 0   
+# 在目标后侧跟随
+uint8 BEHIND = 1 
+# 在目标的左侧跟随
+uint8 LEFT = 2    
+# 在目标的右侧跟随
+uint8 RIGHT = 3   
+
+#goal definition
+# 相对方位，以上方定义的枚举值指定
+uint8 relative_pos     
+# 与跟随目标所保持的距离 
+float32 keep_distance  
+# 行为树的名字（预留）
+string behavior_tree    
+---
+#result definition
+# 结果（预留）
+std_msgs/Empty result   
+---
+# 当前与目标之间的实际距离
+float32 current_distance    
+# 跟随当前目标总计时间 
+builtin_interfaces/Duration tracking_time  
+# 经历过异常自恢复的次数
+int16 number_of_recoveries    
+# 异常码
+int16 exception_code
+```

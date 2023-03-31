@@ -123,8 +123,7 @@ BtNavigatorTracking::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
 
-  if (!target_tracking_navigator_->on_activate())
-  {
+  if (!target_tracking_navigator_->on_activate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -139,8 +138,7 @@ BtNavigatorTracking::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
-  if (!target_tracking_navigator_->on_deactivate())
-  {
+  if (!target_tracking_navigator_->on_deactivate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -159,8 +157,7 @@ BtNavigatorTracking::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
   tf_listener_.reset();
   tf_.reset();
 
-  if (!target_tracking_navigator_->on_cleanup())
-  {
+  if (!target_tracking_navigator_->on_cleanup()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -180,8 +177,6 @@ BtNavigatorTracking::on_shutdown(const rclcpp_lifecycle::State & /*state*/)
 }  // namespace bt_navigators
 
 
-
-#include <memory>
 #include "cyberdog_debug/backtrace.hpp"
 #include "rclcpp/rclcpp.hpp"
 

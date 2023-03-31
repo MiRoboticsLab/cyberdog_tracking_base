@@ -1,5 +1,4 @@
-// Copyright (c) 2018 Intel Corporation
-// Copyright (c) 2019 Samsung Research America
+// Copyright (c) 2023 Beijing Xiaomi Mobile Software Co., Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#include <chrono>
+#include "mcr_uwb/mcr_uwb.hpp"
 #include <cmath>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <limits>
@@ -23,12 +22,8 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <nav2_util/node_utils.hpp>
 #include "builtin_interfaces/msg/duration.hpp"
 #include "nav2_util/costmap.hpp"
-#include "nav2_util/node_utils.hpp"
-
-#include "mcr_uwb/mcr_uwb.hpp"
 
 using namespace std::chrono_literals;
 
@@ -43,9 +38,6 @@ MCRUwb::MCRUwb()
   // Declare this node's parameters
   declare_parameter("uwb_data", "uwb_raw");
   declare_parameter("produced_pose", "tracking_pose");
-
-  // get_parameter("planner_plugins", planner_ids_);
- 
 }
 
 MCRUwb::~MCRUwb()
@@ -64,9 +56,9 @@ MCRUwb::on_configure(const rclcpp_lifecycle::State &)
   // Initialize pubs & subs
   pose_pub_ = create_publisher<geometry_msgs::msg::PoseStamped>(produced_pose, 5);
 
-  uwb_sub_ = create_subscription<protocol::msg::UwbRaw>(uwb_data_topic, 10, 
-                                                        std::bind(&MCRUwb::incomingUwb, this, std::placeholders::_1));
-
+  uwb_sub_ = create_subscription<protocol::msg::UwbRaw>(
+    uwb_data_topic, 10,
+    std::bind(&MCRUwb::incomingUwb, this, std::placeholders::_1));
 
 
   return nav2_util::CallbackReturn::SUCCESS;
@@ -118,17 +110,18 @@ MCRUwb::on_shutdown(const rclcpp_lifecycle::State &)
 }
 
 
-
 void
 MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
 {
-  if(!pose_pub_->is_activated()){
+  if (!pose_pub_->is_activated()) {
     return;
-  }  
+  }
   geometry_msgs::msg::PoseStamped pose;
   pose.header = uwb->header;
 
-  RCLCPP_DEBUG(get_logger(), "received uwb raw data, frame id: %s, dist: %f, angle: %f.", uwb->header.frame_id.c_str(), uwb->dist, uwb->angle);
+  RCLCPP_DEBUG(
+    get_logger(), "received uwb raw data, frame id: %s, dist: %f, angle: %f.",
+    uwb->header.frame_id.c_str(), uwb->dist, uwb->angle);
 
   pose.pose.position.x = uwb->dist * cos(-uwb->angle);
   pose.pose.position.y = uwb->dist * sin(-uwb->angle);
@@ -138,4 +131,4 @@ MCRUwb::incomingUwb(protocol::msg::UwbRaw::ConstSharedPtr uwb)
   pose_pub_->publish(pose);
 }
 
-}  // namespace mcr_planner
+}  // namespace mcr_uwb

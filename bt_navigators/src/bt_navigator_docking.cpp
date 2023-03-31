@@ -124,8 +124,7 @@ BtNavigatorDock::on_activate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Activating");
 
-  if (!automatic_recharge_navigator_->on_activate())
-  {
+  if (!automatic_recharge_navigator_->on_activate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -140,8 +139,7 @@ BtNavigatorDock::on_deactivate(const rclcpp_lifecycle::State & /*state*/)
 {
   RCLCPP_INFO(get_logger(), "Deactivating");
 
-  if (!automatic_recharge_navigator_->on_deactivate())
-  {
+  if (!automatic_recharge_navigator_->on_deactivate()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 
@@ -160,8 +158,7 @@ BtNavigatorDock::on_cleanup(const rclcpp_lifecycle::State & /*state*/)
   tf_listener_.reset();
   tf_.reset();
 
-  if (!automatic_recharge_navigator_->on_cleanup())
-  {
+  if (!automatic_recharge_navigator_->on_cleanup()) {
     return nav2_util::CallbackReturn::FAILURE;
   }
 

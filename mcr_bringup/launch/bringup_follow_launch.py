@@ -73,7 +73,6 @@ def generate_launch_description():
             root_key=namespace,
             param_rewrites=param_substitutions,
             convert_types=True)
-            
     configured_params_a = RewrittenYaml(
             source_file=auto_charings_file,
             root_key=namespace,
@@ -125,7 +124,7 @@ def generate_launch_description():
             executable='controller_server',
             output='screen',
             # prefix=['xterm -e gdb  --args'],
-            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
+            parameters=[{configured_params}, {configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -133,7 +132,7 @@ def generate_launch_description():
             executable='mcr_planner_server',
             name='planner_server',
             output='screen',
-            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
+            parameters=[{configured_params}, {configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -141,7 +140,7 @@ def generate_launch_description():
             executable='recoveries_server',
             name='recoveries_server',
             output='screen',
-            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
+            parameters=[{configured_params}, {configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
         Node(
@@ -149,7 +148,7 @@ def generate_launch_description():
             executable='bt_navigator',
             name='bt_navigator',
             output='screen',
-            parameters=[{configured_params},{configured_params_f}, {configured_params_a}],
+            parameters=[{configured_params}, {configured_params_f}, {configured_params_a}],
             remappings=remappings),
 
 
