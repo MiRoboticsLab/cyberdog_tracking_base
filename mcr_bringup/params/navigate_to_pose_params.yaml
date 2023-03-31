@@ -104,7 +104,7 @@ controller_server_ab:
       vx_samples: 8
       vy_samples: 0
       vtheta_samples: 10
-      sim_time: 0.9
+      sim_time: 1.5
       sim_period: 0.2
       linear_granularity: 0.1
       angular_granularity: 0.05
