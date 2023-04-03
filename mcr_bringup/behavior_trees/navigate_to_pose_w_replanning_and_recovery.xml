@@ -32,9 +32,6 @@
             <ClearEntireCostmap name="ClearLocalCostmap-Subtree" server_timeout="1000" service_name="local_costmap/clear_entirely_local_costmap"/>
             <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" server_timeout="1000" service_name="global_costmap/clear_entirely_global_costmap"/>
           </Sequence>
-          <Spin spin_dist="1.57" server_timeout="4000"/>
-          <Wait wait_duration="5"/>
-          <BackUp backup_dist="0.15" server_timeout="4000" backup_speed="0.025"/>
         </RoundRobin>
       </ReactiveFallback>
     </RecoveryNode>
