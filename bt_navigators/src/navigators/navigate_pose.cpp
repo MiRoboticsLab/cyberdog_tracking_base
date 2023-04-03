@@ -53,7 +53,7 @@ std::string NavABNavigator::getDefaultBTFilepath(
   std::string default_bt_xml_filename;
   auto node = parent_node.lock();
   std::string pkg_share_dir =
-    ament_index_cpp::get_package_share_directory("nav2_bt_navigator");
+    ament_index_cpp::get_package_share_directory("mcr_bringup");
   if (!node->has_parameter("default_nav_to_pose_bt_xml")) {
     node->declare_parameter<std::string>(
       "default_nav_to_pose_bt_xml",
