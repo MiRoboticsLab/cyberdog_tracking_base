@@ -168,13 +168,13 @@ public:
     if (!bt_action_server_->on_configure()) {
       ok = false;
     }
-
+    RCLCPP_INFO(logger_, "bt_action_server on_configure: %d", ok);
     BT::Blackboard::Ptr blackboard = bt_action_server_->getBlackboard();
     blackboard->set<std::shared_ptr<tf2_ros::Buffer>>(
       "tf_buffer", feedback_utils.tf);                      // NOLINT
     blackboard->set<bool>("initial_pose_received", false);  // NOLINT
     blackboard->set<int>("number_recoveries", 0);           // NOLINT
-
+    RCLCPP_INFO(logger_, "will impl navigate_pose configure");
     return configure(parent_node) && ok;
   }
 
