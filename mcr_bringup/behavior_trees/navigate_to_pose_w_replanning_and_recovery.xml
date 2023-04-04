@@ -32,6 +32,7 @@
             <ClearEntireCostmap name="ClearLocalCostmap-Subtree" server_timeout="1000" service_name="local_costmap/clear_entirely_local_costmap"/>
             <ClearEntireCostmap name="ClearGlobalCostmap-Subtree" server_timeout="1000" service_name="global_costmap/clear_entirely_global_costmap"/>
           </Sequence>
+          <Wait wait_duration="2"/>
         </RoundRobin>
       </ReactiveFallback>
     </RecoveryNode>
