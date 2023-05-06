@@ -143,7 +143,7 @@ local_costmap:
       height: 4
       resolution: 0.05
       footprint: "[[0.25, 0.13], [0.25, -0.13], [-0.23, -0.13], [-0.23, 0.13]]"
-      plugins: ["obstacle_layer", "inflation_layer"]
+      plugins: ["obstacle_layer", "point_cloud_layer", "inflation_layer"]
       inflation_layer:
         enabled: True
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -160,6 +160,20 @@ local_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.5
+      point_cloud_layer:
+        plugin: "lidar_obstacle_layer/ObstacleLayer"
+        enabled: True
+        observation_sources: point_cloud
+        point_cloud:
+          topic: camera/depth/color/points
+          max_obstacle_height: 0.2
+          min_obstacle_height: -0.05
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
           raytrace_max_range: 6.0
           raytrace_min_range: 0.0
           obstacle_max_range: 5.5
@@ -185,7 +199,7 @@ global_costmap:
       resolution: 0.05
       track_unknown_space: True
       footprint: "[[0.25, 0.13], [0.25, -0.13], [-0.23, -0.13], [-0.23, 0.13]]"
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      plugins: ["static_layer", "obstacle_layer", "point_cloud_layer", "inflation_layer"]
       obstacle_layer:
         plugin: "lidar_obstacle_layer/ObstacleLayer"
         enabled: True
@@ -201,6 +215,20 @@ global_costmap:
           raytrace_min_range: 0.0
           obstacle_max_range: 6.5
           obstacle_min_range: 0.0
+      point_cloud_layer:
+        plugin: "lidar_obstacle_layer/ObstacleLayer"
+        enabled: True
+        observation_sources: point_cloud
+        point_cloud:
+          topic: camera/depth/color/points
+          max_obstacle_height: 0.2
+          min_obstacle_height: -0.05
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
+          raytrace_max_range: 6.0
+          raytrace_min_range: 0.0
+          obstacle_max_range: 5.5
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
