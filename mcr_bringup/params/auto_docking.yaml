@@ -65,7 +65,7 @@ bt_navigator_dockingautomatic_recharge_rclcpp_node:
     global_frame: vodom
     robot_base_frame: base_link
     distance: 1.5
-    distance_final: 0.43
+    distance_final: 0.5
     charger_updater_topic: chargetolidar
     max_pose_inuse: 0
     dist_throttle: 0.0
@@ -161,7 +161,7 @@ controller_server_docking:
     general_goal_checkerL:
       stateful: True
       plugin: "mcr_tracking_components::XGoalChecker"
-      xy_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.378
       yaw_goal_tolerance: 1.57
       charger_updater_topic: chargetolidar
     TrackingTargetL:
