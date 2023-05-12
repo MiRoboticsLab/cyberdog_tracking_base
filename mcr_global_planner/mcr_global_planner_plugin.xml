@@ -1,0 +1,5 @@
+<library path="mcr_global_planner">
+	<class name="mcr_global_planner/MCRSplinePlanner" type="mcr_global_planner::MCRSplinePlanner" base_class_type="nav2_core::GlobalPlanner">
+	  <description></description>
+	</class>		
+</library>
