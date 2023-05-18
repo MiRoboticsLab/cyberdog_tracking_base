@@ -20,6 +20,8 @@ jobs:
       - name: Download repository
         run: |
           git clone https://github.com/MiRoboticsLab/cyberdog_ws.git
+          sudo apt-get update
+          sudo apt-get install python3-vcstool
           vcs import . < cyberdog_ws/cyberdog.repos
       - name: Build and code test
         run: |
