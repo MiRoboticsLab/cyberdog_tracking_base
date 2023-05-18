@@ -19,7 +19,7 @@ jobs:
           sudo apt install -y qemu-user-static binfmt-support
       - name: Download repository
         run: |
-          git clone https://github.com/${{ secrets.GIT_TOKEN }}/MiRoboticsLab/cyberdog_ws.git
+          git clone https://github.com/MiRoboticsLab/cyberdog_ws.git
           vcs import . < cyberdog_ws/cyberdog.repos
       - name: Build and code test
         run: |
