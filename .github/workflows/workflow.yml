@@ -24,6 +24,6 @@ jobs:
              docker pull ghcr.io/miroboticslab/cyberdog:v1
              docker run -i -v $GITHUB_WORKSPACE:/home/ros2/src ghcr.io/miroboticslab/cyberdog:v1 bash -c \
              "cd /home/ros2 && source /opt/ros2/galactic/setup.bash \
-              && colcon build --packages-up-to mcr_bringup mcr_msgs mcr_uwb mcr_voice bt_navigators  \
+              && colcon build --merge-install --packages-up-to mcr_bringup mcr_msgs mcr_uwb mcr_voice bt_navigators  \
               && colcon test --event-handlers console_cohesion+ --return-code-on-test-failure --packages-select mcr_bringup mcr_msgs mcr_uwb mcr_voice bt_navigators "
              # colcon build test
