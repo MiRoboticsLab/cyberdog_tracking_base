@@ -23,7 +23,7 @@ jobs:
       - name: Download repository
         run: |
           git clone https://github.com/MiRoboticsLab/cyberdog_ws.git
-          vcs import . < cyberdog_ws/cyberdog.repos
+          vcs import . < cyberdog_ws/.github/ci.repos
       - name: Build and code test
         run: |
              docker pull ghcr.io/miroboticslab/cyberdog:v1
