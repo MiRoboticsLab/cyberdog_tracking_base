@@ -27,3 +27,9 @@ builtin_interfaces/Duration tracking_time
 int16 number_of_recoveries    
 # 异常码
 int16 exception_code
+# 与目标保持的距离
+float32 keep_distance
+# 当前档位的速度极限
+float32 max_x
+# 当前运动的状态
+int16 motion_state
