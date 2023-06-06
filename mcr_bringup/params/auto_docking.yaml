@@ -64,7 +64,7 @@ bt_navigator_dockingautomatic_recharge_rclcpp_node:
     use_sim_time: False
     global_frame: vodom
     robot_base_frame: base_link
-    distance: 1.5
+    distance: 1.75
     distance_final: 0.5
     charger_updater_topic: chargetolidar
     max_pose_inuse: 0
