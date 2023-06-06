@@ -27,7 +27,7 @@
             </SequenceStar>
             <ReactiveFallback name="RecoveryActions">
                 <ExceptionVerify exception_code="{exception}" expected_code="1000">
-                    <Action ID="BackUp" backup_dist="0.15" server_timeout="4000" backup_speed="0.05"/>
+                    <Action ID="SpinAndSearch" search_dist="0.2" server_timeout="4000"/>
                 </ExceptionVerify>
                 <ExceptionVerify exception_code="{exception}" expected_code="3001">
                     <Action ID="ClearEntireCostmap" name="ClearEntireGlobalCostmap" service_name="rolling_costmap_charging/clear_entirely_rolling_costmap_charging"/>
