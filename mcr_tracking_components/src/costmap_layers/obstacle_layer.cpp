@@ -647,7 +647,10 @@ ObstacleLayer::raytraceFreespace(
   double ox = clearing_observation.origin_.x;
   double oy = clearing_observation.origin_.y;
   const sensor_msgs::msg::PointCloud2 & cloud = *(clearing_observation.cloud_);
-
+  RCLCPP_INFO(
+    logger_,
+    "raytraceFreespace. The cloud height: %d, width: %d.",
+    cloud.height, cloud.width);
   // get the map coordinates of the origin of the sensor
   unsigned int x0, y0;
   if (!worldToMap(ox, oy, x0, y0)) {
