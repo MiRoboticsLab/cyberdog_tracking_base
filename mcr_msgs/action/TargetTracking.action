@@ -1,3 +1,10 @@
+#goal definition
+uint8 NAVIGATION_TYPE_START_UWB_TRACKING = 11
+uint8 NAVIGATION_TYPE_STOP_UWB_TRACKING = 12
+uint8 NAVIGATION_TYPE_START_HUMAN_TRACKING = 13
+uint8 NAVIGATION_TYPE_STOP_HUMAN_TRACKING = 14
+
+uint8 nav_type
 # 自主选择跟随位置
 uint8 AUTO = 0   
 # 在目标后侧跟随
@@ -7,7 +14,6 @@ uint8 LEFT = 2
 # 在目标的右侧跟随
 uint8 RIGHT = 3   
 
-#goal definition
 # 相对方位，以上方定义的枚举值指定
 uint8 relative_pos     
 # 与跟随目标所保持的距离 

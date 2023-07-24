@@ -666,7 +666,6 @@ ObstacleLayer::raytraceFreespace(
   double map_end_x = origin_x + size_x_ * resolution_;
   double map_end_y = origin_y + size_y_ * resolution_;
 
-
   touch(ox, oy, min_x, min_y, max_x, max_y);
 
   // for each point in the cloud, we want to trace a line from the origin
@@ -674,6 +673,9 @@ ObstacleLayer::raytraceFreespace(
   sensor_msgs::PointCloud2ConstIterator<float> iter_x(cloud, "x");
   sensor_msgs::PointCloud2ConstIterator<float> iter_y(cloud, "y");
 
+  RCLCPP_INFO(
+  logger_,
+  "raytraceFreespace. for loop.");
   for (; iter_x != iter_x.end(); ++iter_x, ++iter_y) {
     double wx = *iter_x;
     double wy = *iter_y;
@@ -726,6 +728,9 @@ ObstacleLayer::raytraceFreespace(
       clearing_observation.raytrace_min_range_, min_x, min_y, max_x,
       max_y);
   }
+  RCLCPP_INFO(
+  logger_,
+  "raytraceFreespace. The end.");
 }
 
 void
