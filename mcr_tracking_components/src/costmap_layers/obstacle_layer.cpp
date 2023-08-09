@@ -238,7 +238,7 @@ void ObstacleLayer::onInitialize()
       global_frame_.c_str(), expected_update_rate, observation_keep_time);
 
     rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_sensor_data;
-    custom_qos_profile.depth = 1;
+    custom_qos_profile.depth = 20;
 
     // create a callback for the topic
     if (data_type == "LaserScan") {
@@ -249,7 +249,7 @@ void ObstacleLayer::onInitialize()
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>> filter(
         new tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>(
-          *sub, *tf_, global_frame_, 1, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
+          *sub, *tf_, global_frame_, 20, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
 
       if (inf_is_valid) {
         filter->registerCallback(
@@ -283,7 +283,7 @@ void ObstacleLayer::onInitialize()
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>> filter(
         new tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>(
-          *sub, *tf_, global_frame_, 1, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
+          *sub, *tf_, global_frame_, 20, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
 
       filter->registerCallback(
         std::bind(
@@ -436,6 +436,10 @@ ObstacleLayer::updateBounds(
 
   // raytrace freespace
   for (unsigned int i = 0; i < clearing_observations.size(); ++i) {
+    RCLCPP_INFO(
+    logger_,
+    "clearing_observations.size(): %d, i: %d.",
+    clearing_observations.size(), i);
     raytraceFreespace(clearing_observations[i], min_x, min_y, max_x, max_y);
   }
 
