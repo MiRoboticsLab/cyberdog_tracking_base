@@ -238,7 +238,7 @@ void ObstacleLayer::onInitialize()
       global_frame_.c_str(), expected_update_rate, observation_keep_time);
 
     rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_sensor_data;
-    custom_qos_profile.depth = 1;
+    custom_qos_profile.depth = 20;
 
     // create a callback for the topic
     if (data_type == "LaserScan") {
@@ -249,7 +249,7 @@ void ObstacleLayer::onInitialize()
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>> filter(
         new tf2_ros::MessageFilter<sensor_msgs::msg::LaserScan>(
-          *sub, *tf_, global_frame_, 1, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
+          *sub, *tf_, global_frame_, 20, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
 
       if (inf_is_valid) {
         filter->registerCallback(
@@ -283,7 +283,7 @@ void ObstacleLayer::onInitialize()
 
       std::shared_ptr<tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>> filter(
         new tf2_ros::MessageFilter<sensor_msgs::msg::PointCloud2>(
-          *sub, *tf_, global_frame_, 1, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
+          *sub, *tf_, global_frame_, 20, rclcpp_node_, tf2::durationFromSec(transform_tolerance)));
 
       filter->registerCallback(
         std::bind(
@@ -436,6 +436,10 @@ ObstacleLayer::updateBounds(
 
   // raytrace freespace
   for (unsigned int i = 0; i < clearing_observations.size(); ++i) {
+    RCLCPP_INFO(
+    logger_,
+    "clearing_observations.size(): %d, i: %d.",
+    clearing_observations.size(), i);
     raytraceFreespace(clearing_observations[i], min_x, min_y, max_x, max_y);
   }
 
@@ -673,10 +677,11 @@ ObstacleLayer::raytraceFreespace(
   sensor_msgs::PointCloud2ConstIterator<float> iter_x(cloud, "x");
   sensor_msgs::PointCloud2ConstIterator<float> iter_y(cloud, "y");
 
-  RCLCPP_INFO(
-  logger_,
-  "raytraceFreespace. for loop.");
+  unsigned int iter_x_size = 0, iter_y_size = 0;
+  unsigned int loop_times = 0;
   for (; iter_x != iter_x.end(); ++iter_x, ++iter_y) {
+    ++iter_x_size;
+    ++iter_y_size;
     double wx = *iter_x;
     double wy = *iter_y;
 
@@ -712,11 +717,16 @@ ObstacleLayer::raytraceFreespace(
     // now that the vector is scaled correctly... we'll get the map coordinates of its endpoint
     unsigned int x1, y1;
 
+    RCLCPP_INFO(
+    logger_,
+    "raytraceFreespace. loop_times: %d, a : %f, b: %f", ++loop_times, a, b);
     // check for legality just in case
     if (!worldToMap(wx, wy, x1, y1)) {
       continue;
     }
-
+    RCLCPP_INFO(
+    logger_,
+    "raytraceFreespace. loop_times: %d", loop_times);
     unsigned int cell_raytrace_max_range = cellDistance(clearing_observation.raytrace_max_range_);
     unsigned int cell_raytrace_min_range = cellDistance(clearing_observation.raytrace_min_range_);
     MarkCell marker(costmap_, FREE_SPACE);
@@ -730,7 +740,7 @@ ObstacleLayer::raytraceFreespace(
   }
   RCLCPP_INFO(
   logger_,
-  "raytraceFreespace. The end.");
+  "raytraceFreespace. The end. iter_x size: %d, iter_y size: %d", iter_x_size, iter_y_size);
 }
 
 void
