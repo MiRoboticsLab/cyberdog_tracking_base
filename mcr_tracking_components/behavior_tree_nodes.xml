@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+  For instructions on using Groot and description of the following BehaviorTree nodes,
+  please refer to the groot_instructions.md and REAMDE.md respectively located in the 
+  nav2_behavior_tree package.
+-->
+<root>
+  <TreeNodesModel>
+    <!-- ############################### ACTION NODES ################################# -->
+    <Action ID="ComputePathSplinePoses">
+      <input_port name="poses">Destinations to plan splined</input_port>
+      <output_port name="path">Path created by ComputePathToPose node</output_port>
+      <input_port name="planner_id"/>
+    </Action>
+    <Action ID="ComputePathToP">
+      <input_port name="goal">Destination to plan to</input_port>
+      <input_port name="start">Start pose of the path if overriding current robot pose</input_port>
+      <output_port name="path">Path created by ComputePathToPose node</output_port>
+      <input_port name="planner_id"/>
+    </Action>
+
+    <Action ID="FollowP">
+      <input_port name="controller_id" default="FollowPath"/>
+      <input_port name="goal">Destination to plan to</input_port>
+      <input_port name="path">Path to follow</input_port>
+      <input_port name="goal_checker_id" default="GoalChecker">Goal checker</input_port>
+      <input_port name="progress_checker_id" default="progress_checker">Progress checker</input_port>
+      <output_port name="output_exception_code">Exception code for the real reason</output_port>
+    </Action>
+
+    <Action ID="TrackingModeDecider">
+      <input_port name="input_tracking_mode">Original tracking mode</input_port>
+      <output_port name="output_tracking_mode">Output tracking mode by decision</output_port>
+    </Action>
+    <Action ID="ChangeGait">
+      <input_port name="gait_motion_id">gait to use next. </input_port>
+      <input_port name="gait_shape_value">gait to use next. </input_port>
+      <input_port name="gait_step_height">gait to use next. </input_port>
+      <output_port name="next_action_start">start signal to next action</output_port>
+    </Action>
+
+    <Action ID="SpinAndSearch">
+      <input_port name="search_dist">Spin distance</input_port>
+    </Action>
+    <Action ID="SeatAdjustClient">
+      <input_port name="start">To start the action. </input_port>
+    </Action>
+    <Action ID="TruncatePath">
+        <input_port name="distance">Distance before goal to truncate</input_port>
+        <input_port name="input_path">Path to truncate</input_port>
+        <output_port name="output_path">Truncated path to utilize</output_port>
+    </Action>
+    <!-- ############################### CONDITION NODES ############################## -->
+    <Condition ID="IsBatteryInCharge">
+      <input_port name="min_battery">Min battery % or voltage before triggering</input_port>
+      <input_port name="battery_topic">Topic for battery info</input_port>
+      <input_port name="is_voltage">Bool if check based on voltage or total %</input_port>
+    </Condition>    
+    <!-- ############################### CONTROL NODES ################################ -->
+    <!-- ############################### DECORATOR NODES ############################## -->
+    <Decorator ID="ExceptionVerify">
+      <input_port name="exception_code">input code</input_port>
+      <input_port name="expected_code">right code</input_port>
+    </Decorator>
+    <Decorator ID="ChargerUpdater">
+      <input_port name="input_goal">Original goal in</input_port>
+      <input_port name="phase">current charing phase</input_port>
+      <output_port name="distance">Distance between target and robot.</output_port>
+      <output_port name="output_goals">Output goals set by subscription</output_port>
+      <output_port name="output_exception_code">Exception code for the real reason</output_port>
+    </Decorator>
+
+    <Decorator ID="TargetUpdater">
+      <input_port name="input_goal">Original goal in</input_port>
+      <input_port name="input_tracking_mode">Original tracking mode</input_port>
+      <output_port name="distance">Distance between target and robot.</output_port>
+      <output_port name="output_goal">Output goal set by subscription</output_port>
+      <output_port name="transformed_goal">Output goal set by transformed_goal subscription</output_port>
+      <output_port name="output_goals">Output goals set by subscription</output_port>
+      <output_port name="output_exception_code">Exception code for the real reason</output_port>
+    </Decorator>
+  </TreeNodesModel>
+</root>
